@@ -1,0 +1,22 @@
+{
+	"name": "zombie",
+	"version-string": "0.1.0",
+	"port-version": 0,
+	"homepage": "https://github.com/mwthinker/Zombie",
+	"description": "Simple 2D-shooter zombie game. ",
+	"license": "MIT",
+	"dependencies": [
+		"sdl2-image",
+		"sdl2-mixer",
+		"sdl2-ttf",
+		"sdl2",
+		"glad",
+		"spdlog",
+		"glm",
+		"catch2",
+		"fmt",
+		"box2d",
+		"nlohmann-json",
+		"freetype"
+	]
+}

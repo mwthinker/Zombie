@@ -1,0 +1,35 @@
+Zombie
+======
+A 2D-shooter zombie game.
+
+<b> About </b>
+The project is using CMake and vcpkg.
+
+Open source
+====
+The project is under the MIT license (see LICENSE.txt).
+
+Prerequisites
+====
+Git and CMake must be installed.
+
+Clone vcpkg and set enviroment variable VCPKG_ROOT to the root folder of the cloned vcpkg folder.
+
+```bash
+git clone https://github.com/microsoft/vcpkg.git
+```
+
+or follow the instruction in https://github.com/microsoft/vcpkg#using-vcpkg-with-cmake.
+
+Build
+====
+```bash
+git clone https://github.com/microsoft/Zombie.git
+cd Zombie
+mkdir build
+cd build
+cmake ..
+make
+```
+
+Or use CMake gui and gnerate the build system of your choice.
