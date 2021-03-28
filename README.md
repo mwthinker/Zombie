@@ -26,4 +26,4 @@ make
 Or use CMake gui and generate the build system of your choice.
 
 ## Open source
-The project is under the MIT license (see LICENSE.txt).
+The project is under the MIT license.
