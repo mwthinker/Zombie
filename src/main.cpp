@@ -1,6 +1,7 @@
 #include "logger.h"
 #include "zombiewindow.h"
-#include "sdl/initsdl.h"
+
+#include <sdl/initsdl.h>
 
 int main (int argc, char** argv) {
 	zombie::logger::init();
@@ -16,5 +17,5 @@ int main (int argc, char** argv) {
 	zombie::ZombieWindow zombieWindow{skipMenu};
 	zombieWindow.startLoop();
 
-    return 0;
+	return 0;
 }

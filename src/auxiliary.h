@@ -32,15 +32,16 @@ namespace zombie {
 	}
 
 	static Position directionVector(float angle) {
-		return Position(std::cos(angle), std::sin(angle));
+		return {std::cos(angle), std::sin(angle)};
 	}
 
-	// Returns a random number. The output is uniformly distributed on the interval [a, b).
+	// Returns a random number. Uniformly distributed on the interval [0, 1).
 	float random();
 
-	float random(float min, float max);
+	// Returns a random number. Uniformly distributed on the interval [a, b).
+	float random(float a, float b);
 
-	int randomInt(int lower, int higher);
+	int randomInt(int a, int b);
 
 }
 

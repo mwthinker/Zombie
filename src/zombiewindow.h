@@ -3,6 +3,7 @@
 
 #include <sdl/imguiwindow.h>
 #include <sdl/graphic.h>
+#include <sdl/shader.h>
 
 #include <memory>
 
@@ -19,6 +20,7 @@ namespace zombie {
 
 	private:
 		void imGuiPreUpdate(const sdl::DeltaTime& deltaTime) override;
+		void imGuiUpdate(const sdl::DeltaTime& deltaTime) override;
 
 		void imGuiEventUpdate(const SDL_Event& windowEvent) override;
 
@@ -28,6 +30,10 @@ namespace zombie {
 		std::unique_ptr<ZombieGame> zombieGame_;
 		bool skipMenu_{};
 		sdl::Graphic graphic_;
+		sdl::Shader shader_;
+		sdl::TextureView background_;
+		ImFont* titleFont_;
+		ImFont* buttonFont_;
 	};
 
 }

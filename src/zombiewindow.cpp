@@ -4,6 +4,24 @@
 
 namespace zombie {
 
+	namespace {
+
+		void PushButtonStyle() {
+			//ImGui::PushFont(zombie::Configuration::getInstance().getDefaultFont(12));
+			ImGui::PushStyleColor(ImGuiCol_Text, sdl::color::html::Black);
+			ImGui::PushStyleColor(ImGuiCol_Border, sdl::color::Transparent);
+			ImGui::PushStyleColor(ImGuiCol_Button, sdl::color::html::White);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, sdl::color::html::Red);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, sdl::color::html::RosyBrown);
+		}
+
+		void PopButtonStyle() {
+			ImGui::PopStyleColor(5);
+			//ImGui::PopFont();
+		}
+
+	}
+
 	ZombieWindow::ZombieWindow(bool skipMenu)
 		: skipMenu_{skipMenu} {
 
@@ -77,8 +95,50 @@ namespace zombie {
 	}
 
 	void ZombieWindow::imGuiPreUpdate(const sdl::DeltaTime& deltaTime) {
+		shader_.useProgram();
+		graphic_.clear();
+		graphic_.addRectangleImage({-1, -1}, {2, 2}, background_);
+		graphic_.upload(shader_);
+
+
 		auto deltaTimeSeconds = std::chrono::duration<double>(deltaTime).count();
-		//zombieGame_->draw(getShader(), graphic_, deltaTimeSeconds);
+
+		if (zombieGame_) {
+			//zombieGame_->draw(getShader(), graphic_, deltaTimeSeconds);
+		}
+	}
+
+	void ZombieWindow::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
+		if (zombieGame_) {
+
+			return;
+		}
+
+		ImGui::MainWindow("Main", [&]() {
+			ImGui::Indent(10.f);
+			ImGui::PushFont(titleFont_);
+			ImGui::TextColored(sdl::color::html::White, "Zombie");
+			ImGui::PopFont();
+
+			PushButtonStyle();
+			if (ImGui::Button("Play")) {
+				zombieGame_ = std::make_unique<ZombieGame>();
+				zombieGame_->startGame();
+			}
+
+			if (ImGui::Button("Custom game")) {
+
+			}
+
+			if (ImGui::Button("Highscore")) {
+
+			}
+
+			if (ImGui::Button("Quit")) {
+				quit();
+			}
+			PopButtonStyle();
+		});
 	}
 
 	void ZombieWindow::initOpenGl() {
@@ -90,9 +150,12 @@ namespace zombie {
 	void ZombieWindow::initPreLoop() {
 		sdl::ImGuiWindow::initPreLoop();
 
-		zombieGame_ = std::make_unique<ZombieGame>();
+		shader_ = sdl::Shader::CreateShaderGlsl_330();
+		Configuration::getInstance().bindTextureFromAtlas();
+		background_ = Configuration::getInstance().getMenuBackgroundImage();
 
-		zombieGame_->startGame();
+		buttonFont_ = ImGui::GetIO().Fonts->AddFontFromFileTTF("fonts/Ubuntu-B.ttf", 30);
+		titleFont_ = ImGui::GetIO().Fonts->AddFontFromFileTTF("fonts/Ubuntu-B.ttf", 45);
 	}
 
 }
