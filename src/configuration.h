@@ -22,22 +22,22 @@
 
 namespace zombie {
 
-	class GameData {
+	class Configuration {
 	public:
-		static GameData& getInstance() {
-			static GameData instance;
+		static Configuration& getInstance() {
+			static Configuration instance;
 			return instance;
 		}
 
-		GameData(const GameData&) = delete;
-		GameData& operator=(const GameData&) = delete;
+		Configuration(const Configuration&) = delete;
+		Configuration& operator=(const Configuration&) = delete;
 
 		void save();
 
 		const sdl::Font& loadFont(std::string file, int fontSize);
 		sdl::Sound loadSound(std::string file);
 		sdl::Music loadMusic(std::string file);
-		sdl::Sprite loadSprite(std::string file);
+		sdl::TextureView loadSprite(std::string file);
 
 		const sdl::Font& getDefaultFont(int size);
 
@@ -78,9 +78,9 @@ namespace zombie {
 
 		sdl::Music getMusicTrack();
 
-		sdl::Sprite getTreeImage();
+		sdl::TextureView getTreeImage();
 
-		sdl::Sprite getBuildingWallImage();
+		sdl::TextureView getBuildingWallImage();
 
 		float getSettingsImpulseThreshold();
 		float getSettingsTimeStep();
@@ -95,21 +95,21 @@ namespace zombie {
 
 		sdl::Sound getMenuSoundChoice();
 		sdl::Sound getMenuSoundHighlited();
-		sdl::Sprite getMenuBackgroundImage();
+		sdl::TextureView getMenuBackgroundImage();
 
-		sdl::Sprite getWaterSeeFloorImage();
+		sdl::TextureView getWaterSeeFloorImage();
 
-		sdl::Sprite getRoadIntersection();
-		sdl::Sprite getRoadStraight0();
-		sdl::Sprite getRoadStraight90();
-		sdl::Sprite getRoadTurn0();
-		sdl::Sprite getRoadTurn90();
-		sdl::Sprite getRoadTurn180();
-		sdl::Sprite getRoadTurn270();
-		sdl::Sprite getRoadTurnIntersection0();
-		sdl::Sprite getRoadTurnIntersection90();
-		sdl::Sprite getRoadTurnIntersection180();
-		sdl::Sprite getRoadTurntersection270();
+		sdl::TextureView getRoadIntersection();
+		sdl::TextureView getRoadStraight0();
+		sdl::TextureView getRoadStraight90();
+		sdl::TextureView getRoadTurn0();
+		sdl::TextureView getRoadTurn90();
+		sdl::TextureView getRoadTurn180();
+		sdl::TextureView getRoadTurn270();
+		sdl::TextureView getRoadTurnIntersection0();
+		sdl::TextureView getRoadTurnIntersection90();
+		sdl::TextureView getRoadTurnIntersection180();
+		sdl::TextureView getRoadTurntersection270();
 
 		//ExplosionProperties getExplosionProperties();
 
@@ -121,7 +121,7 @@ namespace zombie {
 		MapProperties loadMapProperties();
 
 	private:
-		GameData();
+		Configuration();
 		void loadAllWeaponProperties();
 		void loadAllMissileProperties();
 		void loadAllUnitProperties();

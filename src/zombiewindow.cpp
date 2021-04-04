@@ -1,17 +1,17 @@
 #include "zombiewindow.h"
 #include "zombiegame.h"
-#include "gamedata.h"
+#include "configuration.h"
 
 namespace zombie {
 
 	ZombieWindow::ZombieWindow(bool skipMenu)
 		: skipMenu_{skipMenu} {
 
-		sdl::Window::setPosition(GameData::getInstance().getWindowPositionX(), GameData::getInstance().getWindowPositionY());
-		sdl::Window::setSize(GameData::getInstance().getWindowWidth(), GameData::getInstance().getWindowHeight());
-		sdl::Window::setIcon(GameData::getInstance().getWindowIcon());
-		sdl::Window::setResizeable(GameData::getInstance().isWindowResizable());
-		sdl::Window::setFullScreen(GameData::getInstance().isWindowMaximized());
+		sdl::Window::setPosition(Configuration::getInstance().getWindowPositionX(), Configuration::getInstance().getWindowPositionY());
+		sdl::Window::setSize(Configuration::getInstance().getWindowWidth(), Configuration::getInstance().getWindowHeight());
+		sdl::Window::setIcon(Configuration::getInstance().getWindowIcon());
+		sdl::Window::setResizeable(Configuration::getInstance().isWindowResizable());
+		sdl::Window::setFullScreen(Configuration::getInstance().isWindowMaximized());
 		sdl::Window::setMinSize(400, 400);
 	}
 

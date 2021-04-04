@@ -65,8 +65,8 @@ set(SOURCES_ZOMBIE
 	src/box2ddef.h
 	src/device.h
 	src/gameinterface.h
-	src/gamedata.cpp
-	src/gamedata.h
+	src/configuration.cpp
+	src/configuration.h
 	src/Weapons/gun.cpp
 	src/Weapons/gun.h
 	src/humanplayer.h

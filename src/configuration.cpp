@@ -1,4 +1,6 @@
-#include "gamedata.h"
+#include "configuration.h"
+
+#include <spdlog/spdlog.h>
 
 #include <string>
 #include <fstream>
@@ -74,22 +76,24 @@ namespace zombie {
 			return points;
 		}
 
-		bool isJsonName(const std::string name) {
+		bool isJsonFile(const std::string name) {
 			try {
-				static const std::regex regex(R"(.*\.[Jj][Ss][Oo][Nn])");
+				static const std::regex jsonRegex(R"(.*\.[Jj][Ss][Oo][Nn])");
+				static const std::regex schemaRegex(R"(.*\.schema\.[Jj][Ss][Oo][Nn])");
 				std::smatch match;
-				if (std::regex_match(name, match, regex)) {
+				if (std::regex_match(name, match, jsonRegex) && !std::regex_match(name, match, schemaRegex)) {
 					return true;
 				}
-			} catch (std::regex_error error) {
-				// Something is wrong with the regex.
+			} catch (const std::regex_error& error) {
+				spdlog::critical("[zombie::Configuration] Programming error: {}", error.what());
+				std::exit(1);
 			}
 			return false;
 		}
 	
 	}
 
-	GameData::GameData()
+	Configuration::Configuration()
 		: textureAtlas_{2048, 2048, []() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -104,9 +108,9 @@ namespace zombie {
 		loadAllUnitProperties();
 	}
 
-	void GameData::loadAllWeaponProperties() {
+	void Configuration::loadAllWeaponProperties() {
 		for (const auto& fileName : fs::directory_iterator{WeaponsPath}) {
-			if (fileName.is_regular_file() && isJsonName(fileName.path().string())) {
+			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
 				std::ifstream file{fileName.path(), std::ifstream::binary};
 				nlohmann::json weaponJson;
 				file >> weaponJson;
@@ -116,9 +120,9 @@ namespace zombie {
 		}
 	}
 
-	void GameData::loadAllMissileProperties() {
+	void Configuration::loadAllMissileProperties() {
 		for (const auto& fileName : fs::directory_iterator{MissilesPath}) {
-			if (fileName.is_regular_file() && isJsonName(fileName.path().string())) {
+			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
 				std::ifstream file{fileName.path(), std::ifstream::binary};
 				nlohmann::json missileJson;
 				file >> missileJson;
@@ -128,9 +132,9 @@ namespace zombie {
 		}
 	}
 
-	void GameData::loadAllUnitProperties() {
+	void Configuration::loadAllUnitProperties() {
 		for (const auto& fileName : fs::directory_iterator(UnitsPath)) {
-			if (fileName.is_regular_file() && isJsonName(fileName.path().string())) {
+			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
 				std::ifstream file{fileName.path(), std::ifstream::binary};
 				nlohmann::json unitJson;
 				file >> unitJson;
@@ -140,12 +144,12 @@ namespace zombie {
 		}
 	}
 
-	void GameData::save() {
+	void Configuration::save() {
 		std::ofstream out{SettingsPath};
 		//settings_ >> out;
 	}
 
-	const sdl::Font& GameData::loadFont(std::string file, int fontSize) {
+	const sdl::Font& Configuration::loadFont(std::string file, int fontSize) {
 		auto size = fonts_.size();
 		std::string key = file;
 		key += fontSize;
@@ -159,7 +163,7 @@ namespace zombie {
 		return font;
 	}
 
-	sdl::Sound GameData::loadSound(std::string file) {
+	sdl::Sound Configuration::loadSound(std::string file) {
 		auto size = sounds_.size();
 		sdl::Sound& sound = sounds_[file];
 
@@ -171,7 +175,7 @@ namespace zombie {
 		return sound;
 	}
 
-	sdl::Music GameData::loadMusic(std::string file) {
+	sdl::Music Configuration::loadMusic(std::string file) {
 		auto size = musics_.size();
 		sdl::Music& music = musics_[file];
 
@@ -183,214 +187,212 @@ namespace zombie {
 		return music;
 	}
 
-	sdl::Sprite GameData::loadSprite(std::string file) {
-		return textureAtlas_.add(file, 1);;
+	sdl::TextureView Configuration::loadSprite(std::string file) {
+		return textureAtlas_.add(file, 1).getTextureView();
 	}
 
-	const sdl::Font& GameData::getDefaultFont(int size) {
+	const sdl::Font& Configuration::getDefaultFont(int size) {
 		return loadFont(settings_["window"]["font"].get<std::string>(), size);
 	}
 
-	void GameData::bindTextureFromAtlas() {
+	void Configuration::bindTextureFromAtlas() {
 		textureAtlas_.bind();
 	}
 
-	int GameData::getWindowPositionX() {
+	int Configuration::getWindowPositionX() {
 		return settings_["window"]["positionX"].get<int>();
 	}
 
-	int GameData::getWindowPositionY() {
+	int Configuration::getWindowPositionY() {
 		return settings_["window"]["positionY"].get<int>();
 	}
 
-	void GameData::setWindowPositionX(int x) {
+	void Configuration::setWindowPositionX(int x) {
 		settings_["window"]["positionX"] = x;
 	}
 
-	void GameData::setWindowPositionY(int y) {
+	void Configuration::setWindowPositionY(int y) {
 		settings_["window"]["positionY"] = y;
 	}
 
-	int GameData::getWindowWidth() {
+	int Configuration::getWindowWidth() {
 		return settings_["window"]["width"].get<int>();
 	}
 
-	int GameData::getWindowHeight() {
+	int Configuration::getWindowHeight() {
 		return settings_["window"]["height"].get<int>();
 	}
 
-	void GameData::setWindowWidth(int width) {
+	void Configuration::setWindowWidth(int width) {
 		settings_["window"]["width"] = width;
 	}
 
-	void GameData::setWindowHeight(int height) {
+	void Configuration::setWindowHeight(int height) {
 		settings_["window"]["height"] = height;
 	}
 
-	bool GameData::isWindowResizable() {
+	bool Configuration::isWindowResizable() {
 		return settings_["window"]["resizeable"].get<bool>();
 	}
 
-	void GameData::setWindowResizable(bool resizeable) {
+	void Configuration::setWindowResizable(bool resizeable) {
 		settings_["window"]["resizeable"] = resizeable;
 	}
 
-	int GameData::getWindowMinWidth() {
+	int Configuration::getWindowMinWidth() {
 		return settings_["window"]["minWidth"].get<int>();
 	}
 
-	int GameData::getWindowMinHeight() {
+	int Configuration::getWindowMinHeight() {
 		return settings_["window"]["minHeight"].get<int>();
 	}
 
-	std::string GameData::getWindowIcon() {
+	std::string Configuration::getWindowIcon() {
 		return settings_["window"]["icon"].get<std::string>();
 	}
 
-	bool GameData::isWindowBordered() {
+	bool Configuration::isWindowBordered() {
 		return settings_["window"]["border"].get<bool>();
 	}
 
-	void GameData::setWindowBordered(bool border) {
+	void Configuration::setWindowBordered(bool border) {
 		settings_["window"]["border"] = border;
 	}
 
-	bool GameData::isWindowMaximized() {
+	bool Configuration::isWindowMaximized() {
 		return settings_["window"]["maximized"].get<bool>();
 	}
 
-	void GameData::setWindowMaximized(bool maximized) {
+	void Configuration::setWindowMaximized(bool maximized) {
 		settings_["window"]["maximized"] = maximized;
 	}
 
-	bool GameData::isWindowVsync() {
+	bool Configuration::isWindowVsync() {
 		return settings_["window"]["vsync"].get<bool>();
 	}
 
-	void GameData::setWindowVsync(bool activate) {
+	void Configuration::setWindowVsync(bool activate) {
 		settings_["window"]["vsync"] = activate;
 	}
 
-	bool GameData::isMusicOn() {
+	bool Configuration::isMusicOn() {
 		return settings_["music"]["switch"].get<bool>();
 	}
 
-	void GameData::setMusicOn(bool maximized) {
+	void Configuration::setMusicOn(bool maximized) {
 		settings_["music"]["music"] = maximized;
 	}
 
-	float GameData::getMusicVolume() {
+	float Configuration::getMusicVolume() {
 		return settings_["music"]["volume"].get<float>();
 	}
 
-	void GameData::setMusicVolume(float volume) {
+	void Configuration::setMusicVolume(float volume) {
 		settings_["music"]["volume"] = volume;
 	}
 
-	sdl::Music GameData::getMusicTrack() {
+	sdl::Music Configuration::getMusicTrack() {
 		return loadMusic(settings_["music"]["track"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getTreeImage() {
+	sdl::TextureView Configuration::getTreeImage() {
 		return loadSprite(settings_["tree"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getBuildingWallImage() {
+	sdl::TextureView Configuration::getBuildingWallImage() {
 		return loadSprite(settings_["buildings"]["wallImage"].get<std::string>());
 	}
 
-	// -----------------
-
-	float GameData::getSettingsImpulseThreshold() {
+	float Configuration::getSettingsImpulseThreshold() {
 		return settings_["settings"]["impulseThreshold"].get<float>();
 	}
 
-	float GameData::getSettingsTimeStep() {
+	float Configuration::getSettingsTimeStep() {
 		return settings_["settings"]["timeStep"].get<float>();
 	}
 
-	float GameData::getSettingsInnerSpawnRadius() {
+	float Configuration::getSettingsInnerSpawnRadius() {
 		return settings_["settings"]["innerSpawnRadius"].get<float>();
 	}
 
-	float GameData::getSettingsOuterSpawnRadius() {
+	float Configuration::getSettingsOuterSpawnRadius() {
 		return settings_["settings"]["outerSpawnRadius"].get<float>();
 	}
 
-	int GameData::getSettingsUnitLevel() {
+	int Configuration::getSettingsUnitLevel() {
 		return settings_["settings"]["unitLevel"].get<int>();
 	}
 
-	int GameData::getSettingsUnitLimit() {
+	int Configuration::getSettingsUnitLimit() {
 		return settings_["settings"]["unitLimit"].get<int>();
 	}
 
-	std::string GameData::getSettingsMap() {
+	std::string Configuration::getSettingsMap() {
 		return settings_["settings"]["map"].get<std::string>();
 	}
 
-	sdl::Sound GameData::getMenuSoundChoice() {
+	sdl::Sound Configuration::getMenuSoundChoice() {
 		return loadSound(settings_["menu"]["soundChoice"].get<std::string>());
 	}
 
-	sdl::Sound GameData::getMenuSoundHighlited() {
+	sdl::Sound Configuration::getMenuSoundHighlited() {
 		return loadSound(settings_["menu"]["soundHighlited"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getMenuBackgroundImage() {
+	sdl::TextureView Configuration::getMenuBackgroundImage() {
 		return loadSprite(settings_["menu"]["backgroundImage"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getWaterSeeFloorImage() {
+	sdl::TextureView Configuration::getWaterSeeFloorImage() {
 		return loadSprite(settings_["water"]["seeFloorImage"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadIntersection() {
+	sdl::TextureView Configuration::getRoadIntersection() {
 		return loadSprite(settings_["roads"]["intersection"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadStraight0() {
+	sdl::TextureView Configuration::getRoadStraight0() {
 		return loadSprite(settings_["roads"]["straight0"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadStraight90() {
+	sdl::TextureView Configuration::getRoadStraight90() {
 		return loadSprite(settings_["roads"]["straight90"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurn0() {
+	sdl::TextureView Configuration::getRoadTurn0() {
 		return loadSprite(settings_["roads"]["turn0"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurn90() {
+	sdl::TextureView Configuration::getRoadTurn90() {
 		return loadSprite(settings_["roads"]["turn90"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurn180() {
+	sdl::TextureView Configuration::getRoadTurn180() {
 		return loadSprite(settings_["roads"]["turn180"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurn270() {
+	sdl::TextureView Configuration::getRoadTurn270() {
 		return loadSprite(settings_["roads"]["turn270"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurnIntersection0() {
+	sdl::TextureView Configuration::getRoadTurnIntersection0() {
 		return loadSprite(settings_["roads"]["tintersection0"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurnIntersection90() {
+	sdl::TextureView Configuration::getRoadTurnIntersection90() {
 		return loadSprite(settings_["roads"]["tintersection90"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurnIntersection180() {
+	sdl::TextureView Configuration::getRoadTurnIntersection180() {
 		return loadSprite(settings_["roads"]["tintersection180"].get<std::string>());
 	}
 
-	sdl::Sprite GameData::getRoadTurntersection270() {
+	sdl::TextureView Configuration::getRoadTurntersection270() {
 		return loadSprite(settings_["roads"]["tintersection270"].get<std::string>());
 	}
 
 	/*
-	ExplosionProperties GameData::getExplosionProperties() {
+	ExplosionProperties Configuration::getExplosionProperties() {
 		float timeDelay = settings_["explosion"]["timeDelay"].get<float>();
 		float speed = settings_["explosion"]["speed"].get<float>();
 		sdl::Sound sound = loadSound(settings_["explosion"]["sound"].get<std::string>());
@@ -400,16 +402,16 @@ namespace zombie {
 	}
 	*/
 
-	UnitProperties GameData::getHumanProperties() {
+	UnitProperties Configuration::getHumanProperties() {
 		return unitPropertiesMap_[std::string("human")];
 	}
 
-	UnitProperties GameData::getZombieProperties() {
+	UnitProperties Configuration::getZombieProperties() {
 		return unitPropertiesMap_[std::string("zombie")];
 	}
 
 	/*
-	Animation GameData::loadAnimation(const json& animationTag) {
+	Animation Configuration::loadAnimation(const json& animationTag) {
 		float defaultDeltaTime = 1.f;
 		try {
 			defaultDeltaTime = animationTag.at("deltaTime").get<float>();
@@ -452,7 +454,7 @@ namespace zombie {
 	}
 	*/
 
-	MissileProperties GameData::getMissileProperties() {
+	MissileProperties Configuration::getMissileProperties() {
 		try {
 			return missilePropertiesMap_.at(std::string("missile"));
 		} catch (std::out_of_range) {
@@ -460,7 +462,7 @@ namespace zombie {
 		}
 	}
 
-	UnitProperties GameData::loadUnitProperties(const json& unitTag) {
+	UnitProperties Configuration::loadUnitProperties(const json& unitTag) {
 		UnitProperties unitProperties;
 		//unitProperties.hitSound = loadSound(unitTag["hitSound"].get<std::string>());
 		//unitProperties.dieSound = loadSound(unitTag["dieSound"].get<std::string>());
@@ -478,15 +480,15 @@ namespace zombie {
 		return unitProperties;
 	}
 
-	WeaponProperties GameData::loadWeaponProperties(std::string weaponName) {
+	WeaponProperties Configuration::loadWeaponProperties(std::string weaponName) {
 		try {
 			return weaponPropertiesMap_.at(weaponName);
-		} catch (std::out_of_range) {
+		} catch (const std::out_of_range&) {
 			return WeaponProperties();
 		}
 	}
 
-	WeaponProperties GameData::loadWeaponProperties(const json& unitTag) {
+	WeaponProperties Configuration::loadWeaponProperties(const json& unitTag) {
 		WeaponProperties properties;
 		properties.name = unitTag["name"].get<std::string>();
 		properties.type = WeaponProperties::Type::Bullet;
@@ -526,7 +528,7 @@ namespace zombie {
 		return properties;
 	}
 
-	MissileProperties GameData::loadMissileProperties(std::string missileName) {
+	MissileProperties Configuration::loadMissileProperties(std::string missileName) {
 		for (const auto& child : settings_["missiles"]) {
 			std::string name = child["name"].get<std::string>();
 			if (name == missileName) {
@@ -536,7 +538,7 @@ namespace zombie {
 		return MissileProperties();
 	}
 
-	MissileProperties GameData::loadMissileProperties(const json& unitTag) {
+	MissileProperties Configuration::loadMissileProperties(const json& unitTag) {
 		MissileProperties properties;
 		properties.name = unitTag["name"].get<std::string>();
 		properties.mass = unitTag["mass"].get<float>();
@@ -547,7 +549,7 @@ namespace zombie {
 		return properties;
 	}
 
-	MapProperties GameData::loadMapProperties() {
+	MapProperties Configuration::loadMapProperties() {
 		MapProperties properties;
 		properties.name_ = rootMap_["name"].get<std::string>();
 

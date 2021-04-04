@@ -21,7 +21,7 @@ namespace zombie {
 
 		std::string name;
 		Type type;
-		sdl::Sprite symbolImage;
+		sdl::TextureView symbolImage;
 		float timeBetweenShots;
 		int clipSize;
 		sdl::Sound shootSound;

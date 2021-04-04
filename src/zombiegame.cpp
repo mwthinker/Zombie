@@ -7,7 +7,7 @@
 
 #include "humanplayer.h"
 #include "zombiebehavior.h"
-#include "gamedata.h"
+#include "configuration.h"
 
 #include <sdl/opengl.h>
 #include <sdl/exception.h>
@@ -109,8 +109,8 @@ namespace zombie {
 
 	ZombieGame::ZombieGame()
 		: game_{*this}
-		, engine_{game_, GameData::getInstance().getSettingsImpulseThreshold()}
-		, timeStep_{GameData::getInstance().getSettingsTimeStep()}
+		, engine_{game_, Configuration::getInstance().getSettingsImpulseThreshold()}
+		, timeStep_{Configuration::getInstance().getSettingsTimeStep()}
 		, accumulator_{0}
 		, started_{false} {
 
@@ -150,10 +150,10 @@ namespace zombie {
 		
 		nbrUnits_ = 0;
 
-		unitMaxLimit_ = GameData::getInstance().getSettingsUnitLimit();
+		unitMaxLimit_ = Configuration::getInstance().getSettingsUnitLimit();
 
-		innerSpawnRadius_ = GameData::getInstance().getSettingsInnerSpawnRadius();
-		outerSpawnRadius_ = GameData::getInstance().getSettingsOuterSpawnRadius();
+		innerSpawnRadius_ = Configuration::getInstance().getSettingsInnerSpawnRadius();
+		outerSpawnRadius_ = Configuration::getInstance().getSettingsOuterSpawnRadius();
 		
 		
 		//explosionProperties_ = GameData::getInstance().getExplosionProperties();
@@ -184,7 +184,7 @@ namespace zombie {
 
 		// Add zombies to engine.
 		//calculateValidSpawningPoints(units_[0]);
-		unsigned int unitLevel = GameData::getInstance().getSettingsUnitLevel();
+		unsigned int unitLevel = Configuration::getInstance().getSettingsUnitLevel();
 		/*
 		for (unsigned int i = 1; i <= unitLevel && i < units_.getMaxSize(); ++i) {
 			Position p = generatePosition(vaildSpawningPoints_);
