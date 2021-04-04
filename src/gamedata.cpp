@@ -191,8 +191,8 @@ namespace zombie {
 		return loadFont(settings_["window"]["font"].get<std::string>(), size);
 	}
 
-	void GameData::bindTextureFromAtlas() const {
-		textureAtlas_.get().bindTexture();
+	void GameData::bindTextureFromAtlas() {
+		textureAtlas_.bind();
 	}
 
 	int GameData::getWindowPositionX() {

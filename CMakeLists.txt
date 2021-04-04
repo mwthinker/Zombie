@@ -24,8 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Source files.
 set(SOURCES_ZOMBIE
 	# Graphic related
-	src/Graphic/graphic.cpp
-	src/Graphic/graphic.h
+	
 
 	# Physical objects
 	src/Physic/physicalobject.cpp

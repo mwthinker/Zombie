@@ -1,15 +1,15 @@
 #ifndef ZOMBIE_GAMEOBJECT_H
 #define ZOMBIE_GAMEOBJECT_H
 
-#include "Graphic/graphic.h"
 #include "device.h"
 
+#include <sdl/graphic.h>
+
+#include <fmt/printf.h>
 
 #include <memory>
 #include <map>
 #include <vector>
-
-#include <fmt/printf.h>
 
 namespace zombie {
 
@@ -51,7 +51,7 @@ namespace zombie {
 		virtual void update(double deltaTime) {
 		}
 
-		virtual void draw(graphic::Graphic& graphic) {
+		virtual void draw(sdl::Graphic& graphic) {
 		}
 	};
 	using ComponentPtr = std::shared_ptr<Component>;
@@ -90,7 +90,7 @@ namespace zombie {
 
 		}
 
-		void draw(graphic::Graphic& graphic) {
+		void draw(sdl::Graphic& graphic) {
 
 		}
 
@@ -128,7 +128,7 @@ namespace zombie {
 			}
 		}
 
-		void draw(graphic::Graphic& graphic) {
+		void draw(sdl::Graphic& graphic) {
 			for (auto& [_, gameObject] : gameObjects_) {
 				gameObject->draw(graphic);
 			}

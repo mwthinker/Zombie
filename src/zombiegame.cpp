@@ -264,16 +264,16 @@ namespace zombie {
 		started_ = true;
 	}
 
-	void ZombieGame::draw(const sdl::Shader& shader, graphic::Graphic& graphic, double deltaTime) {
+	void ZombieGame::draw(sdl::Shader& shader, sdl::Graphic& graphic, double deltaTime) {
 		sceneManager_.update(deltaTime);
 		
 		shader.useProgram();
-		graphic.clearDraw();
+		graphic.clear();
 		graphic.addCircle({}, 0.2f, Red);
 
 		sceneManager_.draw(graphic);
 
-		graphic.draw(shader);
+		graphic.upload(shader);
 	}
 
 	void ZombieGame::updateGame(double deltaTime) {

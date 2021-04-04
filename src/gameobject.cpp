@@ -1,24 +1,25 @@
 #include "gameobject.h"
-#include "Graphic/graphic.h"
 #include "Physic/Moving/unit.h"
 
 #include "inputkeyboard.h"
+
+#include <sdl/graphic.h>
 
 namespace zombie {
 
 	class RenderMessage : public Message {
 	public:
-		RenderMessage(int id, graphic::Graphic& graphic)
+		RenderMessage(int id, sdl::Graphic& graphic)
 			: Message{id}
 			, graphic_{graphic} {
 		}
 
-		graphic::Graphic& getGraphic() const {
+		sdl::Graphic& getGraphic() const {
 			return graphic_;
 		}
 
 	private:
-		graphic::Graphic& graphic_;
+		sdl::Graphic& graphic_;
 	};
 
 	class RenderUnit : public Component {
@@ -27,7 +28,7 @@ namespace zombie {
 			: unitProperties_{unitProperties} {
 		}
 	
-		void draw(graphic::Graphic& graphic) override {
+		void draw(sdl::Graphic& graphic) override {
 			graphic.addCircle({position_.x, position_.y}, unitProperties_.radius, sdl::Color{1.f, 1.f, 1.f});
 		}
 

@@ -2,7 +2,7 @@
 #define ZOMBIE_ZOMBIEWINDOW_H
 
 #include <sdl/imguiwindow.h>
-#include <Graphic/graphic.h>
+#include <sdl/graphic.h>
 
 #include <memory>
 
@@ -27,7 +27,7 @@ namespace zombie {
 
 		std::unique_ptr<ZombieGame> zombieGame_;
 		bool skipMenu_{};
-		graphic::Graphic graphic_;
+		sdl::Graphic graphic_;
 	};
 
 }

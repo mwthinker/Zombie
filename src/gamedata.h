@@ -41,7 +41,7 @@ namespace zombie {
 
 		const sdl::Font& getDefaultFont(int size);
 
-		void bindTextureFromAtlas() const;
+		void bindTextureFromAtlas();
 
 		int getWindowPositionX();
 		int getWindowPositionY();

@@ -9,12 +9,9 @@
 #include "Physic/Moving/unitproperties.h"
 
 #include "player.h"
-#include "Graphic/graphic.h"
-
 #include "gameobject.h"
 
-#include <sdl/shader.h>
-#include <sdl/texture.h>
+#include <sdl/graphic.h>
 #include <sdl/sprite.h>
 #include <sdl/sound.h>
 #include <sdl/music.h>
@@ -37,7 +34,7 @@ namespace zombie {
 		// Start the game.
 		void startGame();
 		
-		void draw(const sdl::Shader& shader, graphic::Graphic& graphic, double deltaTime);
+		void draw(sdl::Shader& shader, sdl::Graphic& graphic, double deltaTime);
 
 		void zoom(float scale);
 
