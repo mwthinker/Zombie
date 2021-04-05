@@ -22,7 +22,7 @@ namespace zombie {
 
 	void PhysicEngine::update(double timeStep) {
 		// Update the objects physics interactions.
-		world_.Step((float) timeStep, 6, 2);
+		world_.Step(static_cast<float>(timeStep), 6, 2);
 		
 		// Move the time ahead.
 		time_ += timeStep;

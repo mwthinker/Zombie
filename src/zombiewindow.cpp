@@ -7,7 +7,6 @@ namespace zombie {
 	namespace {
 
 		void PushButtonStyle() {
-			//ImGui::PushFont(zombie::Configuration::getInstance().getDefaultFont(12));
 			ImGui::PushStyleColor(ImGuiCol_Text, sdl::color::html::Black);
 			ImGui::PushStyleColor(ImGuiCol_Border, sdl::color::Transparent);
 			ImGui::PushStyleColor(ImGuiCol_Button, sdl::color::html::White);
@@ -34,7 +33,6 @@ namespace zombie {
 	}
 
 	ZombieWindow::~ZombieWindow() {
-		//zombieEntry_.save();
 	}
 
 	void ZombieWindow::imGuiEventUpdate(const SDL_Event& windowEvent) {
@@ -69,25 +67,29 @@ namespace zombie {
 				}
 				break;
 			case SDL_KEYUP:
-				zombieGame_->eventUpdate(windowEvent);
+				if (zombieGame_) {
+					zombieGame_->eventUpdate(windowEvent);
+				}
 				break;
 			case SDL_KEYDOWN:
-				zombieGame_->eventUpdate(windowEvent);
-				switch (windowEvent.key.keysym.sym) {
-					case SDLK_ESCAPE:
-						sdl::Window::quit();
-						break;
-					case SDLK_PAGEUP:
-						zombieGame_->zoom(1.1f);
-						break;
-					case SDLK_PAGEDOWN:
-						zombieGame_->zoom(1 / 1.1f);
-						break;
-					case SDLK_RETURN:
-						break;
-					case SDLK_p: [[fallthrough]];
-					case SDLK_PAUSE:
-						break;
+				if (zombieGame_) {
+					zombieGame_->eventUpdate(windowEvent);
+					switch (windowEvent.key.keysym.sym) {
+						case SDLK_ESCAPE:
+							sdl::Window::quit();
+							break;
+						case SDLK_PAGEUP:
+							zombieGame_->zoom(1.1f);
+							break;
+						case SDLK_PAGEDOWN:
+							zombieGame_->zoom(1 / 1.1f);
+							break;
+						case SDLK_RETURN:
+							break;
+						case SDLK_p: [[fallthrough]];
+						case SDLK_PAUSE:
+							break;
+					}
 				}
 				break;
 		}
@@ -95,22 +97,18 @@ namespace zombie {
 	}
 
 	void ZombieWindow::imGuiPreUpdate(const sdl::DeltaTime& deltaTime) {
-		shader_.useProgram();
-		graphic_.clear();
-		graphic_.addRectangleImage({-1, -1}, {2, 2}, background_);
-		graphic_.upload(shader_);
-
-
-		auto deltaTimeSeconds = std::chrono::duration<double>(deltaTime).count();
-
 		if (zombieGame_) {
-			//zombieGame_->draw(getShader(), graphic_, deltaTimeSeconds);
+			zombieGame_->draw(shader_, graphic_, std::chrono::duration<double>(deltaTime).count());
+		} else {
+			shader_.useProgram();
+			graphic_.clear();
+			graphic_.addRectangleImage({-1, -1}, {2, 2}, background_);
+			graphic_.upload(shader_);
 		}
 	}
 
 	void ZombieWindow::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
 		if (zombieGame_) {
-
 			return;
 		}
 

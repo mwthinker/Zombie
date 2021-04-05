@@ -8,10 +8,9 @@
 
 namespace zombie {
 
-	Unit::Unit(MessageSender& messageSender, const UnitProperties& unitProperties, const WeaponPtr& weapon)
+	Unit::Unit(const UnitProperties& unitProperties, WeaponPtr weapon)
 		: properties_{unitProperties}
-		, weapon_{weapon}
-		, messageSender_{messageSender} {
+		, weapon_{std::move(weapon)} {
 
 		// Properties
 		viewDistance_ = 10.f;

@@ -151,9 +151,10 @@ if (MSVC)
 	target_compile_options(Zombie
 		PRIVATE
 			"/permissive-"
+			"/MP"
 	)
-
 else ()
+
 	add_executable(Zombie ${SOURCES_ZOMBIE})
 endif ()
 

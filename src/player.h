@@ -3,6 +3,8 @@
 
 #include "input.h"
 
+#include <memory>
+
 namespace zombie {
 
 	class Player {
@@ -10,6 +12,8 @@ namespace zombie {
 		virtual ~Player() = default;
 		virtual void updateInput(double time, double deltaTime) = 0;
 	};
+
+	using PlayerPtr = std::shared_ptr<Player>;
 
 }
 

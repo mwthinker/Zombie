@@ -8,6 +8,7 @@ oldSrc
 settings.json
 data
 .vscode
+/vcpkg_installed
 
 #################
 ## Eclipse

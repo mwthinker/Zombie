@@ -32,8 +32,8 @@ namespace zombie {
 		sdl::Graphic graphic_;
 		sdl::Shader shader_;
 		sdl::TextureView background_;
-		ImFont* titleFont_;
-		ImFont* buttonFont_;
+		ImFont* titleFont_{};
+		ImFont* buttonFont_{};
 	};
 
 }

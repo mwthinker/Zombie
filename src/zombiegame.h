@@ -49,7 +49,7 @@ namespace zombie {
 	private:
 		class Game : public GameInterface {
 		public:
-			Game(ZombieGame& zombieGame) 
+			Game(ZombieGame& zombieGame)
 				: zombieGame_{zombieGame} {
 			}
 
@@ -121,6 +121,7 @@ namespace zombie {
 		//UnitProperties zombieProperties_;
 		
 		Game game_;
+		sdl::Music music_;
 
 		Position viewPosition_;
 		Position refViewPosition_;
@@ -141,8 +142,6 @@ namespace zombie {
 		PhysicEngine engine_;
 		bool started_{};
 
-		SceneManager sceneManager_;
-		
 		State humanState_;
 
 		// Fix timestep.

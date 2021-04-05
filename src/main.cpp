@@ -13,7 +13,7 @@ int main (int argc, char** argv) {
 		skipMenu = true;
 	}
 
-	const sdl::InitSdl SDL;
+	const sdl::InitSdl SDL{SDL_INIT_VIDEO | SDL_INIT_AUDIO};
 	zombie::ZombieWindow zombieWindow{skipMenu};
 	zombieWindow.startLoop();
 

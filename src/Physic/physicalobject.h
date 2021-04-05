@@ -9,7 +9,7 @@
 namespace zombie {
 
 	// Represent a object in the box2d world inside "zombie world".
-	class PhysicalObject : public Component {
+	class PhysicalObject {
 	public:
 		// Must call destroyBody() before destructor is called.
 		virtual ~PhysicalObject() = default;

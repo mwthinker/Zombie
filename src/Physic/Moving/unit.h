@@ -9,8 +9,6 @@
 
 namespace zombie {
 
-	class MessageSender;
-
 	class Unit : public MovingObject {
 	public:
 		enum UnitEvent {
@@ -22,7 +20,7 @@ namespace zombie {
 			ACTION
 		};
 		
-		Unit(MessageSender& messageSender, const UnitProperties& unitProperties, const WeaponPtr& weapon);
+		Unit(const UnitProperties& unitProperties, WeaponPtr weapon);
 		virtual ~Unit();
 
 		Unit(const Unit&) = delete;
@@ -91,12 +89,6 @@ namespace zombie {
 			return properties_.grip;
 		}
 
-		bool handleMessage(MessagePtr msg) override {
-
-
-			return true;
-		}
-
 	private:
 		void createBody(b2World* world) override;
 
@@ -109,8 +101,6 @@ namespace zombie {
 				body_ = nullptr;
 			}
 		}
-
-		MessageSender& messageSender_;
 
 		// Properties
 		UnitProperties properties_;

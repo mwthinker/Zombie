@@ -4,6 +4,7 @@
 
 #include "Weapons/shot.h"
 #include "Weapons/gun.h"
+#include "Weapons/weapon.h"
 
 #include "humanplayer.h"
 #include "zombiebehavior.h"
@@ -24,26 +25,13 @@ namespace zombie {
 			float angle = random(0, 2.f * Pi);
 			return position + (innerRadius + (outerRadius - innerRadius) * random()) * Position(std::cos(angle), std::sin(angle));
 		}
-		
+
 		Position generatePosition(const std::vector<Position>& positions) {
 			if (positions.size() > 0) {
 				return positions[randomInt(0, static_cast<int>(positions.size() - 1))];
 			}
 			return Zero;
 		}
-		
-		/*
-		template <class Vector>
-		void activateFirstFreeSlot(Vector& v, Position p, float angle, const Animation& dieAnimation) {
-			// Activate the first free animation slot.
-			for (GraphicAnimation& animation : v) {
-				if (animation.toBeRemoved()) {
-					animation.restart(p, angle, dieAnimation);
-					break;
-				}
-			}
-		}
-		*/
 
 		constexpr KeyboardKeys createDefaultKeyboardKeys() {
 			KeyboardKeys keyboardKeyCodes{};
@@ -58,16 +46,16 @@ namespace zombie {
 			return keyboardKeyCodes;
 		}
 
-		class SdlEvent : public Event {
-		public:
-			SdlEvent(const SDL_Event& windowEvent)
-				: windowEvent_{windowEvent_} {
+	}
 
-			}
+	namespace factory {
 
-		private:
-			SDL_Event windowEvent_;
-		};
+		GameObjectPtr createZombie(PhysicEngine& physicEngine, const UnitProperties& properties, PlayerPtr player) {
+			WeaponPtr weapon;
+			auto unit = std::make_unique<Unit>(properties, weapon);
+			physicEngine.add(unit.get());
+			return std::make_unique<HumanGameObject>(*unit);
+		}
 
 	}
 
@@ -118,7 +106,6 @@ namespace zombie {
 	}
 
 	ZombieGame::~ZombieGame() {
-		//zombieEntry_.save();
 	}
 
 	void ZombieGame::eventUpdate(const SDL_Event& windowEvent) {
@@ -131,34 +118,26 @@ namespace zombie {
 		bulletsInWeapon_ = 0;
 		health_ = 0;
 		scale_ = 1.f;
-		lastSpawnTime_ = (float) engine_.getTime();
+		lastSpawnTime_ = static_cast<float>(engine_.getTime());
 		spawnPeriod_ = 0.5f;
 
-		/*
-		addKeyListener([&](gui::Component& component, const SDL_Event& keyEvent) {
-			keyboard_->eventUpdate(keyEvent);
-		});
-		*/
-
-		/*
-		if (GameData::getInstance().isMusicOn()) {
-			music_ = GameData::getInstance().getMusicTrack();
-			music_.setVolume(GameData::getInstance().getMusicVolume());
+		if (Configuration::getInstance().isMusicOn()) {
+			music_ = Configuration::getInstance().getMusicTrack();
+			music_.setVolume(Configuration::getInstance().getMusicVolume());
 			music_.play(-1);
 		}
-		*/
-		
+
 		nbrUnits_ = 0;
 
 		unitMaxLimit_ = Configuration::getInstance().getSettingsUnitLimit();
 
 		innerSpawnRadius_ = Configuration::getInstance().getSettingsInnerSpawnRadius();
 		outerSpawnRadius_ = Configuration::getInstance().getSettingsOuterSpawnRadius();
-		
-		
+
+
 		//explosionProperties_ = GameData::getInstance().getExplosionProperties();
-		
-		//humanProperties_ = GameData::getInstance().getHumanProperties();
+
+		auto humanProperties = Configuration::getInstance().getHumanProperties();
 		//zombieProperties_ = GameData::getInstance().getZombieProperties();
 
 		//Unit2D human(loadUnit(this, humanProperties_, false));
@@ -166,14 +145,15 @@ namespace zombie {
 
 		// Add human to engine.
 		{
-			State state{Position(85,120), Origo, 0, 0};
-			//Position p = generatePosition(spawningPoints_);
-			//State state(Position(200,200), Origo, 0);
 			/*
-			Unit* unit = units_.pushBack(human);
+			State state{Position(85,120), Origo, 0, 0};
+			Position p = generatePosition(spawningPoints_);
+			//State state(Position(200,200), Origo, 0);
+
+			Unit* unit;// = units_.pushBack(human);
 			engine_.add(unit);
 			unit->setState(state);
-			unit->setActive(true);
+			unit->setEnabled(true);
 			unit->setAwake(true);
 			players_.push_back(std::unique_ptr<HumanPlayer>(new HumanPlayer(keyboard_, unit)));
 			viewPosition_ = state.position_;
@@ -198,7 +178,7 @@ namespace zombie {
 			players_.push_back(std::unique_ptr<ZombieBehavior>(new ZombieBehavior(unit)));
 		}
 		*/
-	
+
 		// Add cars to engine.
 		/*
 		Car2D car; // (zombie::loadCar(zombieEntry_.getDeepChildEntry("car")));
@@ -230,24 +210,24 @@ namespace zombie {
 		vaildSpawningPoints_.clear();
 		float inner = 10;
 		float outer = 200;
-		Position humanPos = human.getPosition();
-		for (Position p : spawningPoints_) {
-			Position diff = p - humanPos;
-			if (diff.LengthSquared() > inner*inner && diff.LengthSquared() < outer*outer) {
+		auto humanPos = human.getPosition();
+		for (const auto& p : spawningPoints_) {
+			auto diff = p - humanPos;
+			if (diff.LengthSquared() > inner * inner && diff.LengthSquared() < outer * outer) {
 				// Spawningpoint is valid!
 				vaildSpawningPoints_.push_back(p);
 			}
 		}
 	}
-	
+
 	void ZombieGame::moveUnits(Unit& unit, Unit& human) {
-		Position diff = unit.getPosition() - human.getPosition();
+		auto diff = unit.getPosition() - human.getPosition();
 		double inner = 10;
 		double outer = 200;
 		if (diff.LengthSquared() > outer * outer) {
 			// Move unit if possible.
 			if (vaildSpawningPoints_.size() > 0) {
-				Position p = vaildSpawningPoints_[randomInt(0, static_cast<int>(vaildSpawningPoints_.size() - 1))];
+				auto p = vaildSpawningPoints_[randomInt(0, static_cast<int>(vaildSpawningPoints_.size() - 1))];
 				float angle = calculateAnglePointToPoint(p, human.getPosition());
 				State state{p, Origo, angle, 0};
 				unit.setState(state);
@@ -259,19 +239,14 @@ namespace zombie {
 		}
 	}
 
-	// Starts the game.
 	void ZombieGame::startGame() {
 		started_ = true;
 	}
 
 	void ZombieGame::draw(sdl::Shader& shader, sdl::Graphic& graphic, double deltaTime) {
-		sceneManager_.update(deltaTime);
-		
 		shader.useProgram();
 		graphic.clear();
 		graphic.addCircle({}, 0.2f, Red);
-
-		sceneManager_.draw(graphic);
 
 		graphic.upload(shader);
 	}
@@ -295,7 +270,7 @@ namespace zombie {
 		}
 
 		if (physicRan) {
-			const float alpha = (float) (accumulator_ / timeStep_);
+			const auto alpha = static_cast<float>(accumulator_ / timeStep_);
 			//humanState_ = humanState_ = units_[0].getState();
 			humanState_.position_ = alpha * humanState_.position_ + (1.f - alpha) * previousState.position_;
 			humanState_.velocity_ = alpha * humanState_.velocity_ + (1.f - alpha) * previousState.velocity_;
@@ -335,7 +310,7 @@ namespace zombie {
 	}
 
 	void ZombieGame::shotMissed(Position startPosition, Position hitPosition) {
-		
+
 	}
 
 	void ZombieGame::shotHit(Position startPosition, Position hitPosition, Unit& unit) {
