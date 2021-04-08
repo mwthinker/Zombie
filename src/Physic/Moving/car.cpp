@@ -102,7 +102,7 @@ namespace zombie {
 		return true;
 	}
 
-	void Car::createBody(b2World* world) {
+	void Car::createBody(b2World& world) {
 		// Box2d properties.
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
@@ -110,7 +110,7 @@ namespace zombie {
 		bodyDef.angle = 0;// state.angle_;
 		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 		
-		body_ = world->CreateBody(&bodyDef);
+		body_ = world.CreateBody(&bodyDef);
 
 		// Body properties.
 		{

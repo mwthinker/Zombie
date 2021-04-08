@@ -76,6 +76,8 @@ namespace zombie {
 		KeyboardKeys keyCodes_{};
 	};
 
+	using InputKeyboardPtr = std::shared_ptr<InputKeyboard>;
+
 }
 
 #endif

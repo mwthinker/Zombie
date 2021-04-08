@@ -39,7 +39,7 @@ namespace zombie {
 		State previousState() const;
 
 	private:
-		void createBody(b2World* world) override;
+		void createBody(b2World& world) override;
 
 		void destroyBody() override {
 			if (body_ != nullptr) {

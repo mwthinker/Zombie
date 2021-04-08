@@ -12,12 +12,12 @@ namespace zombie {
 	class Unit : public MovingObject {
 	public:
 		enum UnitEvent {
-			DIE,
-			INJURED,
-			WALK,
-			STANDSTILL,
-			RUN,
-			ACTION
+			Die,
+			Injured,
+			Walk,
+			Standstill,
+			Run,
+			Action
 		};
 		
 		Unit(const UnitProperties& unitProperties, WeaponPtr weapon);
@@ -90,7 +90,7 @@ namespace zombie {
 		}
 
 	private:
-		void createBody(b2World* world) override;
+		void createBody(b2World& world) override;
 
 		void destroyBody() override {
 			if (body_ != nullptr) {
@@ -103,11 +103,11 @@ namespace zombie {
 		}
 
 		// Properties
-		UnitProperties properties_;
+		UnitProperties properties_{};
 
-		float viewDistance_;
-		float viewAngle_;
-		float smallViewDistance_;
+		float viewDistance_{};
+		float viewAngle_{};
+		float smallViewDistance_{};
 		
 		//float walkingSpeed_;
 		//float runningSpeed_;
@@ -116,8 +116,8 @@ namespace zombie {
 
 		// Health
 		//float healthPoints_;
-		bool isDead_;
-		bool died_;
+		bool isDead_ = false;
+		bool died_ = false;
 
 		WeaponPtr weapon_;
 		//Position grip_;

@@ -47,7 +47,7 @@ namespace zombie {
 		friend class PhysicEngine;
 
 		// Create the body. I.e. the body is now a part of the box2d world.
-		virtual void createBody(b2World* world) = 0;
+		virtual void createBody(b2World& world) = 0;
 
 		// Destroys the body. I.e. the body in no more a part of the box2d world.
 		virtual void destroyBody() = 0;

@@ -24,18 +24,15 @@ namespace zombie {
 		timeLeftToRun_ = 5.f;
 	}
 
-	void Unit::createBody(b2World* world) {
-		// Box2d properties.
+	void Unit::createBody(b2World& world) {
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
-		bodyDef.position = Zero;// tate.position_;
-		bodyDef.angle = 0;// state.angle_;
+		bodyDef.position = Zero;
+		bodyDef.angle = 0;
 		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 
-		body_ = world->CreateBody(&bodyDef);
-
-		// Add tensor to make all objects inside the tenson visible.
-		{
+		body_ = world.CreateBody(&bodyDef);
+		{ // Add tensor to make all objects inside the tenson visible.
 			b2CircleShape circle;
 			circle.m_p.Set(0, 0);
 			circle.m_radius = viewDistance_;
@@ -46,13 +43,11 @@ namespace zombie {
 			fixtureDef.friction = 0.0f;
 			fixtureDef.isSensor = true;
 			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
-
-			// Add Body fixture.
-			b2Fixture* fixture = body_->CreateFixture(&fixtureDef);
+			
+			body_->CreateFixture(&fixtureDef);
 		}
-
-		// Add body properties.
-		{
+		
+		{ // Add body properties.
 			b2CircleShape circle;
 			circle.m_p.Set(0, 0);
 			circle.m_radius = properties_.radius;
@@ -62,9 +57,8 @@ namespace zombie {
 			fixtureDef.density = properties_.mass / (Pi * properties_.radius * properties_.radius);
 			fixtureDef.friction = 0.0f;
 			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
-
-			// Add Body fixture.
-			b2Fixture* fixture = body_->CreateFixture(&fixtureDef);
+			
+			body_->CreateFixture(&fixtureDef);
 		}
 	}
 
@@ -80,69 +74,71 @@ namespace zombie {
 			isDead_ = true;
 		}
 
-		if (!isDead()) {
-			Input input = getInput();
-			float angle = getDirection();
-			Force move{std::cos(angle), std::sin(angle)};
+		if (isDead()) {
+			return;
+		}
+		
+		Input input = getInput();
+		float angle = getDirection();
+		Force move{std::cos(angle), std::sin(angle)};
 
-			// Time left to run?
-			if (timeLeftToRun_ >= 0) {
-				if (input.forward && input.run) {
-					timeLeftToRun_ -= (float) timeStep;
-					move *= 2;
-					//signal(RUN);
-				} else if (timeLeftToRun_ < 5) {
-					timeLeftToRun_ += (float) timeStep;
-				}
-			} else { // Time is negative!
+		// Time left to run?
+		if (timeLeftToRun_ >= 0) {
+			if (input.forward && input.run) {
+				timeLeftToRun_ -= static_cast<float>(timeStep);
+				move *= 2;
+				//signal(RUN);
+			} else if (timeLeftToRun_ < 5) {
 				timeLeftToRun_ += (float) timeStep;
 			}
+		} else { // Time is negative!
+			timeLeftToRun_ += (float) timeStep;
+		}
 
-			// Move forward or backwards.
-			if (input.forward && !input.backward) {
-				body_->ApplyForceToCenter(b2Vec2(move.x, move.y), true);
-				//signal(WALK);
-			} else if (!input.forward && input.backward) {
-				body_->ApplyForceToCenter(-b2Vec2(move.x, move.y), true);
-				//signal(WALK);
-			} else {
-				// In order to make the unit stop when not moving.
-				body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
-				//signal(STANDSTILL);
-			}
-
-			// Add friction.
+		// Move forward or backwards.
+		if (input.forward && !input.backward) {
+			body_->ApplyForceToCenter(b2Vec2{move.x, move.y}, true);
+			//signal(WALK);
+		} else if (!input.forward && input.backward) {
+			body_->ApplyForceToCenter(-b2Vec2{move.x, move.y}, true);
+			//signal(WALK);
+		} else {
+			// In order to make the unit stop when not moving.
 			body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
+			//signal(STANDSTILL);
+		}
 
-			// Turn left or right.
-			if (input.turnLeft && !input.turnRight) {
-				body_->SetAngularVelocity(3.0f);
-			} else if (!input.turnLeft && input.turnRight) {
-				body_->SetAngularVelocity(-3.0f);
-			} else {
-				body_->SetAngularVelocity(0.0);
-			}			
+		// Add friction.
+		body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
 
-			// Want to shoot?
-			if (input.shoot) {
-				if (weapon_) {
-					weapon_->pullTrigger(*this, (float) time);
-					weapon_->releaseTrigger(*this, (float) time);
-				}
+		// Turn left or right.
+		if (input.turnLeft && !input.turnRight) {
+			body_->SetAngularVelocity(3.0f);
+		} else if (!input.turnLeft && input.turnRight) {
+			body_->SetAngularVelocity(-3.0f);
+		} else {
+			body_->SetAngularVelocity(0.0);
+		}
+
+		// Want to shoot?
+		if (input.shoot && weapon_) {
+			weapon_->pullTrigger(*this, static_cast<float>(time));
+			weapon_->releaseTrigger(*this, static_cast<float>(time));
+		}
+
+		// Want to reload?
+		if (input.reload) {
+			if (weapon_) {
+				weapon_->reload(static_cast<float>(time));
 			}
+		}
 
-			// Want to reload?
-			if (input.reload) {
-				if (weapon_) {
-					weapon_->reload((float) time);
-				}
-			}
+		if (input.action) {
+			//signal(ACTION);
+		}
 
-			if (input.action) {
-				//signal(ACTION);
-			}
-
-			weapon_->updateLaserSight(body_->GetWorld(), (float) time, getPosition(), body_->GetAngle());
+		if (weapon_) {
+			weapon_->updateLaserSight(body_->GetWorld(), static_cast<float>(time), getPosition(), body_->GetAngle());
 		}
 	}
 	

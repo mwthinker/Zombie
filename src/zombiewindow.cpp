@@ -97,14 +97,16 @@ namespace zombie {
 	}
 
 	void ZombieWindow::imGuiPreUpdate(const sdl::DeltaTime& deltaTime) {
+		shader_.useProgram();
 		if (zombieGame_) {
-			zombieGame_->draw(shader_, graphic_, std::chrono::duration<double>(deltaTime).count());
+			auto delta = std::chrono::duration<double>(deltaTime).count();
+			zombieGame_->draw(graphic_, delta);
 		} else {
 			shader_.useProgram();
 			graphic_.clear();
 			graphic_.addRectangleImage({-1, -1}, {2, 2}, background_);
-			graphic_.upload(shader_);
 		}
+		graphic_.upload(shader_);
 	}
 
 	void ZombieWindow::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
@@ -121,7 +123,6 @@ namespace zombie {
 			PushButtonStyle();
 			if (ImGui::Button("Play")) {
 				zombieGame_ = std::make_unique<ZombieGame>();
-				zombieGame_->startGame();
 			}
 
 			if (ImGui::Button("Custom game")) {

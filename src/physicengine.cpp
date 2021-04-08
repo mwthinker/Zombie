@@ -23,29 +23,29 @@ namespace zombie {
 	void PhysicEngine::update(double timeStep) {
 		// Update the objects physics interactions.
 		world_.Step(static_cast<float>(timeStep), 6, 2);
-		
+
 		// Move the time ahead.
 		time_ += timeStep;
 	}
 
 	void PhysicEngine::add(Unit* unit) {
 		assert(dynamic_cast<PhysicalObject*>(unit) != nullptr); // Test, PhysicalObject type and not null.
-		(static_cast<PhysicalObject*>(unit))->createBody(&world_);
+		(static_cast<PhysicalObject*>(unit))->createBody(world_);
 		unit->setEnabled(false);
 		unit->setAwake(false);
-		unit->getWeapon()->init(&world_, &gameInterface_);
+		//unit->getWeapon()->init(&world_, &gameInterface_);
 	}
 
 	void PhysicEngine::add(Car* car) {
 		assert(dynamic_cast<PhysicalObject*>(car) != nullptr); // Test, PhysicalObject type and not null.
-		(static_cast<PhysicalObject*>(car))->createBody(&world_);
+		(static_cast<PhysicalObject*>(car))->createBody(world_);
 		car->setEnabled(false);
 		car->setAwake(false);
 	}
 
 	void PhysicEngine::add(PhysicalObject* object) {
 		assert(object != nullptr);
-		object->createBody(&world_);
+		object->createBody(world_);
 		object->setEnabled(false);
 		object->setAwake(false);
 	}
@@ -57,10 +57,10 @@ namespace zombie {
 
 	void PhysicEngine::unitEvent(Unit* unit, int eventType) {
 		switch (eventType) {
-			case Unit::ACTION:
+			case Unit::Action:
 				doAction(unit);
 				break;
-			case Unit::DIE:
+			case Unit::Die:
 				gameInterface_.unitDied(*unit);
 				break;
 		}
@@ -68,7 +68,7 @@ namespace zombie {
 
 	void PhysicEngine::carEvent(Car* car, int eventType) {
 		switch (eventType) {
-			case Car::ACTION:
+			case Car::Action:
 				doAction(car);
 				break;
 		}

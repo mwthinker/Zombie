@@ -18,8 +18,8 @@
 
 namespace zombie {
 
-	const b2Vec2 Origo{};
-	const b2Vec2 Zero{};
+	const b2Vec2 Origo{0, 0};
+	const b2Vec2 Zero{0, 0};
 
 	// Math vectors.
 	using Velocity = b2Vec2;
@@ -38,9 +38,9 @@ namespace zombie {
 
 	using Color = sdl::Color;
 
-	static constexpr Color White = sdl::color::html::White;
-	static constexpr Color Black = sdl::color::html::Black;
-	static constexpr Color Red = sdl::color::html::Red;
+	constexpr Color White = sdl::color::html::White;
+	constexpr Color Black = sdl::color::html::Black;
+	constexpr Color Red = sdl::color::html::Red;
 
 }
 

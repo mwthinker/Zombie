@@ -14,8 +14,8 @@ namespace zombie {
 	class Car : public MovingObject {
 	public:
 		enum CarEvent {
-			ACTION,
-			MOVED
+			Action,
+			Moved
 		};
 
 		Car(float mass, float life, float width, float length);
@@ -78,7 +78,7 @@ namespace zombie {
 		}
 
 	private:
-		void createBody(b2World* world) override;
+		void createBody(b2World& world) override;
 
 		void destroyBody() override {
 			if (body_ != nullptr) {

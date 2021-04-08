@@ -31,7 +31,7 @@ namespace zombie {
 		body_->SetAngularVelocity(0);
 	}
 
-	void Missile::createBody(b2World* world) {
+	void Missile::createBody(b2World& world) {
 		// Box2d properties.
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
@@ -39,7 +39,7 @@ namespace zombie {
 		bodyDef.angle = 0;
 		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 
-		body_ = world->CreateBody(&bodyDef);
+		body_ = world.CreateBody(&bodyDef);
 
 		// Body properties.
 		{

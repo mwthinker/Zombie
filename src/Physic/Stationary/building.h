@@ -24,7 +24,7 @@ namespace zombie {
 		}
 
 	private:
-		void createBody(b2World* world) override {
+		void createBody(b2World& world) override {
 			Position center = 0.5f * (corners_[0] + corners_[2]);
 			float w = (corners_[0] - corners_[1]).Length();
 			float h = (corners_[2] - corners_[1]).Length();
@@ -37,7 +37,7 @@ namespace zombie {
 				bodyDef.position = center;
 				bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 
-				body_ = world->CreateBody(&bodyDef);
+				body_ = world.CreateBody(&bodyDef);
 			}
 
 			// Create fixture to body.

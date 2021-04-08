@@ -30,19 +30,10 @@ namespace zombie {
 	public:
 		ZombieGame();
 		~ZombieGame();
-
-		// Start the game.
-		void startGame();
 		
-		void draw(sdl::Shader& shader, sdl::Graphic& graphic, double deltaTime);
+		void draw(sdl::Graphic& graphic, double deltaTime);
 
 		void zoom(float scale);
-
-		void calculateValidSpawningPoints(Unit& human);
-
-		void moveUnits(Unit& unit, Unit& human);
-
-		void spawnUnits(Unit& human);
 
 		void eventUpdate(const SDL_Event& windowEvent);
 
@@ -61,7 +52,6 @@ namespace zombie {
 			void shotHit(Position startPosition, Position hitPosition, Unit& unit) override;
 			void explosion(Position position, float explosionRadius) override;
 			void removedFromWorld(Unit& unit) override;
-			void shot(Unit& shooter, float speed, float explodeTime, float damage, float explosionRadius, float force) override;
 
 		private:
 			ZombieGame& zombieGame_;
@@ -70,24 +60,6 @@ namespace zombie {
 		void updateGame(double deltaTime);
 
 		void makeGameStep();
-
-		void drawGame(const Mat4& projection, double deltaTime);
-
-		int getZombiesKilled() const {
-			return zombiesKilled_;
-		}
-
-		float getHealth() const {
-			return health_;
-		}
-
-		int getClipSize() const {
-			return clipsize_;
-		}
-
-		int getBulletsInWeapon() const {
-			return bulletsInWeapon_;
-		}		
 
 		void zombieGameInit();
 		
@@ -106,20 +78,10 @@ namespace zombie {
 		void explosion(Position position, float explosionRadius);
 
 		void removedFromWorld(Unit& unit);
-
-		void shot(Unit& shooter, float speed, float explodeTime, float damage, float explosionRadius, float force);
-
-		float innerSpawnRadius_;
-		float outerSpawnRadius_;
-		float scale_;
-		float lastSpawnTime_;
-		float spawnPeriod_;
-
-		//ExplosionProperties explosionProperties_;
 		
-		//UnitProperties humanProperties_;
-		//UnitProperties zombieProperties_;
-		
+		glm::mat4 worldToCamera_;
+		glm::mat4 cameraToScreen_;
+
 		Game game_;
 		sdl::Music music_;
 
@@ -128,21 +90,8 @@ namespace zombie {
 
 		DevicePtr keyboard_;
 
-		std::vector<Position> spawningPoints_;
-		std::vector<Position> vaildSpawningPoints_;
-
-		int zombiesKilled_;
-		int unitMaxLimit_;
-		int nbrUnits_{};
-		float health_;
-		int bulletsInWeapon_;
-		int clipsize_;
-
 		std::vector<std::unique_ptr<Player>> players_;
 		PhysicEngine engine_;
-		bool started_{};
-
-		State humanState_;
 
 		// Fix timestep.
 		double timeStep_{1.0/60.0};

@@ -6,10 +6,10 @@
 namespace zombie {
 
 	struct State {
-		Position position_{};
-		Velocity velocity_{};
-		float angle_{};
-		float anglularVelocity_{};
+		Position position_{0, 0};
+		Velocity velocity_{0, 0};
+		float angle_{0.f};
+		float anglularVelocity_{0.f};
 	};
 
 }
