@@ -13,6 +13,8 @@ namespace zombie {
 
 	class GameInterface {
 	public:
+		virtual ~GameInterface() = default;
+
 		virtual void unitDied(Unit& unit) = 0;
 
 		virtual void collision(float impulse, Unit& unit) = 0;
@@ -34,9 +36,6 @@ namespace zombie {
 		};
 
 		virtual void removedFromWorld(Unit& unit) = 0;
-
-	protected:
-		~GameInterface() = default;
 	};
 
 }

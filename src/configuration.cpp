@@ -10,6 +10,7 @@
 
 using nlohmann::json;
 namespace fs = std::filesystem;
+using Point = b2Vec2;
 
 namespace zombie {
 

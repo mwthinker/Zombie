@@ -8,14 +8,14 @@ namespace zombie {
 
 	class ActionHandler {
 	public:
+		virtual ~ActionHandler() = default;
+
 		virtual void unitEvent(Unit* unit, int eventType) = 0;
 
 		virtual void carEvent(Car* unit, int eventType) = 0;
-
-	protected:
-		~ActionHandler() = default;
 	};
 
 }
 
 #endif
+

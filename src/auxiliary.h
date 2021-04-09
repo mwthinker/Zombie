@@ -31,7 +31,7 @@ namespace zombie {
 		return value < 0 ? -1 : 1;
 	}
 
-	static Position directionVector(float angle) {
+	inline Position directionVector(float angle) {
 		return {std::cos(angle), std::sin(angle)};
 	}
 

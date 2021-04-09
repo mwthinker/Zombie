@@ -9,8 +9,9 @@
 
 #include <imgui.h>
 #include <fmt/format.h>
+#include <fmt/color.h>
 
-#include <iostream>
+#include <string>
 
 #include <Box2D/Box2D.h>
 
@@ -25,14 +26,6 @@ namespace zombie {
 	using Velocity = b2Vec2;
 	using Position = b2Vec2;
 	using Force = b2Vec2;
-	using Vec3 = b2Vec2;
-	using Point = b2Vec2;
-	using Points = std::vector<Position>;
-
-	using Mat4 = glm::mat4;
-	using Mat3 = glm::mat3;
-	using Mat2 = glm::mat2;
-	using Vec4 = glm::vec4;
 
 	constexpr auto Pi = glm::pi<float>();
 
@@ -43,5 +36,29 @@ namespace zombie {
 	constexpr Color Red = sdl::color::html::Red;
 
 }
+
+template <>
+struct fmt::formatter<sdl::Color> : fmt::formatter<std::string> {
+	template <typename FormatContext>
+	auto format(sdl::Color color, FormatContext& ctx) {
+		return formatter<std::string>::format(color.toHexString(), ctx);
+	}
+};
+
+template<>
+struct fmt::formatter<b2Vec2> {
+	
+	template<typename ParseContext>
+	auto parse(ParseContext& ctx)
+	{
+		return ctx.begin();
+	}
+	
+	template <typename FormatContext>
+	auto format(const b2Vec2& p, FormatContext& ctx) {
+		return fmt::format_to(ctx.out(), "({}, {})", p.x, p.y);
+	}
+
+};
 
 #endif
