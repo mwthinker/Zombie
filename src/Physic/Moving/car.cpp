@@ -13,28 +13,6 @@ namespace zombie {
 		, mass_{mass} {
 	}
 
-	Car::Car(const Car& car)
-		: length_{car.length_}
-		, width_{car.width_}
-		, currentTime_{car.currentTime_}
-		, steeringAngle_{car.steeringAngle_}
-		, wheelDelta_{car.wheelDelta_}
-		, mass_{car.mass_} {
-	}
-	
-	Car& Car::operator=(const Car& car) {
-		length_ = car.length_;
-		width_ = car.width_;
-
-		currentTime_ = car.currentTime_;
-		steeringAngle_ = car.steeringAngle_;
-		wheelDelta_ = car.wheelDelta_;
-		mass_ = car.mass_;
-		body_ = nullptr;
-
-		return  *this;
-	}
-
 	Unit* Car::getDriver() const {
 		return driver_;
 	}
@@ -50,7 +28,6 @@ namespace zombie {
 			input = driver_->getInput();
 			brake = false;
 		}
-		previousState_ = getState();
 		b2Vec2 force = getDirectionVector();
 
 		// Accelate or decelerate
@@ -75,10 +52,10 @@ namespace zombie {
 
 		applyFriction(brake, 2.0f, 2.0f, 100.0f, 100.0f);
 
-		//signal(MOVED);
+		carEventHandler(CarEvent::Moved);
 
 		if (input.action) {
-			//signal(ACTION);
+			carEventHandler(CarEvent::Action);
 		}
 	}
 
@@ -106,13 +83,11 @@ namespace zombie {
 		// Box2d properties.
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
-		bodyDef.position = Zero;//state.position_;
-		bodyDef.angle = 0;// state.angle_;
+		bodyDef.position = Zero;
+		bodyDef.angle = 0;
 		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 		
 		body_ = world.CreateBody(&bodyDef);
-
-		// Body properties.
 		{
 			b2PolygonShape dynamicBox;
 			dynamicBox.SetAsBox(0.5f *length_, 0.5f * width_); // Expected parameters is half the side.
@@ -122,7 +97,7 @@ namespace zombie {
 			fixtureDef.density = mass_ / (length_ * width_);
 			fixtureDef.friction = 0.3f;
 			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
-			b2Fixture* fixture = body_->CreateFixture(&fixtureDef);
+			body_->CreateFixture(&fixtureDef);
 		}
 	}
 

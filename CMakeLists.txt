@@ -77,12 +77,8 @@ set(SOURCES_ZOMBIE
 	src/main.cpp
 	src/player.h
 	
-	src/gameobject.cpp
-	src/gameobject.h
-	src/survivorbehavior.cpp
-	src/survivorbehavior.h
-	src/zombiebehavior.cpp
-	src/zombiebehavior.h
+	src/zombieplayer.cpp
+	src/zombieplayer.h
 	src/physicengine.cpp
 	src/physicengine.h
 	src/zombiegame.cpp
@@ -120,6 +116,7 @@ file(COPY data/. DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) # Copy data to build f
 set(ExternalDependencies
 	CppSdl2
 	ImGui
+	Signal
 )
 
 if (CppSdl2_Test)
@@ -127,6 +124,9 @@ if (CppSdl2_Test)
 endif ()
 if (CppSdl2_Example)
 	set(ExternalDependencieTests "${ExternalDependencieTests};CppSdl2_Example")
+endif ()
+if (Signal_Test)
+	set(ExternalDependencieTests "${ExternalDependencieTests};Signal_Test")
 endif ()
 
 set_target_properties(

@@ -7,7 +7,7 @@ namespace zombie {
 	namespace {
 
 		std::random_device rd;
-		std::default_random_engine generator(rd());
+		std::default_random_engine generator{rd()};
 
 	}
 

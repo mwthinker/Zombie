@@ -1,24 +1,22 @@
-#include "zombiebehavior.h"
+#include "zombieplayer.h"
 #include "auxiliary.h"
 #include "Physic/Moving/unit.h"
 
-#include <list>
+#include <sdl/graphic.h>
 
+#include <list>
 #include <cassert>
 
 namespace zombie {
 
-	ZombieBehavior::ZombieBehavior(Unit* unit)
+	ZombiePlayer::ZombiePlayer(std::unique_ptr<Unit> unit)
 		: findNewTargetTime_{random() * 3}
 		, timeToUpdateAngleDirection_{random() * 1}
 		, targetAngle_{unit->getDirection()}
-		, unit_{unit} {
+		, unit_{std::move(unit)} {
 	}
 
-	ZombieBehavior::~ZombieBehavior() {
-	}
-
-	void ZombieBehavior::updateInput(double time, double deltaTime) {
+	void ZombiePlayer::updateInput(double time, double deltaTime) {
 		Input input{};
 
 		if (time > findNewTargetTime_) {
@@ -65,11 +63,16 @@ namespace zombie {
 		unit_->setInput(input);
 	}
 
-	MovingObject* ZombieBehavior::getMovingObject() const {
-		return unit_;
+	void ZombiePlayer::draw(sdl::Graphic& graphic) {
+		auto pos = unit_->getPosition();
+		graphic.addCircle({pos.x, pos.y}, unit_->getRadius(), sdl::color::html::DeepSkyBlue);
 	}
 
-	MovingObject* ZombieBehavior::findUninfectedTarget(Position position, const std::list<MovingObject*>& units) const {
+	MovingObject* ZombiePlayer::getMovingObject() const {
+		return unit_.get();;
+	}
+
+	MovingObject* ZombiePlayer::findUninfectedTarget(Position position, const std::list<MovingObject*>& units) const {
 		MovingObject* target(nullptr);
 
 		float distant = 100;

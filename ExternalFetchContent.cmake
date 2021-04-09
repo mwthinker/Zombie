@@ -8,6 +8,14 @@ FetchContent_Declare(CppSdl2
 )
 FetchContent_MakeAvailable(CppSdl2)
 
+FetchContent_Declare(Signal
+	GIT_REPOSITORY
+		https://github.com/mwthinker/Signal.git
+	GIT_TAG
+		c05de2bf17961b7b094582802eff9107becfa08a
+)
+FetchContent_MakeAvailable(Signal)
+
 fetchcontent_declare(CmakeAuxiliary
 	GIT_REPOSITORY
 		https://gist.github.com/mwthinker/e0539b200e3f0ac6da545af4843a6ff6

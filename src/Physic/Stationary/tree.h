@@ -15,10 +15,10 @@ namespace zombie {
 			: position_{position} {
 
 			radius_ = random(0.5f, 2);
-			angle_ = random(0, 2*PI);
+			angle_ = random(0, 2 * Pi);
 		}
 
-		void createBody(b2World* world) {
+		void createBody(b2World& world) override {
 			// Box2d properties.
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_staticBody;
@@ -26,7 +26,7 @@ namespace zombie {
 			bodyDef.angle = angle_;
 			bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 
-			body_ = world->CreateBody(&bodyDef);
+			body_ = world.CreateBody(&bodyDef);
 
 			b2CircleShape circle;
 			circle.m_p.Set(0, 0);
@@ -38,7 +38,7 @@ namespace zombie {
 			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 			
 			// Add Body fixture.
-			b2Fixture* fixture = body_->CreateFixture(&fixtureDef);
+			body_->CreateFixture(&fixtureDef);
 		}
 
 		float getRadius() const {
@@ -59,7 +59,7 @@ namespace zombie {
 
 		void destroyBody() override {
 			if (body_ != nullptr) {
-				b2World* world = body_->GetWorld();
+				auto world = body_->GetWorld();
 				if (world != nullptr) {
 					world->DestroyBody(body_);
 				}
@@ -68,9 +68,9 @@ namespace zombie {
 		}
 
 	private:
-		Position position_;
-		float radius_;
-		float angle_;
+		Position position_{Zero};
+		float radius_ = 0.f;
+		float angle_ = 0.f;
 		b2Body* body_{};
 	};
 

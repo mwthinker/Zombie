@@ -7,21 +7,25 @@
 #include "Physic/state.h"
 #include "Physic/Moving/unitproperties.h"
 
+#include <mw/signal.h>
+
 namespace zombie {
+
+	enum class UnitEvent {
+		Die,
+		Injured,
+		Walk,
+		Standstill,
+		Run,
+		Action
+	};
 
 	class Unit : public MovingObject {
 	public:
-		enum UnitEvent {
-			Die,
-			Injured,
-			Walk,
-			Standstill,
-			Run,
-			Action
-		};
+		mw::PublicSignal<Unit, UnitEvent> unitEventHandler;
 		
 		Unit(const UnitProperties& unitProperties, WeaponPtr weapon);
-		virtual ~Unit();
+		~Unit() override;
 
 		Unit(const Unit&) = delete;
 		Unit& operator=(const Unit&) = delete;

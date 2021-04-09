@@ -56,19 +56,19 @@ namespace zombie {
 	}
 
 	void PhysicEngine::unitEvent(Unit* unit, int eventType) {
-		switch (eventType) {
-			case Unit::Action:
+		switch (static_cast<UnitEvent>(eventType)) {
+			case UnitEvent::Action:
 				doAction(unit);
 				break;
-			case Unit::Die:
+			case UnitEvent::Die:
 				gameInterface_.unitDied(*unit);
 				break;
 		}
 	}
 
 	void PhysicEngine::carEvent(Car* car, int eventType) {
-		switch (eventType) {
-			case Car::Action:
+		switch (static_cast<CarEvent>(eventType)) {
+			case CarEvent::Action:
 				doAction(car);
 				break;
 		}

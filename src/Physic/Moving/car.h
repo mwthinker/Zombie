@@ -5,24 +5,28 @@
 #include "input.h"
 #include "Physic/state.h"
 
+#include <mw/signal.h>
+
 namespace zombie {
 
 	class Unit;
+
+	enum class CarEvent {
+		Action,
+		Moved
+	};
 
 	// Defines the property of a car. The car has 4 wheels but is simulated as having 
 	// one front wheel and one backwheel in order to simlify the math.
 	class Car : public MovingObject {
 	public:
-		enum CarEvent {
-			Action,
-			Moved
-		};
+		mw::PublicSignal<Car, CarEvent> carEventHandler;
 
 		Car(float mass, float life, float width, float length);
-		virtual ~Car() = default;
+		~Car() override = default;
 
-		Car(const Car& car);
-		Car& operator=(const Car& car);
+		Car(const Car& car) = delete;
+		Car& operator=(const Car& car) = delete;
 
 		Unit* getDriver() const;
 		void setDriver(Unit* driver);
@@ -72,11 +76,6 @@ namespace zombie {
 			return false;
 		}
 
-	protected:
-		inline State previousState() const {
-			return previousState_;
-		}
-
 	private:
 		void createBody(b2World& world) override;
 
@@ -114,7 +113,6 @@ namespace zombie {
 		float currentTime_{0.f};
 		float wheelDelta_{0.4f};
 
-		State previousState_;
 		Unit* driver_{};
 	};
 

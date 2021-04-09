@@ -70,7 +70,7 @@ namespace zombie {
 	// would cause undefined behavior.
 	void Unit::updatePhysics(double time, double timeStep) {
 		if (died_) {
-			//signal(DIE);
+			unitEventHandler(UnitEvent::Die);
 			isDead_ = true;
 		}
 
@@ -87,25 +87,25 @@ namespace zombie {
 			if (input.forward && input.run) {
 				timeLeftToRun_ -= static_cast<float>(timeStep);
 				move *= 2;
-				//signal(RUN);
+				unitEventHandler(UnitEvent::Run);
 			} else if (timeLeftToRun_ < 5) {
-				timeLeftToRun_ += (float) timeStep;
+				timeLeftToRun_ += static_cast<float>(timeStep);
 			}
 		} else { // Time is negative!
-			timeLeftToRun_ += (float) timeStep;
+			timeLeftToRun_ += static_cast<float>(timeStep);
 		}
 
 		// Move forward or backwards.
 		if (input.forward && !input.backward) {
 			body_->ApplyForceToCenter(b2Vec2{move.x, move.y}, true);
-			//signal(WALK);
+			unitEventHandler(UnitEvent::Walk);
 		} else if (!input.forward && input.backward) {
 			body_->ApplyForceToCenter(-b2Vec2{move.x, move.y}, true);
-			//signal(WALK);
+			unitEventHandler(UnitEvent::Walk);
 		} else {
 			// In order to make the unit stop when not moving.
 			body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
-			//signal(STANDSTILL);
+			unitEventHandler(UnitEvent::Standstill);
 		}
 
 		// Add friction.
@@ -134,7 +134,7 @@ namespace zombie {
 		}
 
 		if (input.action) {
-			//signal(ACTION);
+			unitEventHandler(UnitEvent::Action);
 		}
 
 		if (weapon_) {
@@ -198,7 +198,7 @@ namespace zombie {
 	void Unit::updateHealthPoint(float deltaLife) {
 		if (!isDead_) {
 			properties_.life += deltaLife;
-			//signal(INJURED);
+			unitEventHandler(UnitEvent::Injured);
 		}
 		if (properties_.life < 0) {
 			died_ = true;

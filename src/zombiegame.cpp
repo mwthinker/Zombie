@@ -7,7 +7,7 @@
 #include "Weapons/weapon.h"
 
 #include "humanplayer.h"
-#include "zombiebehavior.h"
+#include "zombieplayer.h"
 #include "configuration.h"
 
 #include <sdl/opengl.h>
@@ -58,6 +58,16 @@ namespace zombie {
 			unit->setEnabled(true);
 			unit->setAwake(true);
 			return std::make_unique<HumanPlayer>(device, std::move(unit));
+		}
+
+		ZombiePlayerPtr createZombiePlayer(PhysicEngine& physicEngine, const UnitProperties& properties) {
+			WeaponPtr weapon;
+			auto unit = std::make_unique<Unit>(properties, weapon);
+			physicEngine.add(unit.get());
+			unit->setState(State{});
+			unit->setEnabled(true);
+			unit->setAwake(true);
+			return std::make_unique<ZombiePlayer>(std::move(unit));
 		}
 
 	}
