@@ -2,9 +2,9 @@
 #define ZOMBIE_HUMANPLAYER_H
 
 #include "device.h"
-#include "Physic/Moving/unit.h"
+#include "physics/moving/unit.h"
 #include "player.h"
-#include "Physic/Moving/unit.h"
+#include "physics/moving/unit.h"
 
 namespace zombie {
 

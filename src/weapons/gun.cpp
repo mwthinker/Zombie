@@ -1,9 +1,9 @@
 #include "gun.h"
-#include "Weapons/weaponinterface.h"
-#include "Physic/state.h"
-#include "Physic/Moving/unit.h"
+#include "weapons/weaponinterface.h"
+#include "physics/state.h"
+#include "physics/moving/unit.h"
 #include "box2ddef.h"
-#include "Physic/closestraycastcallback.h"
+#include "physics/closestraycastcallback.h"
 
 namespace zombie {
 	/*

@@ -1,7 +1,7 @@
 #ifndef ZOMBIE_WEAPONITEM_H
 #define ZOMBIE_WEAPONITEM_H
 
-#include "Physic/physicalobject.h"
+#include "physics/physicalobject.h"
 #include "weapon.h"
 
 namespace zombie {

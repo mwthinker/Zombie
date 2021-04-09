@@ -2,7 +2,6 @@
 #define ZOMBIE_OBJECT_H
 
 #include "box2ddef.h"
-#include "gameobject.h"
 
 #include <cassert>
 

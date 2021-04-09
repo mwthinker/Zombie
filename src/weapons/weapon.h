@@ -2,7 +2,7 @@
 #define ZOMBIE_WEAPON_H
 
 #include "weaponinterface.h"
-#include "Physic/state.h"
+#include "physics/state.h"
 #include "gameinterface.h"
 
 #include <sdl/sprite.h>

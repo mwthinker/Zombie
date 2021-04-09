@@ -1,8 +1,8 @@
 #include "contactlistener.h"
 #include "box2ddef.h"
-#include "Physic/Moving/car.h"
-#include "Physic/Moving/unit.h"
-#include "Physic/Stationary/building.h"
+#include "physics/moving/car.h"
+#include "physics/moving/unit.h"
+#include "physics/Stationary/building.h"
 
 #include <sdl/opengl.h>
 

@@ -1,7 +1,7 @@
 #ifndef ZOMBIE_MOVINGOBJECT_H
 #define ZOMBIE_MOVINGOBJECT_H
 
-#include "Physic/physicalobject.h"
+#include "physics/physicalobject.h"
 #include "actionhandler.h"
 
 #include <list>

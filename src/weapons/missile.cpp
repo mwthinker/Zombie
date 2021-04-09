@@ -1,6 +1,6 @@
 #include "missile.h"
-#include "Physic/inviewquerycallback.h"
-#include "Physic/Moving/unit.h"
+#include "physics/inviewquerycallback.h"
+#include "physics/moving/unit.h"
 #include "gameinterface.h"
 #include "auxiliary.h"
 

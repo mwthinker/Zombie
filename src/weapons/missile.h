@@ -1,8 +1,8 @@
 #ifndef ZOMBIE_MISSILE_H
 #define ZOMBIE_MISSILE_H
 
-#include "Physic/physicalobject.h"
-#include "Physic/state.h"
+#include "physics/physicalobject.h"
+#include "physics/state.h"
 #include "gameinterface.h"
 #include "box2ddef.h"
 

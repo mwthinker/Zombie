@@ -1,8 +1,8 @@
 #ifndef ZOMBIE_MISSILELAUNCHER_H
 #define ZOMBIE_MISSILELAUNCHER_H
 
-#include "Physic/physicalobject.h"
-#include "Physic/state.h"
+#include "physics/physicalobject.h"
+#include "physics/state.h"
 #include "missile.h"
 #include "weaponinterface.h"
 #include "missile.h"

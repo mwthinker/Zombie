@@ -1,9 +1,9 @@
 #ifndef ZOMBIE_CAR_H
 #define ZOMBIE_CAR_H
 
-#include "Physic/Moving/movingobject.h"
+#include "physics/moving/movingobject.h"
 #include "input.h"
-#include "Physic/state.h"
+#include "physics/state.h"
 
 #include <mw/signal.h>
 

@@ -27,36 +27,38 @@ set(SOURCES_ZOMBIE
 	
 
 	# Physical objects
-	src/Physic/physicalobject.cpp
-	src/Physic/physicalobject.h
-	src/Physic/contactlistener.cpp
-	src/Physic/contactlistener.h
-	src/Physic/closestraycastcallback.h
-	src/Physic/inviewquerycallback.h
-	src/Physic/state.h
+	src/physics/physicalobject.cpp
+	src/physics/physicalobject.h
+	src/physics/contactlistener.cpp
+	src/physics/contactlistener.h
+	src/physics/closestraycastcallback.h
+	src/physics/inviewquerycallback.h
+	src/physics/state.h
 
-	src/Physic/Stationary/tree.h
-	src/Physic/Stationary/building.h
-	src/Physic/Stationary/buildingproperties.h
+	src/physics/stationary/tree.h
+	src/physics/stationary/building.h
+	src/physics/stationary/buildingproperties.h
 	
-	src/Physic/Moving/unit.cpp
-	src/Physic/Moving/unit.h
-	src/Physic/Moving/unitproperties.h
-	src/Physic/Moving/car.cpp
-	src/Physic/Moving/car.h
-	src/Physic/Moving/movingobject.h
+	src/physics/moving/unit.cpp
+	src/physics/moving/unit.h
+	src/physics/moving/unitproperties.h
+	src/physics/moving/car.cpp
+	src/physics/moving/car.h
+	src/physics/moving/movingobject.h
 	
 	# Weapons
-	src/Weapons/missilelauncher.h
-	src/Weapons/missilelauncher.cpp
-	src/Weapons/missile.cpp
-	src/Weapons/missile.h
-	src/Weapons/missileproperties.h
-	src/Weapons/shot.h
-	src/Weapons/weapon.h
-	src/Weapons/weaponproperties.h
-	src/Weapons/weaponinterface.h
-	src/Weapons/weaponitem.h
+	src/weapons/gun.cpp
+	src/weapons/gun.h
+	src/weapons/missilelauncher.cpp
+	src/weapons/missilelauncher.h
+	src/weapons/missile.cpp
+	src/weapons/missile.h
+	src/weapons/missileproperties.h
+	src/weapons/shot.h
+	src/weapons/weapon.h
+	src/weapons/weaponproperties.h
+	src/weapons/weaponinterface.h
+	src/weapons/weaponitem.h
 
 	# Everything
 	src/actionhandler.h
@@ -67,8 +69,6 @@ set(SOURCES_ZOMBIE
 	src/gameinterface.h
 	src/configuration.cpp
 	src/configuration.h
-	src/Weapons/gun.cpp
-	src/Weapons/gun.h
 	src/humanplayer.h
 	src/input.h
 	src/inputkeyboard.h

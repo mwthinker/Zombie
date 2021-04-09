@@ -1,7 +1,7 @@
 #ifndef ZOMBIE_BUILDING_H
 #define ZOMBIE_BUILDING_H
 
-#include "Physic/physicalobject.h"
+#include "physics/physicalobject.h"
 
 #include <limits>
 #include <array>

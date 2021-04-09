@@ -1,8 +1,7 @@
 #include "unit.h"
 #include "input.h"
-#include "Weapons/weapon.h"
+#include "weapons/weapon.h"
 #include "auxiliary.h"
-#include "gameobject.h"
 
 #include <cmath>
 

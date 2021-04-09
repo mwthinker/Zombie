@@ -2,11 +2,11 @@
 #define ZOMBIE_GAMEDATA_H
 
 //#include "animation.h"
-//#include "Weapons/explosion.h"
-#include "Physic/Moving/unitproperties.h"
-#include "Weapons/weaponproperties.h"
-#include "Weapons/missileproperties.h"
-#include "Physic/Stationary/buildingproperties.h"
+//#include "weapons/explosion.h"
+#include "physics/moving/unitproperties.h"
+#include "weapons/weaponproperties.h"
+#include "weapons/missileproperties.h"
+#include "physics/Stationary/buildingproperties.h"
 
 #include <sdl/sound.h>
 #include <sdl/sprite.h>

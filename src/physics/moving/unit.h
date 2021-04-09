@@ -1,11 +1,11 @@
 #ifndef ZOMBIE_UNIT_H
 #define ZOMBIE_UNIT_H
 
-#include "Physic/Moving/movingobject.h"
+#include "physics/moving/movingobject.h"
 #include "input.h"
-#include "Weapons/weapon.h"
-#include "Physic/state.h"
-#include "Physic/Moving/unitproperties.h"
+#include "weapons/weapon.h"
+#include "physics/state.h"
+#include "physics/moving/unitproperties.h"
 
 #include <mw/signal.h>
 

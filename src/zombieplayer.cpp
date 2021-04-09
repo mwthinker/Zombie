@@ -1,6 +1,6 @@
 #include "zombieplayer.h"
 #include "auxiliary.h"
-#include "Physic/Moving/unit.h"
+#include "physics/moving/unit.h"
 
 #include <sdl/graphic.h>
 
@@ -20,13 +20,13 @@ namespace zombie {
 		Input input{};
 
 		if (time > findNewTargetTime_) {
-			findNewTargetTime_ = random() * 3 + (float) time;
+			findNewTargetTime_ = random() * 3 + static_cast<float>(time);
 
 			target_ = findUninfectedTarget(unit_->getPosition(), unit_->getVisibleObjects());
 		}
 
 		if (time > timeToUpdateAngleDirection_) {
-			timeToUpdateAngleDirection_ = random() * 1 + (float) time;
+			timeToUpdateAngleDirection_ = random() * 1 + static_cast<float>(time);
 
 			// Has a target?
 			if (target_ != nullptr && target_->isEnabled() && !target_->isDead()) {
@@ -73,7 +73,7 @@ namespace zombie {
 	}
 
 	MovingObject* ZombiePlayer::findUninfectedTarget(Position position, const std::list<MovingObject*>& units) const {
-		MovingObject* target(nullptr);
+		MovingObject* target = nullptr;
 
 		float distant = 100;
 		for (auto unit : units) {

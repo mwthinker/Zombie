@@ -2,7 +2,7 @@
 #define ZOMBIE_GUN_H
 
 #include "weaponinterface.h"
-#include "Physic/state.h"
+#include "physics/state.h"
 #include "box2ddef.h"
 #include "weaponproperties.h"
 

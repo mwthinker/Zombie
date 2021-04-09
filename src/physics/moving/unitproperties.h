@@ -3,8 +3,8 @@
 
 #include "box2ddef.h"
 #include "auxiliary.h"
-#include "Weapons/weapon.h"
-#include "Weapons/weaponproperties.h"
+#include "weapons/weapon.h"
+#include "weapons/weaponproperties.h"
 
 #include <sdl/opengl.h>
 #include <sdl/color.h>

@@ -1,11 +1,11 @@
 #include "physicengine.h"
 #include "gameinterface.h"
-#include "Physic/Moving/unit.h"
-#include "Physic/Moving/car.h"
-#include "Weapons/missile.h"
-#include "Physic/Stationary/building.h"
-#include "Weapons/weaponitem.h"
-#include "Physic/closestraycastcallback.h"
+#include "physics/moving/unit.h"
+#include "physics/moving/car.h"
+#include "weapons/missile.h"
+#include "physics/Stationary/building.h"
+#include "weapons/weaponitem.h"
+#include "physics/closestraycastcallback.h"
 
 namespace zombie {
 

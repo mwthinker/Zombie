@@ -3,7 +3,7 @@
 
 #include "box2ddef.h"
 #include "auxiliary.h"
-#include "Physic/physicalobject.h"
+#include "physics/physicalobject.h"
 
 #include <memory>
 

@@ -5,11 +5,10 @@
 #include "gameinterface.h"
 #include "device.h"
 
-#include "Physic/Moving/unit.h"
-#include "Physic/Moving/unitproperties.h"
+#include "physics/moving/unit.h"
+#include "physics/moving/unitproperties.h"
 
 #include "player.h"
-#include "gameobject.h"
 
 #include <sdl/graphic.h>
 #include <sdl/sprite.h>
