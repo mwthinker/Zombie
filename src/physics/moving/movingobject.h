@@ -13,8 +13,6 @@ namespace zombie {
 	public:
 		MovingObject() = default;
 
-		~MovingObject() override = default;
-
 		// Returns true if the object is infected.
 		virtual bool isInfected() const = 0;
 

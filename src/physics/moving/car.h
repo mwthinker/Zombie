@@ -23,7 +23,6 @@ namespace zombie {
 		mw::PublicSignal<Car, CarEvent> carEventHandler;
 
 		Car(float mass, float life, float width, float length);
-		~Car() override = default;
 
 		Car(const Car& car) = delete;
 		Car& operator=(const Car& car) = delete;

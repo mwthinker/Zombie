@@ -61,9 +61,6 @@ namespace zombie {
 		}
 	}
 
-	Unit::~Unit() {
-	}
-
 	// All UnitEvent is only allowed to be triggered in this function.
 	// This in order to avoid adjusting box2d valuse during a box2d step, which
 	// would cause undefined behavior.

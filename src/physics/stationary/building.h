@@ -50,7 +50,7 @@ namespace zombie {
 				fixtureDef.friction = 0.3f;
 				fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 
-				auto fixture = body_->CreateFixture(&fixtureDef);
+				body_->CreateFixture(&fixtureDef);
 			}
 		}
 

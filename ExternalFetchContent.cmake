@@ -26,3 +26,20 @@ FetchContent_GetProperties(CmakeAuxiliary
 		CmakeAuxiliary_SOURCE_DIR
 )
 include(${CmakeAuxiliary_SOURCE_DIR}/auxiliary.cmake)
+
+message(STATUS "Download private date repository is available to add: -DZombieData_PrivateRepo=1")
+option(ZombieData_PrivateRepo "Add ZombieData_PrivateRepo to project." OFF)
+if (ZombieData_PrivateRepo)
+	# Load data.
+	FetchContent_Declare(ZombieData
+		GIT_REPOSITORY
+			https://github.com/mwthinker/ZombieData.git
+		GIT_TAG
+			28fa5d69bb07b8963f9c7d2d65434350bd36d1db
+	)
+	FetchContent_MakeAvailable(ZombieData)
+	FetchContent_GetProperties(ZombieData
+		SOURCE_DIR
+			ZombieData_SOURCE_DIR
+	)
+endif()

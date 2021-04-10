@@ -109,7 +109,15 @@ source_group(TREE
 		${SOURCES_ZOMBIE}
 )
 
-file(COPY data/. DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) # Copy data to build folder.
+# Copy data to build folder.
+if (ZombieData_PrivateRepo)
+	file(COPY ${ZombieData_SOURCE_DIR}/data/fonts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+	file(COPY ${ZombieData_SOURCE_DIR}/data/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
+	file(COPY ${ZombieData_SOURCE_DIR}/data/settings DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
+	file(COPY ${ZombieData_SOURCE_DIR}/data/sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
+endif ()
+
+#file(COPY data/. DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 set(ExternalDependencies
 	CppSdl2

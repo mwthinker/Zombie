@@ -25,7 +25,6 @@ namespace zombie {
 		mw::PublicSignal<Unit, UnitEvent> unitEventHandler;
 		
 		Unit(const UnitProperties& unitProperties, WeaponPtr weapon);
-		~Unit() override;
 
 		Unit(const Unit&) = delete;
 		Unit& operator=(const Unit&) = delete;
