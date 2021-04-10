@@ -24,11 +24,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Source files.
 set(SOURCES_ZOMBIE
 	# Graphic related
-	
 
-	# Physical objects
+	# Physical
 	src/physics/physicalobject.cpp
 	src/physics/physicalobject.h
+	src/physics/physicengine.cpp
+	src/physics/physicengine.h
+	src/physics/gameinterface.h
 	src/physics/contactlistener.cpp
 	src/physics/contactlistener.h
 	src/physics/closestraycastcallback.h
@@ -46,19 +48,18 @@ set(SOURCES_ZOMBIE
 	src/physics/moving/car.h
 	src/physics/moving/movingobject.h
 	
-	# Weapons
-	src/weapons/gun.cpp
-	src/weapons/gun.h
-	src/weapons/missilelauncher.cpp
-	src/weapons/missilelauncher.h
-	src/weapons/missile.cpp
-	src/weapons/missile.h
-	src/weapons/missileproperties.h
-	src/weapons/shot.h
-	src/weapons/weapon.h
-	src/weapons/weaponproperties.h
-	src/weapons/weaponinterface.h
-	src/weapons/weaponitem.h
+	src/physics/weapons/gun.cpp
+	src/physics/weapons/gun.h
+	src/physics/weapons/missilelauncher.cpp
+	src/physics/weapons/missilelauncher.h
+	src/physics/weapons/missile.cpp
+	src/physics/weapons/missile.h
+	src/physics/weapons/missileproperties.h
+	src/physics/weapons/shot.h
+	src/physics/weapons/weapon.h
+	src/physics/weapons/weaponproperties.h
+	src/physics/weapons/weaponinterface.h
+	src/physics/weapons/weaponitem.h
 
 	# Everything
 	src/actionhandler.h
@@ -66,7 +67,6 @@ set(SOURCES_ZOMBIE
 	src/auxiliary.h
 	src/box2ddef.h
 	src/device.h
-	src/gameinterface.h
 	src/configuration.cpp
 	src/configuration.h
 	src/humanplayer.h
@@ -79,8 +79,6 @@ set(SOURCES_ZOMBIE
 	
 	src/zombieplayer.cpp
 	src/zombieplayer.h
-	src/physicengine.cpp
-	src/physicengine.h
 	src/zombiegame.cpp
 	src/zombiegame.h
 	src/zombiewindow.h

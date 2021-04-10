@@ -22,7 +22,6 @@ namespace zombie {
 	const b2Vec2 Origo{0, 0};
 	const b2Vec2 Zero{0, 0};
 
-	// Math vectors.
 	using Velocity = b2Vec2;
 	using Position = b2Vec2;
 	using Force = b2Vec2;

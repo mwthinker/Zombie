@@ -1,6 +1,6 @@
 #include "unit.h"
 #include "input.h"
-#include "weapons/weapon.h"
+#include "physics/weapons/weapon.h"
 #include "auxiliary.h"
 
 #include <cmath>

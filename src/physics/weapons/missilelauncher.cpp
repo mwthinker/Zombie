@@ -1,7 +1,7 @@
 #include "missilelauncher.h"
 #include "physics/moving/unit.h"
 #include "auxiliary.h"
-#include "gameinterface.h"
+#include "physics/gameinterface.h"
 
 #include <cassert>
 

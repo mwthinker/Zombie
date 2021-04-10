@@ -16,7 +16,7 @@ namespace zombie {
 
 			float dist = direction_.Normalize();
 			duration_ = dist / speed_;
-			angle_ = calculateAnglePointToPoint(startPoint, endPoint) * 180 / Pi; // RAD -> DEG.
+			angle_ = calculateAnglePointToPoint(startPoint, endPoint) * 180 / Pi;
 		}
 
 		bool toBeRemoved() const {

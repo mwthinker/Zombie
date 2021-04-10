@@ -2,9 +2,9 @@
 #include "auxiliary.h"
 #include "inputkeyboard.h"
 
-#include "weapons/shot.h"
-#include "weapons/gun.h"
-#include "weapons/weapon.h"
+#include "physics/weapons/shot.h"
+#include "physics/weapons/gun.h"
+#include "physics/weapons/weapon.h"
 
 #include "humanplayer.h"
 #include "zombieplayer.h"

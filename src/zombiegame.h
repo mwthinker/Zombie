@@ -1,8 +1,8 @@
 #ifndef ZOMBIE_ZOMBIEGAME_H
 #define ZOMBIE_ZOMBIEGAME_H
 
-#include "physicengine.h"
-#include "gameinterface.h"
+#include "physics/physicengine.h"
+#include "physics/gameinterface.h"
 #include "device.h"
 
 #include "physics/moving/unit.h"

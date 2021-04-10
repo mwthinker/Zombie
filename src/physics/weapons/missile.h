@@ -3,7 +3,7 @@
 
 #include "physics/physicalobject.h"
 #include "physics/state.h"
-#include "gameinterface.h"
+#include "physics/gameinterface.h"
 #include "box2ddef.h"
 
 namespace zombie {

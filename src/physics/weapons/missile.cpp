@@ -1,7 +1,7 @@
 #include "missile.h"
 #include "physics/inviewquerycallback.h"
 #include "physics/moving/unit.h"
-#include "gameinterface.h"
+#include "physics/gameinterface.h"
 #include "auxiliary.h"
 
 namespace zombie {
@@ -110,7 +110,7 @@ namespace zombie {
 		aabb.upperBound = explosionPosition + explosionRadius_ *  Position(0.5f, 0.5f);
 		body_->GetWorld()->QueryAABB(&queryCallback, aabb);
 
-		for (b2Fixture* fixture : queryCallback.foundFixtures) {
+		for (auto fixture : queryCallback.foundFixtures) {
 			/* if (fixture->GetUserData() != nullptr) {
 				PhysicalObject* ob = static_cast<PhysicalObject*>(fixture->GetUserData());
 				if (auto unit = dynamic_cast<Unit*>(ob)) {

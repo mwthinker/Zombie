@@ -1,26 +1,11 @@
 #include "gun.h"
-#include "weapons/weaponinterface.h"
+#include "physics/weapons/weaponinterface.h"
 #include "physics/state.h"
 #include "physics/moving/unit.h"
 #include "box2ddef.h"
 #include "physics/closestraycastcallback.h"
 
 namespace zombie {
-	/*
-	Weapon2D loadGun(GameInterface* gameInterface, const WeaponProperties& wp) {
-		std::shared_ptr<Laser> laser;
-		if (false) {
-			//laser = loadLaser(entry.getParent().getParent().getChildEntry("laserSight"));
-		}
-		auto gun = std::make_shared<Gun>(wp.damage_, wp.timeBetweenShots_, wp.range_, wp.clipSize_, wp.shootSound_, wp.reloadSound_);
-
-		if (false) {
-			return Weapon2D(gun, wp.symbolImage_, wp.moveAnimation_, wp.size_, wp.moveImageGrip_, *laser);
-		} else {
-			return Weapon2D(gun, wp.symbolImage_, wp.moveAnimation_, wp.size_, wp.moveImageGrip_);
-		}
-	}
-	*/
 
 	namespace {
 

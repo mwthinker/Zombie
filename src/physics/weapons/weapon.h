@@ -3,7 +3,7 @@
 
 #include "weaponinterface.h"
 #include "physics/state.h"
-#include "gameinterface.h"
+#include "physics/gameinterface.h"
 
 #include <sdl/sprite.h>
 

@@ -29,7 +29,6 @@ namespace zombie {
 		void initEngine(b2World* world, GameInterface* gameInterface) override final;
 
 	protected:
-		// Is called when reloading.
 		virtual void reload() {
 		}
 

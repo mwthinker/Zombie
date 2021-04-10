@@ -4,8 +4,8 @@
 //#include "animation.h"
 //#include "weapons/explosion.h"
 #include "physics/moving/unitproperties.h"
-#include "weapons/weaponproperties.h"
-#include "weapons/missileproperties.h"
+#include "physics/weapons/weaponproperties.h"
+#include "physics/weapons/missileproperties.h"
 #include "physics/Stationary/buildingproperties.h"
 
 #include <sdl/sound.h>

@@ -8,9 +8,7 @@
 
 #include <memory>
 
-namespace zombie {	
-
-	//Weapon2D loadGun(GameInterface* gameInterface, const WeaponProperties& wp);
+namespace zombie {
 
 	class Gun : public WeaponInterface {
 	public:

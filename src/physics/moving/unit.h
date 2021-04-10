@@ -3,7 +3,7 @@
 
 #include "physics/moving/movingobject.h"
 #include "input.h"
-#include "weapons/weapon.h"
+#include "physics/weapons/weapon.h"
 #include "physics/state.h"
 #include "physics/moving/unitproperties.h"
 
