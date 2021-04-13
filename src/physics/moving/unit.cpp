@@ -132,10 +132,6 @@ namespace zombie {
 		if (input.action) {
 			unitEventHandler(UnitEvent::Action);
 		}
-
-		if (weapon_) {
-			weapon_->updateLaserSight(body_->GetWorld(), static_cast<float>(time), getPosition(), body_->GetAngle());
-		}
 	}
 	
 	State Unit::getState() const {

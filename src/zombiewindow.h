@@ -34,6 +34,7 @@ namespace zombie {
 		sdl::TextureView background_;
 		ImFont* titleFont_{};
 		ImFont* buttonFont_{};
+		ImFont* debugFont_{};
 	};
 
 }

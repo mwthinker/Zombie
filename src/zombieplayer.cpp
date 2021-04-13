@@ -65,7 +65,8 @@ namespace zombie {
 
 	void ZombiePlayer::draw(sdl::Graphic& graphic) {
 		auto pos = unit_->getPosition();
-		graphic.addCircle({pos.x, pos.y}, unit_->getRadius(), sdl::color::html::DeepSkyBlue);
+		graphic.addCircle({pos.x, pos.y}, unit_->getRadius(), sdl::color::html::Firebrick);
+		graphic.addCircleOutline({pos.x, pos.y}, unit_->getViewDistance(), 0.1, sdl::color::html::Firebrick);
 	}
 
 	MovingObject* ZombiePlayer::getMovingObject() const {

@@ -14,6 +14,7 @@
 #include <sdl/sprite.h>
 #include <sdl/sound.h>
 #include <sdl/music.h>
+#include <sdl/imguiwindow.h>
 
 #include <memory>
 #include <vector>
@@ -31,6 +32,8 @@ namespace zombie {
 		~ZombieGame();
 		
 		void draw(sdl::Graphic& graphic, double deltaTime);
+
+		void imGuiUpdate(const sdl::DeltaTime& deltaTime);
 
 		void zoom(float scale);
 

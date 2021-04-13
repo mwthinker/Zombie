@@ -111,6 +111,9 @@ namespace zombie {
 
 	void ZombieWindow::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
 		if (zombieGame_) {
+			ImGui::PushFont(debugFont_);
+			zombieGame_->imGuiUpdate(deltaTime);
+			ImGui::PopFont();
 			return;
 		}
 
@@ -155,6 +158,7 @@ namespace zombie {
 
 		buttonFont_ = ImGui::GetIO().Fonts->AddFontFromFileTTF("fonts/Ubuntu-B.ttf", 30);
 		titleFont_ = ImGui::GetIO().Fonts->AddFontFromFileTTF("fonts/Ubuntu-B.ttf", 45);
+		debugFont_ = ImGui::GetIO().Fonts->AddFontFromFileTTF("fonts/Ubuntu-B.ttf", 12);
 	}
 
 }

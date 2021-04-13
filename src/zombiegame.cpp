@@ -156,6 +156,14 @@ namespace zombie {
 		}
 	}
 
+	void ZombieGame::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
+		ImGui::Window("Factory", []() {
+			if (ImGui::Button("Create Zombie")) {
+
+			}
+		});
+	}
+
 	void ZombieGame::updateGame(double deltaTime) {
 		if (deltaTime > 0.25) {
 			// To avoid spiral of death.

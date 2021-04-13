@@ -23,33 +23,30 @@ namespace zombie {
 			, laserSight_{laserSight} {
 		}
 
-		Weapon(const Weapon&& weapon) noexcept = delete;
-		Weapon& operator=(const Weapon&& weapon) noexcept = delete;
-
-		Weapon(const Weapon& weapon) {
-			weaponInterface_ = weapon.weaponInterface_->clone();
-		}
-
-		Weapon& operator=(const Weapon& weapon) {
-			weaponInterface_ = weapon.weaponInterface_->clone();
-			return *this;
-		}
+		Weapon(const Weapon& weapon) = delete;
+		Weapon& operator=(const Weapon& weapon) = delete;
 
 		Weapon(const WeaponInterfacePtr& weaponInterface)
 			: weaponInterface_{weaponInterface} {
 		}
 
 		void pullTrigger(Unit& shooter, float time) {
-			weaponInterface_->pullTrigger(shooter, time);
+			if (weaponInterface_) {
+				weaponInterface_->pullTrigger(shooter, time);
+			}
 		}
 
 		void releaseTrigger(Unit& shooter, float time) {
-			weaponInterface_->releaseTrigger(shooter, time);
+			if (weaponInterface_) {
+				weaponInterface_->releaseTrigger(shooter, time);
+			}
 		}
 
 		// Tries to reload the weapon. If it reloads return true, else false.
 		void reload(float time) {
-			weaponInterface_->reload(time);
+			if (weaponInterface_) {
+				weaponInterface_->reload(time);
+			}
 		}
 
 		int getClipSize() const {
@@ -57,31 +54,29 @@ namespace zombie {
 		}
 
 		int getBulletsInWeapon() const {
-			return weaponInterface_->getBulletsInWeapon();
+			if (weaponInterface_) {
+				return weaponInterface_->getBulletsInWeapon();
+			}
+			return 0;
 		}
-
-		// Return the weapon symbol.
-		virtual const sdl::Sprite& getSymbol() const = 0;
-
-		// Draw the weapon. The function will be called when the physical object is drawn.
-		//virtual void draw(float timeStep, float x, float y, const GameShader& shader) = 0;
 
 		float getRange() const {
-			return weaponInterface_->getRange();
+			if (weaponInterface_) {
+				return weaponInterface_->getRange();
+			}
+			return 0;
 		}
-
-		virtual WeaponPtr clone() const = 0;
 
 		// Should be called by the zombieEngine.
 		void init(b2World* world, GameInterface* gameInterface) {
-			weaponInterface_->initEngine(world, gameInterface);
+			if (weaponInterface_) {
+				weaponInterface_->initEngine(world, gameInterface);
+			}
 		}
 
 		bool hasLaserSight() const {
 			return laserSight_;
 		}
-
-		virtual void updateLaserSight(b2World* world, float time, Position position, float angle) = 0;
 
 	private:
 		WeaponInterfacePtr weaponInterface_{};
