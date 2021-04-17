@@ -91,6 +91,7 @@ namespace zombie {
 			}
 			return false;
 		}
+
 	
 	}
 
@@ -99,10 +100,16 @@ namespace zombie {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}} {
-		std::ifstream in{SettingsPath, std::ifstream::binary};
+		spdlog::info("[Configuration] Current path: {}\n{}", std::filesystem::canonical(SettingsPath).string(), fs::current_path().string());
+		
+		spdlog::info("[Configuration] Load: {}", SettingsPath);
+		std::ifstream in{std::filesystem::canonical(SettingsPath), std::ifstream::in};
 		in >> settings_;
-		std::ifstream mapIn(settings_["settings"]["map"].get<std::string>(), std::ifstream::in);
+		
+		spdlog::info("[Configuration] Load: {}", settings_["settings"]["map"].get<std::string>());
+		std::ifstream mapIn{std::filesystem::canonical(settings_["settings"]["map"].get<std::string>()), std::ifstream::in};
 		mapIn >> rootMap_;
+		
 
 		loadAllWeaponProperties();
 		loadAllMissileProperties();
@@ -110,8 +117,9 @@ namespace zombie {
 	}
 
 	void Configuration::loadAllWeaponProperties() {
-		for (const auto& fileName : fs::directory_iterator{WeaponsPath}) {
+		for (const auto& fileName : fs::directory_iterator{std::filesystem::canonical(WeaponsPath)}) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
+				spdlog::info("[Configuration] Load: {}", fileName.path().string());
 				std::ifstream file{fileName.path(), std::ifstream::in};
 				nlohmann::json weaponJson;
 				file >> weaponJson;
@@ -122,8 +130,9 @@ namespace zombie {
 	}
 
 	void Configuration::loadAllMissileProperties() {
-		for (const auto& fileName : fs::directory_iterator{MissilesPath}) {
+		for (const auto& fileName : fs::directory_iterator{std::filesystem::canonical(MissilesPath)}) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
+				spdlog::info("[Configuration] Load: {}", fileName.path().string());
 				std::ifstream file{fileName.path(), std::ifstream::in};
 				nlohmann::json missileJson;
 				file >> missileJson;
@@ -134,8 +143,9 @@ namespace zombie {
 	}
 
 	void Configuration::loadAllUnitProperties() {
-		for (const auto& fileName : fs::directory_iterator(UnitsPath)) {
+		for (const auto& fileName : fs::directory_iterator(std::filesystem::canonical(UnitsPath))) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
+				spdlog::info("[Configuration] Load: {}", fileName.path().string());
 				std::ifstream file{fileName.path(), std::ifstream::in};
 				nlohmann::json unitJson;
 				file >> unitJson;
