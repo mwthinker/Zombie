@@ -4,7 +4,7 @@ FetchContent_Declare(CppSdl2
 	GIT_REPOSITORY
 		https://github.com/mwthinker/CppSdl2.git
 	GIT_TAG
-		fc9204d21ff741bd29df07c6235e036cc9fedc3e
+		e47fdfd75cbd7e9f8baa2ddb8bb17aa593fb3151
 )
 FetchContent_MakeAvailable(CppSdl2)
 
@@ -27,13 +27,21 @@ FetchContent_GetProperties(CmakeAuxiliary
 )
 include(${CmakeAuxiliary_SOURCE_DIR}/auxiliary.cmake)
 
-message(STATUS "Download private date repository is available to add: -DZombieData_PrivateRepo=1")
-option(ZombieData_PrivateRepo "Add ZombieData_PrivateRepo to project." OFF)
-if (ZombieData_PrivateRepo)
+message(STATUS "Download private date repository is available to add: -DZombieData_PrivateRepo_SSH=1")
+message(STATUS "Download private date repository is available to add: -DZombieData_PrivateRepo_HTTPS=1")
+option(ZombieData_PrivateRepo_SSH "Add ZombieData_PrivateRepo_SSH to project." OFF)
+option(ZombieData_PrivateRepo_HTTPS "Add ZombieData_PrivateRepo_HTTPS to project." OFF)
+
+if (ZombieData_PrivateRepo_SSH OR ZombieData_PrivateRepo_HTTPS)
+	set(ZombieData_PrivateRepo OFF)
+	set(ZombieData_PrivateRepo_HTTPS "https://github.com/mwthinker/ZombieData.git")
+	if (ZombieData_PrivateRepo_SSH)
+		set(ZombieData_PrivateRepo_SSH "git@github.com:mwthinker/Zombie.git")
+	endif ()
 	# Load data.
 	FetchContent_Declare(ZombieData
 		GIT_REPOSITORY
-			https://github.com/mwthinker/ZombieData.git
+			${ZombieData_PrivateRepo_SSH}
 		GIT_TAG
 			28fa5d69bb07b8963f9c7d2d65434350bd36d1db
 	)
@@ -42,4 +50,4 @@ if (ZombieData_PrivateRepo)
 		SOURCE_DIR
 			ZombieData_SOURCE_DIR
 	)
-endif()
+endif ()
