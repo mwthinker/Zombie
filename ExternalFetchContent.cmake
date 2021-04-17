@@ -1,6 +1,7 @@
 include(FetchContent)
 # Load external github projects
 FetchContent_Declare(CppSdl2
+	GIT_SHALLOW 1
 	GIT_REPOSITORY
 		https://github.com/mwthinker/CppSdl2.git
 	GIT_TAG
@@ -9,6 +10,7 @@ FetchContent_Declare(CppSdl2
 FetchContent_MakeAvailable(CppSdl2)
 
 FetchContent_Declare(Signal
+	GIT_SHALLOW 1
 	GIT_REPOSITORY
 		https://github.com/mwthinker/Signal.git
 	GIT_TAG
@@ -17,6 +19,7 @@ FetchContent_Declare(Signal
 FetchContent_MakeAvailable(Signal)
 
 fetchcontent_declare(CmakeAuxiliary
+	GIT_SHALLOW 1
 	GIT_REPOSITORY
 		https://gist.github.com/mwthinker/e0539b200e3f0ac6da545af4843a6ff6
 )
@@ -40,6 +43,7 @@ if (ZombieData_PrivateRepo_SSH OR ZombieData_PrivateRepo_HTTPS)
 	endif ()
 	# Load data.
 	FetchContent_Declare(ZombieData
+		GIT_SHALLOW 1
 		GIT_REPOSITORY
 			${ZombieData_PrivateRepo_URL}
 		GIT_TAG
