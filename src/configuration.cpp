@@ -91,7 +91,6 @@ namespace zombie {
 			}
 			return false;
 		}
-
 	
 	}
 
@@ -100,16 +99,22 @@ namespace zombie {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}} {
-		spdlog::info("[Configuration] Current path: {}\n{}", std::filesystem::canonical(SettingsPath).string(), fs::current_path().string());
+		spdlog::info("[Configuration] Current path: {}", fs::current_path().string());
 		
 		spdlog::info("[Configuration] Load: {}", SettingsPath);
-		std::ifstream in{std::filesystem::canonical(SettingsPath), std::ifstream::in};
-		in >> settings_;
+		if (std::ifstream file{SettingsPath}; file) {
+			file >> settings_;
+		} else {
+			spdlog::critical("[Configuration] Failed to load: {}", SettingsPath);
+		}
 		
-		spdlog::info("[Configuration] Load: {}", settings_["settings"]["map"].get<std::string>());
-		std::ifstream mapIn{std::filesystem::canonical(settings_["settings"]["map"].get<std::string>()), std::ifstream::in};
-		mapIn >> rootMap_;
-		
+		auto map = settings_["settings"]["map"].get<std::string>();
+		spdlog::info("[Configuration] Load: {}", map);
+		if (std::ifstream file{map}; file) {
+			file >> rootMap_;
+		} else {
+			spdlog::critical("[Configuration] Fail to load: {}", map);
+		}
 
 		loadAllWeaponProperties();
 		loadAllMissileProperties();
@@ -117,40 +122,46 @@ namespace zombie {
 	}
 
 	void Configuration::loadAllWeaponProperties() {
-		for (const auto& fileName : fs::directory_iterator{std::filesystem::canonical(WeaponsPath)}) {
+		for (const auto& fileName : fs::directory_iterator{WeaponsPath}) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
 				spdlog::info("[Configuration] Load: {}", fileName.path().string());
-				std::ifstream file{fileName.path(), std::ifstream::in};
-				nlohmann::json weaponJson;
-				file >> weaponJson;
-
-				weaponPropertiesMap_[weaponJson["name"].get<std::string>()] = loadWeaponProperties(weaponJson);
+				if (std::ifstream file{fileName.path()}; file) {
+					nlohmann::json weaponJson;
+					file >> weaponJson;
+					weaponPropertiesMap_[weaponJson["name"].get<std::string>()] = loadWeaponProperties(weaponJson);
+				} else {
+					spdlog::critical("[Configuration] Fail to load: {}", fileName.path().string());
+				}
 			}
 		}
 	}
 
 	void Configuration::loadAllMissileProperties() {
-		for (const auto& fileName : fs::directory_iterator{std::filesystem::canonical(MissilesPath)}) {
+		for (const auto& fileName : fs::directory_iterator{MissilesPath}) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
 				spdlog::info("[Configuration] Load: {}", fileName.path().string());
-				std::ifstream file{fileName.path(), std::ifstream::in};
-				nlohmann::json missileJson;
-				file >> missileJson;
-
-				missilePropertiesMap_[missileJson["name"].get<std::string>()] = loadMissileProperties(missileJson);
+				if (std::ifstream file{fileName.path()}; file) {
+					nlohmann::json missileJson;
+					file >> missileJson;
+					missilePropertiesMap_[missileJson["name"].get<std::string>()] = loadMissileProperties(missileJson);
+				} else {
+					spdlog::critical("[Configuration] Fail to load: {}", fileName.path().string());
+				}
 			}
 		}
 	}
 
 	void Configuration::loadAllUnitProperties() {
-		for (const auto& fileName : fs::directory_iterator(std::filesystem::canonical(UnitsPath))) {
+		for (const auto& fileName : fs::directory_iterator(UnitsPath)) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
 				spdlog::info("[Configuration] Load: {}", fileName.path().string());
-				std::ifstream file{fileName.path(), std::ifstream::in};
-				nlohmann::json unitJson;
-				file >> unitJson;
-
-				unitPropertiesMap_[unitJson["name"].get<std::string>()] = loadUnitProperties(unitJson);
+				if (std::ifstream file{fileName.path()}; file) {
+					nlohmann::json unitJson;
+					file >> unitJson;
+					unitPropertiesMap_[unitJson["name"].get<std::string>()] = loadUnitProperties(unitJson);
+				} else {
+					spdlog::critical("[Configuration] Fail to load: {}", fileName.path().string());
+				}
 			}
 		}
 	}
@@ -160,7 +171,7 @@ namespace zombie {
 		//settings_ >> out;
 	}
 
-	const sdl::Font& Configuration::loadFont(std::string file, int fontSize) {
+	const sdl::Font& Configuration::loadFont(const std::string& file, int fontSize) {
 		auto size = fonts_.size();
 		std::string key = file;
 		key += fontSize;
@@ -174,7 +185,7 @@ namespace zombie {
 		return font;
 	}
 
-	sdl::Sound Configuration::loadSound(std::string file) {
+	sdl::Sound Configuration::loadSound(const std::string& file) {
 		auto size = sounds_.size();
 		sdl::Sound& sound = sounds_[file];
 
@@ -186,7 +197,7 @@ namespace zombie {
 		return sound;
 	}
 
-	sdl::Music Configuration::loadMusic(std::string file) {
+	sdl::Music Configuration::loadMusic(const std::string& file) {
 		auto size = musics_.size();
 		sdl::Music& music = musics_[file];
 
@@ -198,7 +209,7 @@ namespace zombie {
 		return music;
 	}
 
-	sdl::TextureView Configuration::loadSprite(std::string file) {
+	sdl::TextureView Configuration::loadSprite(const std::string& file) {
 		return textureAtlas_.add(file, 1).getTextureView();
 	}
 

@@ -34,10 +34,10 @@ namespace zombie {
 
 		void save();
 
-		const sdl::Font& loadFont(std::string file, int fontSize);
-		sdl::Sound loadSound(std::string file);
-		sdl::Music loadMusic(std::string file);
-		sdl::TextureView loadSprite(std::string file);
+		const sdl::Font& loadFont(const std::string& file, int fontSize);
+		sdl::Sound loadSound(const std::string& file);
+		sdl::Music loadMusic(const std::string& file);
+		sdl::TextureView loadSprite(const std::string& file);
 
 		const sdl::Font& getDefaultFont(int size);
 
