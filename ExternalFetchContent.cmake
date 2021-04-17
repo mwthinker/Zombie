@@ -36,7 +36,7 @@ if (ZombieData_PrivateRepo_SSH OR ZombieData_PrivateRepo_HTTPS)
 	set(ZombieData ON)
 	set(ZombieData_PrivateRepo_URL "https://github.com/mwthinker/ZombieData.git")
 	if (ZombieData_PrivateRepo_SSH)
-		set(ZombieData_PrivateRepo_URL "git@github.com:mwthinker/Zombie.git")
+		set(ZombieData_PrivateRepo_URL "git@github.com:mwthinker/ZombieData.git")
 	endif ()
 	# Load data.
 	FetchContent_Declare(ZombieData
