@@ -110,7 +110,7 @@ source_group(TREE
 )
 
 # Copy data to build folder.
-if (ZombieData_PrivateRepo)
+if (ZombieData)
 	file(COPY ${ZombieData_SOURCE_DIR}/data/fonts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 	file(COPY ${ZombieData_SOURCE_DIR}/data/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
 	file(COPY ${ZombieData_SOURCE_DIR}/data/settings DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
