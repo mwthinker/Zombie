@@ -101,7 +101,7 @@ namespace zombie {
 	}} {
 		std::ifstream in{SettingsPath, std::ifstream::binary};
 		in >> settings_;
-		std::ifstream mapIn(settings_["settings"]["map"].get<std::string>(), std::ifstream::binary);
+		std::ifstream mapIn(settings_["settings"]["map"].get<std::string>(), std::ifstream::in);
 		mapIn >> rootMap_;
 
 		loadAllWeaponProperties();
@@ -112,7 +112,7 @@ namespace zombie {
 	void Configuration::loadAllWeaponProperties() {
 		for (const auto& fileName : fs::directory_iterator{WeaponsPath}) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
-				std::ifstream file{fileName.path(), std::ifstream::binary};
+				std::ifstream file{fileName.path(), std::ifstream::in};
 				nlohmann::json weaponJson;
 				file >> weaponJson;
 
@@ -124,7 +124,7 @@ namespace zombie {
 	void Configuration::loadAllMissileProperties() {
 		for (const auto& fileName : fs::directory_iterator{MissilesPath}) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
-				std::ifstream file{fileName.path(), std::ifstream::binary};
+				std::ifstream file{fileName.path(), std::ifstream::in};
 				nlohmann::json missileJson;
 				file >> missileJson;
 
@@ -136,7 +136,7 @@ namespace zombie {
 	void Configuration::loadAllUnitProperties() {
 		for (const auto& fileName : fs::directory_iterator(UnitsPath)) {
 			if (fileName.is_regular_file() && isJsonFile(fileName.path().string())) {
-				std::ifstream file{fileName.path(), std::ifstream::binary};
+				std::ifstream file{fileName.path(), std::ifstream::in};
 				nlohmann::json unitJson;
 				file >> unitJson;
 
