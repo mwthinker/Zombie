@@ -30,9 +30,7 @@ namespace zombie {
 
 			// Has a target?
 			if (target_ != nullptr && target_->isEnabled() && !target_->isDead()) {
-				Position targetPosition = target_->getPosition();
-				Position position = unit_->getPosition();
-				Position dir = targetPosition - position;
+				auto dir = target_->getPosition() - unit_->getPosition();
 				targetAngle_ = std::atan2(dir.y, dir.x);
 				forward_ = true;
 
@@ -66,7 +64,7 @@ namespace zombie {
 	void ZombiePlayer::draw(sdl::Graphic& graphic) {
 		auto pos = unit_->getPosition();
 		graphic.addCircle({pos.x, pos.y}, unit_->getRadius(), sdl::color::html::Firebrick);
-		graphic.addCircleOutline({pos.x, pos.y}, unit_->getViewDistance(), 0.1, sdl::color::html::Firebrick);
+		graphic.addCircleOutline({pos.x, pos.y}, unit_->getViewDistance(), 0.1f, sdl::color::html::Firebrick);
 	}
 
 	MovingObject* ZombiePlayer::getMovingObject() const {

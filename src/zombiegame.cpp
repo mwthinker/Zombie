@@ -147,7 +147,7 @@ namespace zombie {
 			for (int j = 0; j < 100; ++j) {
 				float x = i - 50.f;
 				float y = j - 50.f;
-				const float w = 0.05;
+				const float w = 0.05f;
 				graphic.addRectangle({x + w, y + w}, {1.f - w * 2.f, 1.f - w * 2.f}, sdl::color::html::ForestGreen);
 			}
 		}

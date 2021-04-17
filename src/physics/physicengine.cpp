@@ -11,8 +11,8 @@ namespace zombie {
 
 	PhysicEngine::PhysicEngine(GameInterface& gameInterface, float impulseThreshold)
 		: gameInterface_{gameInterface}
-		, world_{b2Vec2{0, 0}}
-		, contactListener_{gameInterface, impulseThreshold} {
+		, contactListener_{gameInterface, impulseThreshold}
+		, world_{b2Vec2{0, 0}} {
 		
 		world_.SetContactListener(&contactListener_);
 	}
@@ -63,6 +63,8 @@ namespace zombie {
 			case UnitEvent::Die:
 				gameInterface_.unitDied(*unit);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -70,6 +72,8 @@ namespace zombie {
 		switch (static_cast<CarEvent>(eventType)) {
 			case CarEvent::Action:
 				doAction(car);
+				break;
+			default:
 				break;
 		}
 	}

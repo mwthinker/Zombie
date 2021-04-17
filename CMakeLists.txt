@@ -156,12 +156,15 @@ if (MSVC)
 
 	target_compile_options(Zombie
 		PRIVATE
-			"/permissive-"
-			"/MP"
+			/W3 /WX /permissive-
+			/MP
 	)
 else ()
-
 	add_executable(Zombie ${SOURCES_ZOMBIE})
+	target_compile_options(Zombie
+		PRIVATE
+			-Wall -pedantic -Wcast-align -Woverloaded-virtual -Wno-unused-parameter -Wno-sign-compare -Wno-unused-function
+	)
 endif ()
 
 set_target_properties(Zombie

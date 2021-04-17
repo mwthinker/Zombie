@@ -8,8 +8,8 @@ namespace zombie {
 
 	Missile::Missile(GameInterface* gameInterface, float width, float length, float mass)
 		: gameInterface_{gameInterface}
-		, width_{width}
 		, length_{length}
+		, width_{width}
 		, mass_{mass} {
 	}
 
@@ -51,7 +51,7 @@ namespace zombie {
 			fixtureDef.density = mass_ / (length_ * width_);
 			fixtureDef.friction = 0.3f;
 			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
-			b2Fixture* fixture = body_->CreateFixture(&fixtureDef);
+			body_->CreateFixture(&fixtureDef);
 		}
 
 		previousState_ = getState();
@@ -110,7 +110,7 @@ namespace zombie {
 		aabb.upperBound = explosionPosition + explosionRadius_ *  Position(0.5f, 0.5f);
 		body_->GetWorld()->QueryAABB(&queryCallback, aabb);
 
-		for (auto fixture : queryCallback.foundFixtures) {
+		//for (auto fixture : queryCallback.foundFixtures) {
 			/* if (fixture->GetUserData() != nullptr) {
 				PhysicalObject* ob = static_cast<PhysicalObject*>(fixture->GetUserData());
 				if (auto unit = dynamic_cast<Unit*>(ob)) {
@@ -123,7 +123,7 @@ namespace zombie {
 				}
 			}
 			*/
-		}
+		//}
 		explode_ = false;
 		gameInterface_->explosion(explosionPosition, explosionRadius_);
 		//body_->SetActive(false);

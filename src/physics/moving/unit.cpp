@@ -163,16 +163,15 @@ namespace zombie {
 	}
 
 	bool Unit::isInside(Position position) const {
-		Position p = getPosition();
 		return (position - getPosition()).LengthSquared() < getRadius()*getRadius();
 	}
 
 	bool Unit::isInsideViewArea(Position position) const {
 		Position p = position - getPosition();
-		double angle = std::atan2(p.y, p.x);
-		return calculateDifferenceBetweenAngles(angle, body_->GetAngle() + viewAngle() * 0.5) < 0
-			&& calculateDifferenceBetweenAngles(angle, body_->GetAngle() - viewAngle() * 0.5) > 0
-			&& p.LengthSquared() < getViewDistance() * getViewDistance() || isInsideSmalViewDistance(position);
+		auto angle = std::atan2(p.y, p.x);
+		return (calculateDifferenceBetweenAngles(angle, body_->GetAngle() + viewAngle() * 0.5f) < 0
+			&& calculateDifferenceBetweenAngles(angle, body_->GetAngle() - viewAngle() * 0.5f) > 0
+			&& p.LengthSquared() < getViewDistance() * getViewDistance()) || isInsideSmalViewDistance(position);
 	}
 
 	bool Unit::isInsideSmalViewDistance(Position position) const {

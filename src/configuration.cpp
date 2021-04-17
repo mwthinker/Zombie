@@ -479,7 +479,7 @@ namespace zombie {
 	MissileProperties Configuration::getMissileProperties() {
 		try {
 			return missilePropertiesMap_.at(std::string("missile"));
-		} catch (std::out_of_range) {
+		} catch (const std::out_of_range&) {
 			return MissileProperties();
 		}
 	}

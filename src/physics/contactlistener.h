@@ -18,8 +18,8 @@ namespace zombie {
 		void EndContact(b2Contact* contact) override;
 
 	private:
-		float impulseThreshold_;
 		GameInterface& gameInterface_;
+		float impulseThreshold_;
 	};
 
 }

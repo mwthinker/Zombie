@@ -49,7 +49,7 @@ namespace zombie {
 					case SDL_WINDOWEVENT_MOVED:
 						if (!(SDL_GetWindowFlags(sdl::Window::getSdlWindow()) & SDL_WINDOW_MAXIMIZED)) {
 							// The Window's is not maximized. Save position!
-							const auto [x, y] = sdl::Window::getSize();
+							//const auto [x, y] = sdl::Window::getSize();
 							//GameData::getInstance().setWindowPositionX(x);
 							//GameData::getInstance().setWindowPositionY(y);
 						}
