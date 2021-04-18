@@ -9,6 +9,7 @@
 #include "physics/moving/unitproperties.h"
 
 #include "player.h"
+#include "graphics/drawdebugcircle.h"
 
 #include <sdl/graphic.h>
 #include <sdl/sprite.h>
@@ -31,6 +32,8 @@ namespace zombie {
 		ZombieGame();
 		~ZombieGame();
 		
+		void setPixelToClipMatrix(const glm::mat4& pixelToScreen);
+
 		void draw(sdl::Graphic& graphic, double deltaTime);
 
 		void imGuiUpdate(const sdl::DeltaTime& deltaTime);
@@ -81,8 +84,9 @@ namespace zombie {
 
 		void removedFromWorld(Unit& unit);
 		
+		glm::mat4 pixelToClip_;
 		glm::mat4 worldToCamera_;
-		glm::mat4 cameraToScreen_;
+		glm::mat4 cameraToClip_;
 
 		Game game_;
 		sdl::Music music_;
@@ -93,6 +97,7 @@ namespace zombie {
 		DevicePtr keyboard_;
 
 		std::vector<std::unique_ptr<Player>> players_;
+		DrawDebugCircle drawDebugCircle_;
 		PhysicEngine engine_;
 
 		// Fix timestep.

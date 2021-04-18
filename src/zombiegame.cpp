@@ -50,21 +50,21 @@ namespace zombie {
 
 	namespace factory {
 
-		HumanPlayerPtr createHumanPlayer(PhysicEngine& physicEngine, const UnitProperties& properties, DevicePtr device) {
+		HumanPlayerPtr createHumanPlayer(PhysicEngine& physicEngine, const UnitProperties& properties, DevicePtr device, Position pos = Zero) {
 			WeaponPtr weapon;
 			auto unit = std::make_unique<Unit>(properties, weapon);
 			physicEngine.add(unit.get());
-			unit->setState(State{});
+			unit->setState(State{pos, Zero, 0.f, 0.f});
 			unit->setEnabled(true);
 			unit->setAwake(true);
 			return std::make_unique<HumanPlayer>(device, std::move(unit));
 		}
 
-		ZombiePlayerPtr createZombiePlayer(PhysicEngine& physicEngine, const UnitProperties& properties) {
+		ZombiePlayerPtr createZombiePlayer(PhysicEngine& physicEngine, const UnitProperties& properties, Position pos = Zero) {
 			WeaponPtr weapon;
 			auto unit = std::make_unique<Unit>(properties, weapon);
 			physicEngine.add(unit.get());
-			unit->setState(State{});
+			unit->setState(State{pos, Zero, 0.f, 0.f});
 			unit->setEnabled(true);
 			unit->setAwake(true);
 			return std::make_unique<ZombiePlayer>(std::move(unit));
@@ -118,6 +118,32 @@ namespace zombie {
 
 	void ZombieGame::eventUpdate(const SDL_Event& windowEvent) {
 		keyboard_->eventUpdate(windowEvent);
+
+		switch (windowEvent.type) {
+			case SDL_MOUSEBUTTONDOWN:
+				switch (windowEvent.button.button) {
+					case SDL_BUTTON_LEFT: {
+						auto pos = glm::inverse(worldToCamera_) * glm::inverse(cameraToClip_) * pixelToClip_ * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
+						drawDebugCircle_.position = {pos.x, pos.y};
+						break;
+					}
+				}
+				break;
+			case SDL_MOUSEWHEEL:
+				if (windowEvent.wheel.y > 0) {
+					zoom(1.1f);
+				}
+				if (windowEvent.wheel.y < 0) {
+					zoom(0.9f);
+				}
+				break;
+			case SDL_MOUSEMOTION:
+				if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+					auto delta = glm::inverse(cameraToClip_) * pixelToClip_ * glm::vec4{windowEvent.motion.xrel, windowEvent.motion.yrel, 0.f, 0.f};
+					cameraToClip_ = glm::translate(cameraToClip_, {delta.x, delta.y, 0.f});
+				}
+				break;
+		}
 	}
 
 	void ZombieGame::zombieGameInit() {
@@ -129,12 +155,16 @@ namespace zombie {
 			music_.play(-1);
 		}
 
-		worldToCamera_ = glm::ortho(-10.f, 10.f, -10.f, 10.f);
-		cameraToScreen_ = glm::mat4{1};
+		worldToCamera_ = glm::mat4{1};
+		cameraToClip_ = glm::ortho(-10.f, 10.f, -10.f, 10.f);
 		keyboard_ = std::make_shared<InputKeyboard>(createDefaultKeyboardKeys());
 
 		auto humanProperties = Configuration::getInstance().getHumanProperties();
 		players_.push_back(factory::createHumanPlayer(engine_, humanProperties, keyboard_));
+	}
+
+	void ZombieGame::setPixelToClipMatrix(const glm::mat4& pixelToClip) {
+		pixelToClip_ = pixelToClip;
 	}
 
 	void ZombieGame::draw(sdl::Graphic& graphic, double deltaTime) {
@@ -142,7 +172,7 @@ namespace zombie {
 
 		graphic.clear();
 		graphic.addRectangle({-1, -1}, {2, 2}, sdl::color::html::OliveDrab);
-		graphic.setMatrix(worldToCamera_* cameraToScreen_);
+		graphic.setMatrix(cameraToClip_ * worldToCamera_);
 		for (int i = 0; i < 100; ++i) {
 			for (int j = 0; j < 100; ++j) {
 				float x = i - 50.f;
@@ -154,12 +184,14 @@ namespace zombie {
 		for (auto& player : players_) {
 			player->draw(graphic);
 		}
+
+		drawDebugCircle_.draw(graphic);
 	}
 
 	void ZombieGame::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
-		ImGui::Window("Factory", []() {
+		ImGui::Window("Factory", [&]() {
 			if (ImGui::Button("Create Zombie")) {
-
+				players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugCircle_.position));
 			}
 		});
 	}
@@ -187,7 +219,7 @@ namespace zombie {
 	}
 
 	void ZombieGame::zoom(float scale) {
-		cameraToScreen_ = glm::scale(cameraToScreen_, {scale, scale, 1});
+		cameraToClip_ = glm::scale(cameraToClip_, {scale, scale, 1});
 	}
 
 	void ZombieGame::unitDied(Unit& unit) {

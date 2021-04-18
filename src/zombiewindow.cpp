@@ -36,6 +36,10 @@ namespace zombie {
 	}
 
 	void ZombieWindow::imGuiEventUpdate(const SDL_Event& windowEvent) {
+		if (zombieGame_) {
+			zombieGame_->eventUpdate(windowEvent);
+		}
+
 		switch (windowEvent.type) {
 			case SDL_WINDOWEVENT:
 				switch (windowEvent.window.event) {
@@ -66,14 +70,12 @@ namespace zombie {
 						break;
 				}
 				break;
+			case SDL_MOUSEBUTTONDOWN:
+				break;
 			case SDL_KEYUP:
-				if (zombieGame_) {
-					zombieGame_->eventUpdate(windowEvent);
-				}
 				break;
 			case SDL_KEYDOWN:
 				if (zombieGame_) {
-					zombieGame_->eventUpdate(windowEvent);
 					switch (windowEvent.key.keysym.sym) {
 						case SDLK_ESCAPE:
 							sdl::Window::quit();
@@ -97,6 +99,11 @@ namespace zombie {
 	}
 
 	void ZombieWindow::imGuiPreUpdate(const sdl::DeltaTime& deltaTime) {
+		if (zombieGame_) {
+			auto matrix = glm::ortho(0.f, static_cast<float>(getWidth()), static_cast<float>(getHeight()), 0.f);
+			zombieGame_->setPixelToClipMatrix(matrix);
+		}
+
 		shader_.useProgram();
 		if (zombieGame_) {
 			auto delta = std::chrono::duration<double>(deltaTime).count();

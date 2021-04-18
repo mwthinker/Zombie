@@ -59,6 +59,7 @@ namespace zombie {
 
 		input.forward = forward_;
 		unit_->setInput(input);
+		unit_->updatePhysics(time, deltaTime);
 	}
 
 	void ZombiePlayer::draw(sdl::Graphic& graphic) {
