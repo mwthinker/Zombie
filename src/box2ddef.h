@@ -46,10 +46,8 @@ struct fmt::formatter<sdl::Color> : fmt::formatter<std::string> {
 
 template<>
 struct fmt::formatter<b2Vec2> {
-	
 	template<typename ParseContext>
-	auto parse(ParseContext& ctx)
-	{
+	auto parse(ParseContext& ctx) {
 		return ctx.begin();
 	}
 	
@@ -57,7 +55,46 @@ struct fmt::formatter<b2Vec2> {
 	auto format(const b2Vec2& p, FormatContext& ctx) {
 		return fmt::format_to(ctx.out(), "({}, {})", p.x, p.y);
 	}
+};
 
+template<>
+struct fmt::formatter<glm::vec2> {
+	template<typename ParseContext>
+	auto parse(ParseContext& ctx) {
+		return ctx.begin();
+	}
+
+	template <typename FormatContext>
+	auto format(const glm::vec2& p, FormatContext& ctx) {
+		return fmt::format_to(ctx.out(), "({}, {})", p.x, p.y);
+	}
+
+};
+
+template<>
+struct fmt::formatter<glm::vec3> {
+	template<typename ParseContext>
+	auto parse(ParseContext& ctx) {
+		return ctx.begin();
+	}
+
+	template <typename FormatContext>
+	auto format(const glm::vec3& p, FormatContext& ctx) {
+		return fmt::format_to(ctx.out(), "({}, {}, {})", p.x, p.y, p.z);
+	}
+};
+
+template<>
+struct fmt::formatter<glm::vec4> {
+	template<typename ParseContext>
+	auto parse(ParseContext& ctx) {
+		return ctx.begin();
+	}
+
+	template <typename FormatContext>
+	auto format(const glm::vec4& p, FormatContext& ctx) {
+		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", p.x, p.y, p.x, p.w);
+	}
 };
 
 #endif
