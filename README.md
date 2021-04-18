@@ -25,5 +25,25 @@ make
 
 Or use CMake gui and generate the build system of your choice.
 
+### Release/Debug build
+Either do it via the IDE or run 
+
+```bash
+cd build
+# Debug
+cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build .
+# Or Release
+cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+```
+
+If you have acess to the private repo run:
+```bash
+cd build
+# Debug
+cmake -DZombieData_PrivateRepo_SSH=1 -DCMAKE_BUILD_TYPE=Debug .. && cmake --build .
+# Or Release
+cmake -DZombieData_PrivateRepo_SSH=1 -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+```
+
 ## Open source
 The project is under the MIT license.
