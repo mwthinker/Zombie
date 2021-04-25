@@ -123,7 +123,7 @@ namespace zombie {
 			case SDL_MOUSEBUTTONDOWN:
 				switch (windowEvent.button.button) {
 					case SDL_BUTTON_LEFT: {
-						auto pos = glm::inverse(worldToCamera_) * glm::inverse(cameraToClip_) * pixelToClip_ * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
+						auto pos = glm::inverse(worldToCamera_) * glm::inverse(cameraToClip_) * screenToClip_ * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
 						drawDebugCircle_.position = {pos.x, pos.y};
 						break;
 					}
@@ -139,11 +139,61 @@ namespace zombie {
 				break;
 			case SDL_MOUSEMOTION:
 				if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
-					auto delta = glm::inverse(cameraToClip_) * pixelToClip_ * glm::vec4{windowEvent.motion.xrel, windowEvent.motion.yrel, 0.f, 0.f};
-					cameraToClip_ = glm::translate(cameraToClip_, {delta.x, delta.y, 0.f});
+					auto delta = getMatrix(Space::Screen, Space::World) * glm::vec4{windowEvent.motion.xrel, windowEvent.motion.yrel, 0.f, 0.f};
+					worldToCamera_ = glm::translate(worldToCamera_, {delta.x, delta.y, 0.f});
 				}
 				break;
 		}
+	}
+
+	glm::mat4 ZombieGame::getMatrix(Space from, Space to) const {
+		switch (from) {
+			case Space::World:
+				switch (to) {
+					case Space::Camera:
+						return worldToCamera_;
+					case Space::Clip:
+						return cameraToClip_ * worldToCamera_;
+					case Space::World:
+						return glm::mat4{1};
+					case Space::Screen:
+						return glm::inverse(screenToClip_) * cameraToClip_ * worldToCamera_;
+				}
+			case Space::Camera:
+				switch (to) {
+					case Space::Camera:
+						return glm::mat4{1};
+					case Space::Clip:
+						return cameraToClip_;
+					case Space::World:
+						return glm::inverse(worldToCamera_);
+					case Space::Screen:
+						return glm::inverse(screenToClip_) * cameraToClip_;
+				}
+			case Space::Clip:
+				switch (to) {
+					case Space::Camera:
+						return glm::inverse(cameraToClip_);
+					case Space::Clip:
+						return glm::mat4{1};
+					case Space::World:
+						return glm::inverse(worldToCamera_) * cameraToClip_;
+					case Space::Screen:
+						return glm::inverse(screenToClip_);
+				}
+			case Space::Screen:
+				switch (to) {
+					case Space::Camera:
+						return glm::inverse(cameraToClip_) * screenToClip_;
+					case Space::Clip:
+						return screenToClip_;
+					case Space::World:
+						return glm::inverse(worldToCamera_) * glm::inverse(cameraToClip_) * screenToClip_;
+					case Space::Screen:
+						return glm::mat4{1};
+				}
+		}
+		return glm::mat4{1};
 	}
 
 	void ZombieGame::zombieGameInit() {
@@ -163,11 +213,20 @@ namespace zombie {
 		players_.push_back(factory::createHumanPlayer(engine_, humanProperties, keyboard_));
 	}
 
-	void ZombieGame::setPixelToClipMatrix(const glm::mat4& pixelToClip) {
-		pixelToClip_ = pixelToClip;
+	void ZombieGame::setViewport(const Viewport& viewport) {
+		viewport_ = viewport;
+		float x = static_cast<float>(viewport.x);
+		float y = static_cast<float>(viewport.x);
+		float width = static_cast<float>(viewport.width);
+		float height = static_cast<float>(viewport.height);
+
+		float aspect = width / height;
+		screenToClip_ = glm::ortho(x, x + width, y + height, y);
+		cameraToClip_ = glm::ortho(-10.f * aspect, 10.f * aspect, -10.f, 10.f);
 	}
 
 	void ZombieGame::draw(sdl::Graphic& graphic, double deltaTime) {
+		glViewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height);
 		updateGame(deltaTime);
 
 		graphic.clear();
@@ -219,7 +278,7 @@ namespace zombie {
 	}
 
 	void ZombieGame::zoom(float scale) {
-		cameraToClip_ = glm::scale(cameraToClip_, {scale, scale, 1});
+		worldToCamera_ = glm::scale(worldToCamera_, {scale, scale, 1});
 	}
 
 	void ZombieGame::unitDied(Unit& unit) {

@@ -100,8 +100,13 @@ namespace zombie {
 
 	void ZombieWindow::imGuiPreUpdate(const sdl::DeltaTime& deltaTime) {
 		if (zombieGame_) {
-			auto matrix = glm::ortho(0.f, static_cast<float>(getWidth()), static_cast<float>(getHeight()), 0.f);
-			zombieGame_->setPixelToClipMatrix(matrix);
+			Viewport viewport;
+			viewport.x = 0;
+			viewport.y = 0;
+			viewport.width = getWidth();
+			viewport.height = getHeight();
+			
+			zombieGame_->setViewport(viewport);
 		}
 
 		shader_.useProgram();

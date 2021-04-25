@@ -22,6 +22,14 @@
 
 namespace zombie {
 
+	struct Viewport {
+		int x;
+		int y;
+		int width;
+		int height;
+	};
+
+
 	// Responsible of loading map, units and initiate all
 	// game related things and to start the game engine.
 	// It also handle all game events triggered by the game engine,
@@ -32,7 +40,7 @@ namespace zombie {
 		ZombieGame();
 		~ZombieGame();
 		
-		void setPixelToClipMatrix(const glm::mat4& pixelToScreen);
+		void setViewport(const Viewport& viewport);
 
 		void draw(sdl::Graphic& graphic, double deltaTime);
 
@@ -43,6 +51,15 @@ namespace zombie {
 		void eventUpdate(const SDL_Event& windowEvent);
 
 	private:
+		enum class Space {
+			World,
+			Camera,
+			Clip,
+			Screen
+		};
+
+		glm::mat4 getMatrix(Space from, Space to) const;
+
 		class Game : public GameInterface {
 		public:
 			Game(ZombieGame& zombieGame)
@@ -84,7 +101,7 @@ namespace zombie {
 
 		void removedFromWorld(Unit& unit);
 		
-		glm::mat4 pixelToClip_;
+		glm::mat4 screenToClip_;
 		glm::mat4 worldToCamera_;
 		glm::mat4 cameraToClip_;
 
@@ -103,6 +120,7 @@ namespace zombie {
 		// Fix timestep.
 		double timeStep_{1.0/60.0};
 		double accumulator_{};
+		Viewport viewport_{};
 	};
 
 }
