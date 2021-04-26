@@ -103,10 +103,10 @@ namespace zombie {
 			Viewport viewport;
 			viewport.x = 0;
 			viewport.y = 0;
-			viewport.width = getWidth();
-			viewport.height = getHeight();
+			viewport.w = getWidth();
+			viewport.h = getHeight();
 			
-			zombieGame_->setViewport(viewport);
+			zombieGame_->setSize(getWidth(), getHeight(), viewport);
 		}
 
 		shader_.useProgram();

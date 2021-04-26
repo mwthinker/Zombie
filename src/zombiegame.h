@@ -22,13 +22,13 @@
 
 namespace zombie {
 
+	// In OpenGL coordinates, i.e. lower left screen is Origo and y is positive upwards on the screen.
 	struct Viewport {
 		int x;
 		int y;
-		int width;
-		int height;
+		int w;
+		int h;
 	};
-
 
 	// Responsible of loading map, units and initiate all
 	// game related things and to start the game engine.
@@ -40,7 +40,7 @@ namespace zombie {
 		ZombieGame();
 		~ZombieGame();
 		
-		void setViewport(const Viewport& viewport);
+		void setSize(int width, int height, const Viewport& viewport);
 
 		void draw(sdl::Graphic& graphic, double deltaTime);
 
@@ -101,9 +101,9 @@ namespace zombie {
 
 		void removedFromWorld(Unit& unit);
 		
-		glm::mat4 screenToClip_;
-		glm::mat4 worldToCamera_;
-		glm::mat4 cameraToClip_;
+		glm::mat4 screenToClip_{};
+		glm::mat4 worldToCamera_{};
+		glm::mat4 cameraToClip_{};
 
 		Game game_;
 		sdl::Music music_;

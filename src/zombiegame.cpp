@@ -123,7 +123,7 @@ namespace zombie {
 			case SDL_MOUSEBUTTONDOWN:
 				switch (windowEvent.button.button) {
 					case SDL_BUTTON_LEFT: {
-						auto pos = glm::inverse(worldToCamera_) * glm::inverse(cameraToClip_) * screenToClip_ * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
+						auto pos = getMatrix(Space::Screen, Space::World) * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
 						drawDebugCircle_.position = {pos.x, pos.y};
 						break;
 					}
@@ -205,6 +205,7 @@ namespace zombie {
 			music_.play(-1);
 		}
 
+
 		worldToCamera_ = glm::mat4{1};
 		cameraToClip_ = glm::ortho(-10.f, 10.f, -10.f, 10.f);
 		keyboard_ = std::make_shared<InputKeyboard>(createDefaultKeyboardKeys());
@@ -213,20 +214,23 @@ namespace zombie {
 		players_.push_back(factory::createHumanPlayer(engine_, humanProperties, keyboard_));
 	}
 
-	void ZombieGame::setViewport(const Viewport& viewport) {
+	void ZombieGame::setSize(int width, int height, const Viewport& viewport) {
 		viewport_ = viewport;
-		float x = static_cast<float>(viewport.x);
-		float y = static_cast<float>(viewport.x);
-		float width = static_cast<float>(viewport.width);
-		float height = static_cast<float>(viewport.height);
+		const float x = static_cast<float>(viewport.x);
+		const float y = static_cast<float>(viewport.y);
+		const float w = static_cast<float>(viewport.w);
+		const float h = static_cast<float>(viewport.h);
+		const float H = static_cast<float>(height);
+		const float aspect = w / h;
 
-		float aspect = width / height;
-		screenToClip_ = glm::ortho(x, x + width, y + height, y);
-		cameraToClip_ = glm::ortho(-10.f * aspect, 10.f * aspect, -10.f, 10.f);
+		screenToClip_ = glm::ortho(x, x + w, H - y, H - y - h);
+
+		const float delta = 10.f;
+		cameraToClip_ = glm::ortho(-delta * aspect, delta * aspect, -delta, delta);
 	}
 
 	void ZombieGame::draw(sdl::Graphic& graphic, double deltaTime) {
-		glViewport(viewport_.x, viewport_.y, viewport_.width, viewport_.height);
+		glViewport(viewport_.x, viewport_.y, viewport_.w, viewport_.h);
 		updateGame(deltaTime);
 
 		graphic.clear();
