@@ -1,5 +1,7 @@
 Zombie
 ======
+![image](https://user-images.githubusercontent.com/3457668/116273499-14b62300-a782-11eb-8179-c66399824f6c.png)
+
 A 2D-shooter zombie game.
 
 ## Prerequisites
