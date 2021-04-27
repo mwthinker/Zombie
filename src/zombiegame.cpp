@@ -64,7 +64,7 @@ namespace zombie {
 			WeaponPtr weapon;
 			auto unit = std::make_unique<Unit>(properties, weapon);
 			physicEngine.add(unit.get());
-			unit->setState(State{pos, Zero, 0.f, 0.f});
+			unit->setState(State{pos, Zero, random(0.f, 2*Pi), 0.f});
 			unit->setEnabled(true);
 			unit->setAwake(true);
 			return std::make_unique<ZombiePlayer>(std::move(unit));
@@ -256,6 +256,21 @@ namespace zombie {
 			if (ImGui::Button("Create Zombie")) {
 				players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugCircle_.position));
 			}
+
+			if (ImGui::Button("Create 10 Zombies")) {
+				for (int i = 0; i < 10; ++i) {
+					b2Vec2 delta{random(0,5), random(0,5)};
+					players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugCircle_.position + delta));
+				} 
+			}
+
+			if (ImGui::Button("Clear Zombies")) {
+				// TODO
+			}
+		});
+
+		ImGui::Window("Units", [&]() {
+			ImGui::Text("active units %d", players_.size());
 		});
 	}
 

@@ -30,6 +30,8 @@ namespace zombie {
 		sdl::Window::setResizeable(Configuration::getInstance().isWindowResizable());
 		sdl::Window::setFullScreen(Configuration::getInstance().isWindowMaximized());
 		sdl::Window::setMinSize(400, 400);
+
+        // sdl::ImGuiWindow::setShowDemoWindow(true);
 	}
 
 	ZombieWindow::~ZombieWindow() {
