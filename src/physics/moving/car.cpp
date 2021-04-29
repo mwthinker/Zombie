@@ -7,33 +7,19 @@
 
 namespace zombie {
 
-	Car::Car(float mass, float life, float width, float length)
-		: length_{length}
-		, width_{width}
-		, mass_{mass} {
-	}
-
-	Unit* Car::getDriver() const {
-		return driver_;
-	}
-
-	void Car::setDriver(Unit* driver) {
-		driver_ = driver;
+	Car::Car(const CarProperties& properties)
+		: properties_{properties} {
 	}
 
 	void Car::updatePhysics(double time, double timeStep) {
-		Input input{};
+		Input input = getInput();
 		bool brake = true;
-		if (driver_ != nullptr) {
-			input = driver_->getInput();
-			brake = false;
-		}
 		b2Vec2 force = getDirectionVector();
 
 		// Accelate or decelerate
 		float throttle = 0.0f;
 		if (input.forward && !input.backward) {
-			throttle = 20.0;
+			throttle = 100.0;
 		} else if (!input.forward && input.backward) {
 			throttle = -20.0;
 		}
@@ -50,7 +36,7 @@ namespace zombie {
 
 		steeringAngle_ = 0.4f * steering;
 
-		applyFriction(brake, 2.0f, 2.0f, 100.0f, 100.0f);
+		applyFriction(brake, 1.0f, 1.0f, 10.0f, 10.0f);
 
 		carEventHandler(CarEvent::Moved);
 
@@ -90,11 +76,11 @@ namespace zombie {
 		body_ = world.CreateBody(&bodyDef);
 		{
 			b2PolygonShape dynamicBox;
-			dynamicBox.SetAsBox(0.5f *length_, 0.5f * width_); // Expected parameters is half the side.
+			dynamicBox.SetAsBox(0.5f * properties_.length, 0.5f * properties_.width); // Expected parameters is half the side.
 
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = &dynamicBox;
-			fixtureDef.density = mass_ / (length_ * width_);
+			fixtureDef.density = properties_.mass / (properties_.length * properties_.width);
 			fixtureDef.friction = 0.3f;
 			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
 			body_->CreateFixture(&fixtureDef);

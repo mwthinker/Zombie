@@ -8,6 +8,8 @@
 
 #include "humanplayer.h"
 #include "zombieplayer.h"
+#include "carplayer.h"
+
 #include "configuration.h"
 
 #include <sdl/opengl.h>
@@ -68,6 +70,15 @@ namespace zombie {
 			unit->setEnabled(true);
 			unit->setAwake(true);
 			return std::make_unique<ZombiePlayer>(std::move(unit));
+		}
+
+		CarPlayerPtr createCarPlayer(PhysicEngine& physicEngine, const CarProperties& properties, DevicePtr device, Position pos = Zero) {
+			auto car = std::make_unique<Car>(properties);
+			physicEngine.add(car.get());
+			car->setState(State{pos, Zero, random(0.f, 2 * Pi), 0.f});
+			car->setEnabled(true);
+			car->setAwake(true);
+			return std::make_unique<CarPlayer>(device, std::move(car));
 		}
 
 	}
@@ -253,6 +264,10 @@ namespace zombie {
 
 	void ZombieGame::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
 		ImGui::Window("Factory", [&]() {
+			if (ImGui::Button("Create Car")) {
+				players_.push_back(factory::createCarPlayer(engine_, CarProperties{}, keyboard_, drawDebugCircle_.position));
+			}
+
 			if (ImGui::Button("Create Zombie")) {
 				players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugCircle_.position));
 			}
@@ -265,7 +280,7 @@ namespace zombie {
 			}
 
 			if (ImGui::Button("Clear Zombies")) {
-				// TODO
+				players_.clear();
 			}
 		});
 

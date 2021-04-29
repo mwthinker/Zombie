@@ -24,10 +24,6 @@ namespace zombie {
 		~PhysicEngine();
 		
 		void update(double timeStep);
-		
-		void add(Unit* unit);
-		
-		void add(Car* car);
 
 		// Add a generic object to the engine.
 		void add(PhysicalObject* object);

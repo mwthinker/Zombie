@@ -80,6 +80,9 @@ set(SOURCES_ZOMBIE
 	
 	src/zombieplayer.cpp
 	src/zombieplayer.h
+	src/carplayer.cpp
+	src/carplayer.h
+
 	src/zombiegame.cpp
 	src/zombiegame.h
 	src/zombiewindow.h

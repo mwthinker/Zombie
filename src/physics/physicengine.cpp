@@ -28,21 +28,6 @@ namespace zombie {
 		time_ += timeStep;
 	}
 
-	void PhysicEngine::add(Unit* unit) {
-		assert(dynamic_cast<PhysicalObject*>(unit) != nullptr); // Test, PhysicalObject type and not null.
-		(static_cast<PhysicalObject*>(unit))->createBody(world_);
-		unit->setEnabled(false);
-		unit->setAwake(false);
-		//unit->getWeapon()->init(&world_, &gameInterface_);
-	}
-
-	void PhysicEngine::add(Car* car) {
-		assert(dynamic_cast<PhysicalObject*>(car) != nullptr); // Test, PhysicalObject type and not null.
-		(static_cast<PhysicalObject*>(car))->createBody(world_);
-		car->setEnabled(false);
-		car->setAwake(false);
-	}
-
 	void PhysicEngine::add(PhysicalObject* object) {
 		assert(object != nullptr);
 		object->createBody(world_);
@@ -92,27 +77,18 @@ namespace zombie {
 		// Is there an object near by?
 		if (fixture != nullptr) {
 			// Safe to do, because all userdata must be a PhysicalObject!
-			auto ob = static_cast<PhysicalObject*>(nullptr); // (fixture->GetUserData());
+			auto ob = reinterpret_cast<PhysicalObject*>(fixture->GetUserData().pointer);
 
 			if (auto car = dynamic_cast<Car*>(ob)) {
-				// Car is empty?
-				if (car->getDriver() == nullptr) {
-					// The player is able to drive?
-					car->setDriver(unit);
-					unit->setEnabled(false);
-				}
+				// ToDo
 			} else if (auto wItem = dynamic_cast<WeaponItem*>(ob)) {
-				// Change the weapon.
-				unit->setWeapon(wItem->getWeapon());
-				//remove(wItem);
+				// Todo
 			}
 		}
 	}
 
 	void PhysicEngine::doAction(Car* car) {
-		auto driver = car->getDriver();
-		driver->setEnabled(true);
-		car->setDriver(nullptr);
+		// Todo
 	}
 
 }

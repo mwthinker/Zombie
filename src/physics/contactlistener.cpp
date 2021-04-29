@@ -11,11 +11,11 @@ namespace zombie {
 	namespace {
 
 		void collision(GameInterface& game, float impulse, PhysicalObject* ob) {
-			if (Car* car = dynamic_cast<Car*>(ob)) {
+			if (auto car = dynamic_cast<Car*>(ob)) {
 				game.collision(impulse, *car);
-			} else if (Unit* unit = dynamic_cast<Unit*>(ob)) {
+			} else if (auto unit = dynamic_cast<Unit*>(ob)) {
 				game.collision(impulse, *unit);
-			} else if (Building* building = dynamic_cast<Building*>(ob)) {
+			} else if (auto building = dynamic_cast<Building*>(ob)) {
 				game.collision(impulse, *building);
 			}
 		}
@@ -58,8 +58,8 @@ namespace zombie {
 	}
 
 	void ContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {
-		auto ob1 = static_cast<PhysicalObject*>(nullptr);//contact->GetFixtureA()->GetUserData());
-		auto ob2 = static_cast<PhysicalObject*>(nullptr);//contact->GetFixtureB()->GetUserData());
+		auto ob1 = reinterpret_cast<PhysicalObject*>(contact->GetFixtureB()->GetUserData().pointer);
+		auto ob2 = reinterpret_cast<PhysicalObject*>(contact->GetFixtureB()->GetUserData().pointer);
 		float maxImpulse = 0;
 		for (int32 i = 0; i < impulse->count; ++i) {
 			maxImpulse = b2Max(maxImpulse, impulse->normalImpulses[i]);

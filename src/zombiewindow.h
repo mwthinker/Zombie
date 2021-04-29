@@ -16,7 +16,7 @@ namespace zombie {
 	public:
 		explicit ZombieWindow(bool skipMenu = false);
 
-		~ZombieWindow();
+		~ZombieWindow() override;
 
 	private:
 		void imGuiPreUpdate(const sdl::DeltaTime& deltaTime) override;

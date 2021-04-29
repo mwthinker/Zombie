@@ -14,7 +14,7 @@ namespace zombie {
 
 	class ZombiePlayer : public Player {
 	public:
-		ZombiePlayer(std::unique_ptr<Unit> unit);
+		explicit ZombiePlayer(std::unique_ptr<Unit> unit);
 
 		void updateInput(double time, double deltaTime) override;
 		void draw(sdl::Graphic& graphic) override;

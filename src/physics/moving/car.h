@@ -9,11 +9,16 @@
 
 namespace zombie {
 
-	class Unit;
-
 	enum class CarEvent {
 		Action,
 		Moved
+	};
+
+	struct CarProperties {
+		float mass = 10.f;
+		float life = 100.f;
+		float width = 1.f;
+		float length = 2.f;
 	};
 
 	// Defines the property of a car. The car has 4 wheels but is simulated as having 
@@ -22,13 +27,10 @@ namespace zombie {
 	public:
 		mw::PublicSignal<Car, CarEvent> carEventHandler;
 
-		Car(float mass, float life, float width, float length);
+		Car(const CarProperties& properties);
 
 		Car(const Car& car) = delete;
 		Car& operator=(const Car& car) = delete;
-
-		Unit* getDriver() const;
-		void setDriver(Unit* driver);
 
 		void updatePhysics(double time, double timeStept);
 
@@ -41,11 +43,11 @@ namespace zombie {
 		void setState(const State& state);
 
 		float getWidth() const {
-			return width_;
+			return properties_.width;
 		}
 
 		float getLength() const {
-			return length_;
+			return properties_.length;
 		}
 
 		bool isInsideViewArea(Position position) const override;
@@ -63,8 +65,7 @@ namespace zombie {
 		}
 
 		bool isInfected() const override {
-			// No driver, the car is seen as infected and therefore ignored by the zombies.
-			return driver_ == nullptr;
+			return false;
 		}
 
 		float getViewDistance() const override {
@@ -73,6 +74,14 @@ namespace zombie {
 
 		bool isDead() const override {
 			return false;
+		}
+
+		inline void setInput(Input input) {
+			input_ = input;
+		}
+
+		inline Input getInput() const {
+			return input_;
 		}
 
 	private:
@@ -92,11 +101,11 @@ namespace zombie {
 			float frictionLateralFrontWheel, float frictionLateralBackWheel);
 
 		b2Vec2 getFrontWheelPosition() const {
-			return body_->GetWorldPoint(b2Vec2(length_ * wheelDelta_, 0));
+			return body_->GetWorldPoint(b2Vec2(properties_.length * wheelDelta_, 0));
 		}
 
 		b2Vec2 getBackWheelPosition() const {
-			return body_->GetWorldPoint(b2Vec2(-length_ * wheelDelta_, 0));
+			return body_->GetWorldPoint(b2Vec2(-properties_.length * wheelDelta_, 0));
 		}
 
 		b2Vec2 getDirectionVector() const {
@@ -106,13 +115,11 @@ namespace zombie {
 		b2Body* body_{};
 		float steeringAngle_{0.f};
 		
-		float length_;
-		float width_;
-		float mass_;
+		CarProperties properties_{};
+
 		float currentTime_{0.f};
 		float wheelDelta_{0.4f};
-
-		Unit* driver_{};
+		Input input_{};
 	};
 
 }
