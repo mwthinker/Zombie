@@ -4,8 +4,6 @@
 #include "box2ddef.h"
 #include "auxiliary.h"
 
-#include <sdl/opengl.h>
-
 namespace zombie {
 
 	class Shot {
@@ -14,7 +12,7 @@ namespace zombie {
 			: position_{startPoint}
 			, direction_{endPoint - startPoint} {
 
-			float dist = direction_.Normalize();
+			auto dist = direction_.Normalize();
 			duration_ = dist / speed_;
 			angle_ = calculateAnglePointToPoint(startPoint, endPoint) * 180 / Pi;
 		}

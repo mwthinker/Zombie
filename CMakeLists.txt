@@ -37,10 +37,6 @@ set(SOURCES_ZOMBIE
 	src/physics/closestraycastcallback.h
 	src/physics/inviewquerycallback.h
 	src/physics/state.h
-
-	src/physics/stationary/tree.h
-	src/physics/stationary/building.h
-	src/physics/stationary/buildingproperties.h
 	
 	src/physics/moving/unit.cpp
 	src/physics/moving/unit.h

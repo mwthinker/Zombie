@@ -1,12 +1,9 @@
 #ifndef ZOMBIE_GAMEDATA_H
 #define ZOMBIE_GAMEDATA_H
 
-//#include "animation.h"
-//#include "weapons/explosion.h"
 #include "physics/moving/unitproperties.h"
 #include "physics/weapons/weaponproperties.h"
 #include "physics/weapons/missileproperties.h"
-#include "physics/Stationary/buildingproperties.h"
 
 #include <sdl/sound.h>
 #include <sdl/sprite.h>
@@ -117,8 +114,6 @@ namespace zombie {
 		UnitProperties getZombieProperties();
 
 		MissileProperties getMissileProperties();
-
-		MapProperties loadMapProperties();
 
 	private:
 		Configuration();

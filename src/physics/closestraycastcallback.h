@@ -39,7 +39,7 @@ namespace zombie {
 		}
 
 	private:
-		float closestFraction_{1.f};
+		float closestFraction_ = 1.f;
 		b2Fixture* fixture_{};
 		std::function<bool(b2Fixture*)> conditionFunc_;
 	};

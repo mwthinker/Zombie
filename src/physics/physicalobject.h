@@ -52,6 +52,10 @@ namespace zombie {
 		virtual void destroyBody() = 0;
 	};
 
+	inline PhysicalObject* castToPhysicalObject(b2FixtureUserData& userData) {
+		return reinterpret_cast<PhysicalObject*>(userData.pointer);
+	}
+
 }
 
 #endif

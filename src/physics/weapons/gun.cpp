@@ -25,11 +25,11 @@ namespace zombie {
 
 			// Did bullet hit something?
 			if (fixture != nullptr) {
-				auto physicalObject = static_cast<PhysicalObject*>(nullptr);// fixture->GetUserData());
+				auto physicalObject = castToPhysicalObject(fixture->GetUserData());
 
-				if (Unit* target = dynamic_cast<Unit*>(physicalObject)) {
+				if (auto target = dynamic_cast<Unit*>(physicalObject)) {
 					gameInterface.shotHit(shooter.getPosition(), hitPosition, *target);
-					// Target alive?
+					
 					if (!target->isDead()) {
 						target->updateHealthPoint(-damage);
 					}
@@ -90,10 +90,6 @@ namespace zombie {
 	void Gun::initEngine(b2World* world, GameInterface* gameInterface) {
 		gameInterface_ = gameInterface;
 		world_ = world;
-	}
-
-	WeaponInterfacePtr Gun::clone() const {
-		return std::make_shared<Gun>(*this);
 	}
 
 }

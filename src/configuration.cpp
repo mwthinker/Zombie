@@ -480,7 +480,7 @@ namespace zombie {
 		try {
 			return missilePropertiesMap_.at(std::string("missile"));
 		} catch (const std::out_of_range&) {
-			return MissileProperties();
+			return {};
 		}
 	}
 
@@ -491,14 +491,14 @@ namespace zombie {
 		//unitProperties.moveAnimation_ = loadAnimation(unitTag["moveAnimation"]);
 		//unitProperties.dieAnimation_ = loadAnimation(unitTag["dieAnimation"]);
 		//unitProperties.injuredAnimation_ = loadAnimation(unitTag["injuredAnimation"]);
-		unitProperties.grip = Position(unitTag["moveImageGripX"].get<float>(), unitTag["moveImageGripY"].get<float>());
+		//unitProperties.grip = Position(unitTag["moveImageGripX"].get<float>(), unitTag["moveImageGripY"].get<float>());
 		unitProperties.mass = unitTag["mass"].get<float>();
 		unitProperties.radius = unitTag["radius"].get<float>();
 		unitProperties.life = unitTag["life"].get<float>();
 		unitProperties.walkingSpeed = unitTag["walkingSpeed"].get<float>();
 		unitProperties.runningSpeed = unitTag["runningSpeed"].get<float>();
 		//unitProperties.stamina = unitTag["stamina"].get<float>();
-		unitProperties.weaponProperties = loadWeaponProperties(unitTag["weapon"].get<std::string>());
+		//unitProperties.weaponProperties = loadWeaponProperties(unitTag["weapon"].get<std::string>());
 		return unitProperties;
 	}
 
@@ -512,9 +512,9 @@ namespace zombie {
 
 	WeaponProperties Configuration::loadWeaponProperties(const json& unitTag) {
 		WeaponProperties properties;
-		properties.name = unitTag["name"].get<std::string>();
+		//properties.name = unitTag["name"].get<std::string>();
 		properties.type = WeaponProperties::Type::Bullet;
-		std::string s = unitTag["type"].get<std::string>();
+		auto s = unitTag["type"].get<std::string>();
 		if (unitTag["type"].get<std::string>() == "BULLET") {
 			properties.type = WeaponProperties::Type::Bullet;
 		} else if (unitTag["type"].get<std::string>() == "MISSILE") {
@@ -522,11 +522,11 @@ namespace zombie {
 		} else {
 			throw 1;
 		}
-		properties.symbolImage = loadSprite(unitTag["symbolImage"].get<std::string>());
+		//properties.symbolImage = loadSprite(unitTag["symbolImage"].get<std::string>());
 		properties.timeBetweenShots = unitTag["timeBetweenShots"].get<float>();
 		properties.clipSize = unitTag["clipSize"].get<int>();
-		properties.shootSound = loadSound(unitTag["shootSound"].get<std::string>());
-		properties.reloadSound = loadSound(unitTag["reloadSound"].get<std::string>());
+		//properties.shootSound = loadSound(unitTag["shootSound"].get<std::string>());
+		//properties.reloadSound = loadSound(unitTag["reloadSound"].get<std::string>());
 		//properties.moveAnimation_ = loadAnimation(unitTag["moveAnimation"]);
 		properties.size = unitTag["size"].get<float>();
 		properties.moveImageGrip = Position(unitTag["moveImageGripX"].get<float>(), unitTag["moveImageGripY"].get<float>());
@@ -562,58 +562,12 @@ namespace zombie {
 
 	MissileProperties Configuration::loadMissileProperties(const json& unitTag) {
 		MissileProperties properties;
-		properties.name = unitTag["name"].get<std::string>();
+		//properties.name = unitTag["name"].get<std::string>();
 		properties.mass = unitTag["mass"].get<float>();
 		properties.width = unitTag["width"].get<float>();
 		properties.length = unitTag["length"].get<float>();
 		//properties.animation_ = loadAnimation(unitTag["animation"]);
-		properties.moveSound = loadSound(unitTag["moveSound"].get<std::string>());
-		return properties;
-	}
-
-	MapProperties Configuration::loadMapProperties() {
-		MapProperties properties;
-		properties.name_ = rootMap_["name"].get<std::string>();
-
-		for (const auto& child : rootMap_["objects"]) {
-			std::string objectType = child["objectType"].get<std::string>();
-			if (objectType == "building") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::Building;
-				ob.geom_ = loadPolygon(child["geom"].get<std::string>());
-				properties.positions_.push_back(ob);
-			} else if (objectType == "grass") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::Grass;
-				ob.geom_ = loadPolygon(child["geom"].get<std::string>());
-				properties.positions_.push_back(ob);
-			} else if (objectType == "tilepoint") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::TilePoint;
-				ob.geom_.push_back(loadPoint(child["geom"].get<std::string>()));
-				properties.positions_.push_back(ob);
-			} else if (objectType == "tree") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::Tree;
-				ob.geom_.push_back(loadPoint(child["geom"].get<std::string>()));
-				properties.positions_.push_back(ob);
-			} else if (objectType == "water") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::Water;
-				ob.geom_ = loadPolygon(child["geom"].get<std::string>());
-				properties.positions_.push_back(ob);
-			} else if (objectType == "spawningpoint") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::SpawningPoint;
-				ob.geom_.push_back(loadPoint(child["geom"].get<std::string>()));
-				properties.positions_.push_back(ob);
-			} else if (objectType == "car spawningpoint") {
-				MapProperties::Object ob;
-				ob.type_ = MapProperties::ObjectType::CarSpawningPoint;
-				ob.geom_.push_back(loadPoint(child["geom"].get<std::string>()));
-				properties.positions_.push_back(ob);
-			}
-		}
+		//properties.moveSound = loadSound(unitTag["moveSound"].get<std::string>());
 		return properties;
 	}
 

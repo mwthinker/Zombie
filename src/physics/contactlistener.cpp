@@ -2,7 +2,6 @@
 #include "box2ddef.h"
 #include "physics/moving/car.h"
 #include "physics/moving/unit.h"
-#include "physics/Stationary/building.h"
 
 #include <sdl/opengl.h>
 
@@ -15,8 +14,6 @@ namespace zombie {
 				game.collision(impulse, *car);
 			} else if (auto unit = dynamic_cast<Unit*>(ob)) {
 				game.collision(impulse, *unit);
-			} else if (auto building = dynamic_cast<Building*>(ob)) {
-				game.collision(impulse, *building);
 			}
 		}
 
@@ -25,20 +22,16 @@ namespace zombie {
 			auto fixtureB = contact->GetFixtureB();
 
 			// Make sure only one of the fixtures was a sensor.
-			bool sensorA = fixtureA->IsSensor();
-			bool sensorB = fixtureB->IsSensor();
-			if (sensorA == sensorB) {
+			if (fixtureA->IsSensor() == fixtureB->IsSensor()) {
 				return false;
 			}
-
-			auto obA = static_cast<PhysicalObject*>(nullptr);// fixtureA->GetBody()->GetUserData());
-			auto obB = static_cast<PhysicalObject*>(nullptr);//(fixtureB->GetBody()->GetUserData());
-			auto mObA = dynamic_cast<MovingObject*>(obA);
-			auto mObB = dynamic_cast<MovingObject*>(obB);
+			
+			auto mObA = castToMovingObject(contact->GetFixtureB()->GetUserData());
+			auto mObB = castToMovingObject(contact->GetFixtureB()->GetUserData());
 
 			// Make sure both are moving objects.
-			if (mObA != nullptr && mObB != nullptr && mObA && mObB) {
-				if (sensorA) {
+			if (mObA && mObB) {
+				if (fixtureA->IsSensor()) {
 					looker = mObA;
 					target = mObB;
 				} else {
@@ -50,7 +43,7 @@ namespace zombie {
 			return false;
 		}
 
-	} // Anonymous namespace.
+	}
 
 	ContactListener::ContactListener(GameInterface& gameInterface, float impulseThreshold)
 		: gameInterface_{gameInterface}
@@ -58,8 +51,8 @@ namespace zombie {
 	}
 
 	void ContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {
-		auto ob1 = reinterpret_cast<PhysicalObject*>(contact->GetFixtureB()->GetUserData().pointer);
-		auto ob2 = reinterpret_cast<PhysicalObject*>(contact->GetFixtureB()->GetUserData().pointer);
+		auto ob1 = castToMovingObject(contact->GetFixtureA()->GetUserData());
+		auto ob2 = castToMovingObject(contact->GetFixtureB()->GetUserData());
 		float maxImpulse = 0;
 		for (int32 i = 0; i < impulse->count; ++i) {
 			maxImpulse = b2Max(maxImpulse, impulse->normalImpulses[i]);
@@ -74,16 +67,16 @@ namespace zombie {
 	}
 
 	void ContactListener::BeginContact(b2Contact* contact) {
-		MovingObject* object;
-		MovingObject* looker;
+		MovingObject* object = nullptr;
+		MovingObject* looker = nullptr;
 		if (getVisibleObject(contact, object, looker)) {
 			looker->addSeenObject(object);
 		}
 	}
 
 	void ContactListener::EndContact(b2Contact* contact) {
-		MovingObject* object;
-		MovingObject* looker;
+		MovingObject* object = nullptr;
+		MovingObject* looker = nullptr;
 		if (getVisibleObject(contact, object, looker)) {
 			looker->removeSeenObject(object);
 		}

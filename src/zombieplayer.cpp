@@ -12,8 +12,8 @@
 namespace zombie {
 
 	ZombiePlayer::ZombiePlayer(std::unique_ptr<Unit> unit)
-		: findNewTargetTime_{random() * 3}
-		, timeToUpdateAngleDirection_{random() * 1}
+		: findNewTargetTime_{random(0.f, 3.f)}
+		, timeToUpdateAngleDirection_{random()}
 		, targetAngle_{unit->getDirection()}
 		, unit_{std::move(unit)} {
 	}
@@ -22,13 +22,13 @@ namespace zombie {
 		Input input{};
 
 		if (time > findNewTargetTime_) {
-			findNewTargetTime_ = random() * 3 + static_cast<float>(time);
+			findNewTargetTime_ = random(0.f, 3.f) + static_cast<float>(time);
 
 			target_ = findUninfectedTarget(unit_->getPosition(), unit_->getVisibleObjects());
 		}
 
 		if (time > timeToUpdateAngleDirection_) {
-			timeToUpdateAngleDirection_ = random() * 1 + static_cast<float>(time);
+			timeToUpdateAngleDirection_ = random() + static_cast<float>(time);
 
 			// Has a target?
 			if (target_ != nullptr && target_->isEnabled() && !target_->isDead()) {
@@ -36,22 +36,25 @@ namespace zombie {
 				targetAngle_ = std::atan2(dir.y, dir.x);
 				forward_ = true;
 
-				double distSquared = dir.LengthSquared();
+				auto distSquared = dir.LengthSquared();
+				
 				// Target is in range?
-				if (distSquared < unit_->getWeapon()->getRange() * unit_->getWeapon()->getRange()) {
+				if (auto& weapon = unit_->getWeapon();
+					weapon != nullptr && distSquared < weapon->getRange() * weapon->getRange()) {
+					
 					// Attack!
 					input.shoot = true;
 				}
 			} else {
-				targetAngle_ +=  (random() - 0.5f) * 2 * Pi * 2 * 0.05f;
-				forward_ = random() > 0.25;
+				targetAngle_ +=  random(-0.5f, 0.5f) * 2.f * Pi * 2.f * 0.05f;
+				forward_ = random() > 0.25f;
 			}
 		}
 
-		double diffAngle = calculateDifferenceBetweenAngles(targetAngle_, unit_->getDirection());
+		auto diffAngle = calculateDifferenceBetweenAngles(targetAngle_, unit_->getDirection());
 
 		// Turn?
-		if (std::abs(diffAngle) > 0.1) {
+		if (std::abs(diffAngle) > 0.1f) {
 			if (diffAngle > 0) {
 				input.turnLeft = true;
 			} else {
@@ -77,20 +80,16 @@ namespace zombie {
 
 	MovingObject* ZombiePlayer::findUninfectedTarget(Position position, const std::list<MovingObject*>& units) const {
 		MovingObject* target = nullptr;
-
-		float distant = 100;
+		float distance = 100.f;
 		for (auto unit : units) {
-			// Not infected?
 			if (!unit->isInfected()) {
-				float tmp = (position - unit->getPosition()).LengthSquared();
-				// Closer?
-				if (tmp < distant) {
+				auto tmp = (position - unit->getPosition()).LengthSquared();
+				if (tmp < distance) {
 					target = unit;
-					distant = tmp;
+					distance = tmp;
 				}
 			}
 		}
-
 		return target;
 	}
 

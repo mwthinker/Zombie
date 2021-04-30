@@ -28,8 +28,6 @@ namespace zombie {
 
 		void initEngine(b2World* world, GameInterface* gameInterface);
 
-		WeaponInterfacePtr clone() const override;
-
 	private:
 		GameInterface* gameInterface_{};
 		b2World* world_{};

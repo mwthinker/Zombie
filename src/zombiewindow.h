@@ -28,13 +28,13 @@ namespace zombie {
 		void initPreLoop() override;
 
 		std::unique_ptr<ZombieGame> zombieGame_;
-		bool skipMenu_{};
+		bool skipMenu_ = false;
 		sdl::Graphic graphic_;
 		sdl::Shader shader_;
 		sdl::TextureView background_;
-		ImFont* titleFont_{};
-		ImFont* buttonFont_{};
-		ImFont* debugFont_{};
+		ImFont* titleFont_ = nullptr;
+		ImFont* buttonFont_ = nullptr;
+		ImFont* debugFont_ = nullptr;
 	};
 
 }

@@ -16,8 +16,6 @@ namespace zombie {
 
 		Missile(GameInterface* gameInterface, float width, float length, float mass);
 
-		virtual ~Missile() = default;
-
 		void create(Position position, float angle, float speed, float explodeTime, float damage, float explosionRadius, float force);
 
 		void updatePhysics(double time, double timeStep);
@@ -43,8 +41,7 @@ namespace zombie {
 
 		void destroyBody() override {
 			if (body_ != nullptr) {
-				b2World* world = body_->GetWorld();
-				if (world != nullptr) {
+				if (auto world = body_->GetWorld(); world != nullptr) {
 					world->DestroyBody(body_);
 				}
 				body_ = nullptr;

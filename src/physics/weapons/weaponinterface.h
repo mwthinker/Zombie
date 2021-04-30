@@ -13,7 +13,6 @@ namespace zombie {
 	class WeaponInterface;
 	using WeaponInterfacePtr = std::shared_ptr<WeaponInterface>;
 
-	// Describes a Weapon and is responsible of shooting.
 	class WeaponInterface {
 	public:
 		virtual ~WeaponInterface() = default;
@@ -30,7 +29,7 @@ namespace zombie {
 
 		virtual int getBulletsInWeapon() const = 0;
 
-		// Must be called by ZombieEngine.
+		// Todo! Remove or hide. Must be called by ZombieEngine.
 		virtual void initEngine(b2World* world_, GameInterface* gameInterface) {
 		}
 

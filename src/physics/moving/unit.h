@@ -66,7 +66,7 @@ namespace zombie {
 			return properties_.infected;
 		}
 
-		WeaponPtr getWeapon() const {
+		const WeaponPtr& getWeapon() const {
 			return weapon_;
 		}
 
@@ -87,10 +87,6 @@ namespace zombie {
 		}
 
 		b2Body* getBody() const override;
-
-		Position getGrip() const {
-			return properties_.grip;
-		}
 
 	private:
 		void createBody(b2World& world) override;

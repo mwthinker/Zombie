@@ -3,7 +3,6 @@
 #include "physics/moving/unit.h"
 #include "physics/moving/car.h"
 #include "physics/weapons/missile.h"
-#include "physics/Stationary/building.h"
 #include "physics/weapons/weaponitem.h"
 #include "physics/closestraycastcallback.h"
 

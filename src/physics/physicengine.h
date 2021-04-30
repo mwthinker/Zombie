@@ -8,10 +8,7 @@
 namespace zombie {
 
 	// Forward declarations.
-	class Weapon;
 	class GameInterface;
-	class Missile;
-	class Building;
 	class Unit;
 	class Car;
 	class PhysicalObject;
@@ -50,10 +47,10 @@ namespace zombie {
 		GameInterface& gameInterface_;
 		ContactListener contactListener_;
 		b2World world_;
-		bool started_{};
-		double time_{};
+		bool started_ = false;
+		double time_ = 0.0;
 
-		float impulseThreshold_{};
+		float impulseThreshold_ = 0.f;
 	};
 
 }
