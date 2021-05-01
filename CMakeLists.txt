@@ -24,7 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Source files.
 set(SOURCES_ZOMBIE
 	# Graphic related
-	src/graphics/drawdebugcircle.h
+	src/graphics/drawdebugarrow.h
 
 	# Physical
 	src/physics/physicalobject.cpp

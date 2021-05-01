@@ -37,4 +37,8 @@ namespace zombie {
 		//graphic.addCircleOutline({pos.x, pos.y}, unit_->getViewDistance(), 0.04f, sdl::color::html::Firebrick);
 	}
 
+	PhysicalObject* CarPlayer::getPhysicalObject() {
+		return car_.get();
+	}
+
 }

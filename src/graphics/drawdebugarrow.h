@@ -1,5 +1,5 @@
-#ifndef ZOMBIE_DRAWABLE_H
-#define ZOMBIE_DRAWABLE_H
+#ifndef ZOMBIE_DRAWDEBUGARROW_H
+#define ZOMBIE_DRAWDEBUGARROW_H
 
 #include "input.h"
 
@@ -8,7 +8,7 @@
 
 namespace zombie {
 
-	class DrawDebugCircle {
+	class DrawDebugArrow {
 	public:
 		Position position = Zero;
 

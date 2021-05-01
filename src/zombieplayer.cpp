@@ -78,6 +78,10 @@ namespace zombie {
 		return unit_.get();;
 	}
 
+	PhysicalObject* ZombiePlayer::getPhysicalObject() {
+		return unit_.get();
+	}
+
 	MovingObject* ZombiePlayer::findUninfectedTarget(Position position, const std::list<MovingObject*>& units) const {
 		MovingObject* target = nullptr;
 		float distance = 100.f;

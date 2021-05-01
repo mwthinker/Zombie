@@ -9,7 +9,7 @@
 #include "physics/moving/unitproperties.h"
 
 #include "player.h"
-#include "graphics/drawdebugcircle.h"
+#include "graphics/drawdebugarrow.h"
 
 #include <sdl/graphic.h>
 #include <sdl/sprite.h>
@@ -104,23 +104,20 @@ namespace zombie {
 		glm::mat4 screenToClip_{};
 		glm::mat4 worldToCamera_{};
 		glm::mat4 cameraToClip_{};
+		Viewport viewport_{};
 
 		Game game_;
 		sdl::Music music_;
 
-		Position viewPosition_;
-		Position refViewPosition_;
-
 		DevicePtr keyboard_;
 
 		std::vector<std::unique_ptr<Player>> players_;
-		DrawDebugCircle drawDebugCircle_;
+		DrawDebugArrow drawDebugArrow_;
 		PhysicEngine engine_;
 
 		// Fix timestep.
 		double timeStep_{1.0/60.0};
 		double accumulator_{};
-		Viewport viewport_{};
 	};
 
 }

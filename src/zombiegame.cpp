@@ -135,7 +135,7 @@ namespace zombie {
 				switch (windowEvent.button.button) {
 					case SDL_BUTTON_LEFT: {
 						auto pos = getMatrix(Space::Screen, Space::World) * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
-						drawDebugCircle_.position = {pos.x, pos.y};
+						drawDebugArrow_.position = {pos.x, pos.y};
 						break;
 					}
 				}
@@ -216,7 +216,6 @@ namespace zombie {
 			music_.play(-1);
 		}
 
-
 		worldToCamera_ = glm::mat4{1};
 		cameraToClip_ = glm::ortho(-10.f, 10.f, -10.f, 10.f);
 		keyboard_ = std::make_shared<InputKeyboard>(createDefaultKeyboardKeys());
@@ -259,33 +258,37 @@ namespace zombie {
 			player->draw(graphic);
 		}
 
-		drawDebugCircle_.draw(graphic);
+		drawDebugArrow_.draw(graphic);
 	}
 
 	void ZombieGame::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
 		ImGui::Window("Factory", [&]() {
 			if (ImGui::Button("Create Car")) {
-				players_.push_back(factory::createCarPlayer(engine_, CarProperties{}, keyboard_, drawDebugCircle_.position));
+				players_.push_back(factory::createCarPlayer(engine_, CarProperties{}, keyboard_, drawDebugArrow_.position));
 			}
 
 			if (ImGui::Button("Create Zombie")) {
-				players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugCircle_.position));
+				players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugArrow_.position));
 			}
 
 			if (ImGui::Button("Create 10 Zombies")) {
 				for (int i = 0; i < 10; ++i) {
 					b2Vec2 delta{random(0,5), random(0,5)};
-					players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugCircle_.position + delta));
-				} 
+					players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugArrow_.position + delta));
+				}
 			}
 
 			if (ImGui::Button("Clear Zombies")) {
+				for (auto& player : players_) {
+					engine_.remove(player->getPhysicalObject());
+				}
 				players_.clear();
 			}
 		});
 
 		ImGui::Window("Units", [&]() {
-			ImGui::Text("active units %d", players_.size());
+			ImGui::Text("Active units %d", players_.size());
+			ImGui::Text("Arrow position: (%4.2f, %4.2f)", drawDebugArrow_.position.x, drawDebugArrow_.position.y);
 		});
 	}
 

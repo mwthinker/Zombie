@@ -33,6 +33,10 @@ namespace zombie {
 			return unit_.get();
 		}
 
+		PhysicalObject* getPhysicalObject() override {
+			return unit_.get();
+		}
+
 	private:
 		DevicePtr device_;
 		std::unique_ptr<Unit> unit_;

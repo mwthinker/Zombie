@@ -21,6 +21,8 @@ namespace zombie {
 
 		MovingObject* getMovingObject() const;
 
+		PhysicalObject* getPhysicalObject() override;
+
 	private:
 		MovingObject* findUninfectedTarget(Position position, const std::list<MovingObject*>& units) const;
 

@@ -26,7 +26,7 @@ namespace zombie {
 				return false;
 			}
 			
-			auto mObA = castToMovingObject(contact->GetFixtureB()->GetUserData());
+			auto mObA = castToMovingObject(contact->GetFixtureA()->GetUserData());
 			auto mObB = castToMovingObject(contact->GetFixtureB()->GetUserData());
 
 			// Make sure both are moving objects.

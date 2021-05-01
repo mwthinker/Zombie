@@ -16,6 +16,8 @@ namespace zombie {
 		void updateInput(double time, double deltaTime) override;
 		void draw(sdl::Graphic& graphic) override;
 
+		PhysicalObject* getPhysicalObject() override;
+
 	private:
 		DevicePtr device_;
 		std::unique_ptr<Car> car_;
