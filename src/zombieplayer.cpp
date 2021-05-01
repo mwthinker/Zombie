@@ -31,7 +31,7 @@ namespace zombie {
 			timeToUpdateAngleDirection_ = random() + static_cast<float>(time);
 
 			// Has a target?
-			if (target_ != nullptr && target_->isEnabled() && !target_->isDead()) {
+			if (false && target_ != nullptr && target_->isEnabled() && !target_->isDead()) {
 				auto dir = target_->getPosition() - unit_->getPosition();
 				targetAngle_ = std::atan2(dir.y, dir.x);
 				forward_ = true;
