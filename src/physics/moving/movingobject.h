@@ -55,11 +55,6 @@ namespace zombie {
 		std::list<MovingObject*> objectsSeen_;
 	};
 
-	inline MovingObject* castToMovingObject(b2FixtureUserData& userData) {
-		auto obA = reinterpret_cast<PhysicalObject*>(userData.pointer);
-		return dynamic_cast<MovingObject*>(obA);
-	}
-
 }
 
 #endif

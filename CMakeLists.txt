@@ -73,6 +73,7 @@ set(SOURCES_ZOMBIE
 	src/logger.h
 	src/main.cpp
 	src/player.h
+	src/b2_user_settings.h
 	
 	src/zombieplayer.cpp
 	src/zombieplayer.h
@@ -87,6 +88,7 @@ set(SOURCES_ZOMBIE
 	# Cmake stuff
 	ExternalFetchContent.cmake
 	CPack.cmake
+	vcpkg.json
 )
 
 if (MSVC)
@@ -192,6 +194,7 @@ create_guid()
 
 target_compile_definitions(Zombie
 	PRIVATE
+		B2_USER_SETTINGS=1
 		GIT_VERSION="${GIT_HASH}"
 		PROJECT_VERSION="${PROJECT_VERSION}"
 )

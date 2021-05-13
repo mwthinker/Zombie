@@ -55,7 +55,7 @@ namespace zombie {
 		HumanPlayerPtr createHumanPlayer(PhysicEngine& physicEngine, const UnitProperties& properties, DevicePtr device, Position pos = Zero) {
 			WeaponPtr weapon;
 			auto unit = std::make_unique<Unit>(properties, weapon);
-			physicEngine.add(unit.get());
+			physicEngine.add(*unit);
 			unit->setState(State{pos, Zero, 0.f, 0.f});
 			unit->setEnabled(true);
 			unit->setAwake(true);
@@ -65,7 +65,7 @@ namespace zombie {
 		ZombiePlayerPtr createZombiePlayer(PhysicEngine& physicEngine, const UnitProperties& properties, Position pos = Zero) {
 			WeaponPtr weapon;
 			auto unit = std::make_unique<Unit>(properties, weapon);
-			physicEngine.add(unit.get());
+			physicEngine.add(*unit);
 			unit->setState(State{pos, Zero, random(0.f, 2*Pi), 0.f});
 			unit->setEnabled(true);
 			unit->setAwake(true);
@@ -74,7 +74,7 @@ namespace zombie {
 
 		CarPlayerPtr createCarPlayer(PhysicEngine& physicEngine, const CarProperties& properties, DevicePtr device, Position pos = Zero) {
 			auto car = std::make_unique<Car>(properties);
-			physicEngine.add(car.get());
+			physicEngine.add(*car);
 			car->setState(State{pos, Zero, random(0.f, 2 * Pi), 0.f});
 			car->setEnabled(true);
 			car->setAwake(true);
@@ -136,6 +136,10 @@ namespace zombie {
 					case SDL_BUTTON_LEFT: {
 						auto pos = getMatrix(Space::Screen, Space::World) * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
 						drawDebugArrow_.position = {pos.x, pos.y};
+						auto unit = engine_.query<Unit>(drawDebugArrow_.position);
+						if (unit != nullptr) {
+							spdlog::info("Found unit!!");
+						}
 						break;
 					}
 				}
@@ -280,7 +284,9 @@ namespace zombie {
 
 			if (ImGui::Button("Clear Zombies")) {
 				for (auto& player : players_) {
-					engine_.remove(player->getPhysicalObject());
+					if (auto ob = player->getPhysicalObject(); ob) {
+						engine_.remove(*ob);
+					}
 				}
 				players_.clear();
 			}

@@ -4,8 +4,34 @@
 #include "box2ddef.h"
 #include "physics/contactlistener.h"
 #include "actionhandler.h"
+#include "physics/physicalobject.h"
 
 namespace zombie {
+
+	class QueryCallback : public b2QueryCallback {
+	public:
+		explicit QueryCallback(b2World& world)
+			: world_{world} {
+		}
+
+		PhysicalObject* getPhysicalObject(const b2AABB& b2AABB) {
+			object_ = nullptr;
+			world_.QueryAABB(this, b2AABB);
+			return object_;
+		}
+
+		bool ReportFixture(b2Fixture* fixture) override {
+			object_ = nullptr;
+			if (fixture->IsSensor()) {
+				object_ = fixture->GetUserData().physicalObject;
+			}
+			return object_ != nullptr;
+		}
+
+	private:
+		b2World& world_;
+		PhysicalObject* object_ = nullptr;
+	};
 
 	// Forward declarations.
 	class GameInterface;
@@ -23,10 +49,10 @@ namespace zombie {
 		void update(double timeStep);
 
 		// Add a generic object to the engine.
-		void add(PhysicalObject* object);
+		void add(PhysicalObject& object);
 		
 		// Remove the object from the world.
-		void remove(PhysicalObject* object);
+		void remove(PhysicalObject& object);
 
 		// Get the current game time.
 		inline double getTime() const {
@@ -35,6 +61,14 @@ namespace zombie {
 
 		inline float getImpulseThreshold() const {
 			return impulseThreshold_;
+		}
+
+		template <typename Object>
+		Object* query(Position position) {
+			static_assert(std::is_base_of_v<PhysicalObject, Object>, "Object must be base of object");
+			auto delta = Position{0.5f, 0.5f};
+			auto ob = QueryCallback{world_}.getPhysicalObject({position - delta, position + delta});
+			return dynamic_cast<Object*>(ob);
 		}
 
 	private:

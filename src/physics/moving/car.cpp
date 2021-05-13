@@ -16,14 +16,14 @@ namespace zombie {
 		bool brake = true;
 		b2Vec2 force = getDirectionVector();
 
-		// Accelate or decelerate
+		// Accelerate or decelerate
 		float throttle = 0.0f;
 		if (input.forward && !input.backward) {
 			throttle = 100.0;
 		} else if (!input.forward && input.backward) {
 			throttle = -20.0;
 		}
-		body_->ApplyForce(throttle*force, getFrontWheelPosition(), true);
+		body_->ApplyForce(throttle * force, getFrontWheelPosition(), true);
 
 		float steering = 0.0f;
 
@@ -53,10 +53,7 @@ namespace zombie {
 	}
 
 	void Car::setState(const State& state) {
-		// Set the position and current angle.
 		body_->SetTransform(state.position_ - body_->GetPosition(), state.angle_ - body_->GetAngle());
-
-		// Set the velocity of the states.
 		body_->SetAngularVelocity(state.anglularVelocity_);
 		body_->SetLinearVelocity(body_->GetLinearVelocity());
 	}
@@ -66,12 +63,11 @@ namespace zombie {
 	}
 
 	void Car::createBody(b2World& world) {
-		// Box2d properties.
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position = Zero;
 		bodyDef.angle = 0;
-		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+		bodyDef.userData.physicalObject = this;
 		
 		body_ = world.CreateBody(&bodyDef);
 		{
@@ -82,7 +78,7 @@ namespace zombie {
 			fixtureDef.shape = &dynamicBox;
 			fixtureDef.density = properties_.mass / (properties_.length * properties_.width);
 			fixtureDef.friction = 0.3f;
-			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+			fixtureDef.userData.physicalObject = this;
 			body_->CreateFixture(&fixtureDef);
 		}
 	}

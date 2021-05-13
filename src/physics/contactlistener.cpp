@@ -26,8 +26,8 @@ namespace zombie {
 				return false;
 			}
 			
-			auto mObA = castToMovingObject(contact->GetFixtureA()->GetUserData());
-			auto mObB = castToMovingObject(contact->GetFixtureB()->GetUserData());
+			auto mObA = dynamic_cast<MovingObject*>(contact->GetFixtureA()->GetUserData().physicalObject);
+			auto mObB = dynamic_cast<MovingObject*>(contact->GetFixtureB()->GetUserData().physicalObject);
 
 			// Make sure both are moving objects.
 			if (mObA && mObB) {
@@ -51,8 +51,8 @@ namespace zombie {
 	}
 
 	void ContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {
-		auto ob1 = castToMovingObject(contact->GetFixtureA()->GetUserData());
-		auto ob2 = castToMovingObject(contact->GetFixtureB()->GetUserData());
+		auto ob1 = dynamic_cast<MovingObject*>(contact->GetFixtureA()->GetUserData().physicalObject);
+		auto ob2 = dynamic_cast<MovingObject*>(contact->GetFixtureB()->GetUserData().physicalObject);
 		float maxImpulse = 0;
 		for (int32 i = 0; i < impulse->count; ++i) {
 			maxImpulse = b2Max(maxImpulse, impulse->normalImpulses[i]);

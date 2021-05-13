@@ -106,6 +106,7 @@ namespace zombie {
 			file >> settings_;
 		} else {
 			spdlog::critical("[Configuration] Failed to load: {}", SettingsPath);
+			return;
 		}
 		
 		auto map = settings_["settings"]["map"].get<std::string>();
@@ -114,6 +115,7 @@ namespace zombie {
 			file >> rootMap_;
 		} else {
 			spdlog::critical("[Configuration] Fail to load: {}", map);
+			return;
 		}
 
 		loadAllWeaponProperties();

@@ -19,8 +19,6 @@ namespace zombie {
 		void updateInput(double time, double deltaTime) override;
 		void draw(sdl::Graphic& graphic) override;
 
-		MovingObject* getMovingObject() const;
-
 		PhysicalObject* getPhysicalObject() override;
 
 	private:

@@ -30,11 +30,10 @@ namespace zombie {
 
 	private:
 		void createBody(b2World& world) override {
-			// Box2d properties.
 			b2BodyDef bodyDef;
 			bodyDef.position.Set(x_, y_);
 			bodyDef.angle = 0.0;
-			bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+			bodyDef.userData.physicalObject = this;
 			body_ = world.CreateBody(&bodyDef);
 
 			// Add tensor. Should not be a physical object.
@@ -48,7 +47,7 @@ namespace zombie {
 				fixtureDef.density = 0.0f;
 				fixtureDef.friction = 0.0f;
 				fixtureDef.isSensor = true;
-				fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+				fixtureDef.userData.physicalObject = this;
 
 				// Add Body fixture.
 				body_->CreateFixture(&fixtureDef);
@@ -66,12 +65,10 @@ namespace zombie {
 		}
 
 		WeaponPtr weapon_;
-		float radius_{0.5f};
-		float x_{0.f};
-		float y_{0.f};
-
-
-		b2Body* body_{};
+		float radius_ = 0.5f;
+		float x_ = 0.f;
+		float y_ = 0.f;
+		b2Body* body_ = nullptr;
 	};
 
 }

@@ -4,6 +4,7 @@
 #include "box2ddef.h"
 
 #include <cassert>
+#include <memory>
 
 namespace zombie {
 
@@ -51,10 +52,6 @@ namespace zombie {
 		// Destroys the body. I.e. the body in no more a part of the box2d world.
 		virtual void destroyBody() = 0;
 	};
-
-	inline PhysicalObject* castToPhysicalObject(b2FixtureUserData& userData) {
-		return reinterpret_cast<PhysicalObject*>(userData.pointer);
-	}
 
 }
 

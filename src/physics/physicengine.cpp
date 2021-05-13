@@ -8,6 +8,11 @@
 
 namespace zombie {
 
+	namespace {
+
+		
+	}
+
 	PhysicEngine::PhysicEngine(GameInterface& gameInterface, float impulseThreshold)
 		: gameInterface_{gameInterface}
 		, contactListener_{gameInterface, impulseThreshold}
@@ -27,16 +32,14 @@ namespace zombie {
 		time_ += timeStep;
 	}
 
-	void PhysicEngine::add(PhysicalObject* object) {
-		assert(object != nullptr);
-		object->createBody(world_);
-		object->setEnabled(false);
-		object->setAwake(false);
+	void PhysicEngine::add(PhysicalObject& object) {
+		object.createBody(world_);
+		object.setEnabled(false);
+		object.setAwake(false);
 	}
 
-	void PhysicEngine::remove(PhysicalObject* object) {
-		assert(object != nullptr);
-		object->destroyBody();
+	void PhysicEngine::remove(PhysicalObject& object) {
+		object.destroyBody();
 	}
 
 	void PhysicEngine::unitEvent(Unit* unit, int eventType) {
@@ -76,13 +79,13 @@ namespace zombie {
 		// Is there an object near by?
 		if (fixture != nullptr) {
 			// Safe to do, because all userdata must be a PhysicalObject!
-			auto ob = reinterpret_cast<PhysicalObject*>(fixture->GetUserData().pointer);
+			auto ob = fixture->GetUserData().physicalObject;
 
-			if (auto car = dynamic_cast<Car*>(ob)) {
+			//if (auto car = std::dynamic_pointer_cast<Car>(ob)) {
 				// ToDo
-			} else if (auto wItem = dynamic_cast<WeaponItem*>(ob)) {
+			//} else if (auto wItem = std::dynamic_pointer_cast<WeaponItem>(ob)) {
 				// Todo
-			}
+			//}
 		}
 	}
 

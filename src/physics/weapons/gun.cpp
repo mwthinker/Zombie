@@ -25,9 +25,7 @@ namespace zombie {
 
 			// Did bullet hit something?
 			if (fixture != nullptr) {
-				auto physicalObject = castToPhysicalObject(fixture->GetUserData());
-
-				if (auto target = dynamic_cast<Unit*>(physicalObject)) {
+				if (auto target = dynamic_cast<Unit*>(fixture->GetUserData().physicalObject)) {
 					gameInterface.shotHit(shooter.getPosition(), hitPosition, *target);
 					
 					if (!target->isDead()) {

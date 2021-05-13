@@ -3,8 +3,6 @@
 
 #include "input.h"
 
-#include <memory>
-
 #include <sdl/graphic.h>
 
 namespace zombie {
@@ -20,8 +18,6 @@ namespace zombie {
 
 		virtual PhysicalObject* getPhysicalObject() = 0;
 	};
-
-	using PlayerPtr = std::shared_ptr<Player>;
 
 }
 

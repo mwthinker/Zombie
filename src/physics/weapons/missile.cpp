@@ -32,12 +32,11 @@ namespace zombie {
 	}
 
 	void Missile::createBody(b2World& world) {
-		// Box2d properties.
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position = Zero;
 		bodyDef.angle = 0;
-		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+		bodyDef.userData.physicalObject = this;
 
 		body_ = world.CreateBody(&bodyDef);
 
@@ -50,7 +49,7 @@ namespace zombie {
 			fixtureDef.shape = &dynamicBox;
 			fixtureDef.density = mass_ / (length_ * width_);
 			fixtureDef.friction = 0.3f;
-			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+			fixtureDef.userData.physicalObject = this;
 			body_->CreateFixture(&fixtureDef);
 		}
 
@@ -110,9 +109,8 @@ namespace zombie {
 		aabb.upperBound = explosionPosition + explosionRadius_ *  Position(0.5f, 0.5f);
 		body_->GetWorld()->QueryAABB(&queryCallback, aabb);
 
-		//for (auto fixture : queryCallback.foundFixtures) {
-			/* if (fixture->GetUserData() != nullptr) {
-				PhysicalObject* ob = static_cast<PhysicalObject*>(fixture->GetUserData());
+		for (auto fixture : queryCallback.foundFixtures) {
+			if (auto ob = fixture->GetUserData().physicalObject) {
 				if (auto unit = dynamic_cast<Unit*>(ob)) {
 					unit->updateHealthPoint(-damage_);
 					Position dir = unit->getPosition() - explosionPosition;
@@ -122,8 +120,7 @@ namespace zombie {
 					unit->getBody()->ApplyForceToCenter(force_ * dir, true);
 				}
 			}
-			*/
-		//}
+		}
 		explode_ = false;
 		gameInterface_->explosion(explosionPosition, explosionRadius_);
 		//body_->SetActive(false);

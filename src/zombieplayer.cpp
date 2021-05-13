@@ -74,10 +74,6 @@ namespace zombie {
         graphic.addLine({pos.x, pos.y}, glm::vec2{pos.x, pos.y} + glm::rotate(glm::vec2{1.f, 0.f}*0.5f, unit_->getDirection()), 0.1f, sdl::color::html::Firebrick);
 	} 
 
-	MovingObject* ZombiePlayer::getMovingObject() const {
-		return unit_.get();;
-	}
-
 	PhysicalObject* ZombiePlayer::getPhysicalObject() {
 		return unit_.get();
 	}

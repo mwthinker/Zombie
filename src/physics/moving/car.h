@@ -89,7 +89,7 @@ namespace zombie {
 
 		void destroyBody() override {
 			if (body_ != nullptr) {
-				b2World* world = body_->GetWorld();
+				auto world = body_->GetWorld();
 				if (world != nullptr) {
 					world->DestroyBody(body_);
 				}

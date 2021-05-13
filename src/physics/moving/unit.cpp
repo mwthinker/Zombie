@@ -28,7 +28,7 @@ namespace zombie {
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position = Zero;
 		bodyDef.angle = 0;
-		bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+		bodyDef.userData.physicalObject = this;
 
 		body_ = world.CreateBody(&bodyDef);
 		{ // Add tensor to make all objects inside the tenson visible.
@@ -41,8 +41,8 @@ namespace zombie {
 			fixtureDef.density = 0.0f;
 			fixtureDef.friction = 0.0f;
 			fixtureDef.isSensor = true;
-			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
-			
+			fixtureDef.userData.physicalObject = this;
+
 			body_->CreateFixture(&fixtureDef);
 		}
 		
@@ -55,7 +55,8 @@ namespace zombie {
 			fixtureDef.shape = &circle;
 			fixtureDef.density = properties_.mass / (Pi * properties_.radius * properties_.radius);
 			fixtureDef.friction = 0.0f;
-			fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+			fixtureDef.userData.physicalObject = this;
+			fixtureDef.isSensor = false;
 			
 			body_->CreateFixture(&fixtureDef);
 		}
@@ -95,6 +96,7 @@ namespace zombie {
 		if (input.forward && !input.backward) {
 			body_->ApplyForceToCenter(b2Vec2{move.x, move.y}, true);
 			unitEventHandler(UnitEvent::Walk);
+			spdlog::info("Force: {}", body_->GetPosition());
 		} else if (!input.forward && input.backward) {
 			body_->ApplyForceToCenter(-b2Vec2{move.x, move.y}, true);
 			unitEventHandler(UnitEvent::Walk);
@@ -105,7 +107,7 @@ namespace zombie {
 		}
 
 		// Add friction.
-		body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
+		//body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
 
 		// Turn left or right.
 		if (input.turnLeft && !input.turnRight) {
