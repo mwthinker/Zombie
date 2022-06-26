@@ -4,12 +4,12 @@
 #include "box2ddef.h"
 
 #include <cmath>
+#include <concepts>
 
 namespace zombie {
 
-	template <typename T>
+	template <typename T> requires std::floating_point<T>
 	T calculateDifferenceBetweenAngles(T firstAngle, T secondAngle) {
-		static_assert(std::is_signed<T>());
 		T difference = firstAngle - secondAngle;
 		while (difference < -Pi) difference += 2 * Pi;
 		while (difference > Pi) difference -= 2 * Pi;
@@ -20,14 +20,13 @@ namespace zombie {
 		return std::atan2(p2.y - p1.y, p2.x - p1.x);
 	}
 
-	template <typename T>
+	template <typename T> requires std::floating_point<T>
 	T calculateAnglePointToPoint(T x, T y, T pX, T pY) {
 		return std::atan2(pY-y, pX-x);
 	}
-
-	template <typename T>
-	constexpr T sign(const T& value) {
-		static_assert(std::is_signed<T>());
+	
+	template <typename T> requires std::is_signed_v<T>
+	constexpr T sign(T value) {
 		return value < 0 ? -1 : 1;
 	}
 

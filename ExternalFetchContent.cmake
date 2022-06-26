@@ -5,7 +5,7 @@ FetchContent_Declare(CppSdl2
 	GIT_REPOSITORY
 		https://github.com/mwthinker/CppSdl2.git
 	GIT_TAG
-		24e17bdd95024edadfabd2cb414034563978deb2
+		9bae1c86e168ecf05fd896b152b35e15bc709466
 )
 FetchContent_MakeAvailable(CppSdl2)
 
@@ -14,7 +14,7 @@ FetchContent_Declare(Signal
 	GIT_REPOSITORY
 		https://github.com/mwthinker/Signal.git
 	GIT_TAG
-		c05de2bf17961b7b094582802eff9107becfa08a
+		56a20197ab61a936cbdaace49c98fca50e1584ad 
 )
 FetchContent_MakeAvailable(Signal)
 
@@ -41,7 +41,7 @@ if (ZombieData_PrivateRepo_SSH OR ZombieData_PrivateRepo_HTTPS)
 	if (ZombieData_PrivateRepo_SSH)
 		set(ZombieData_PrivateRepo_URL "git@github.com:mwthinker/ZombieData.git")
 	endif ()
-	# Load data.
+
 	FetchContent_Declare(ZombieData
 		GIT_SHALLOW 1
 		GIT_REPOSITORY

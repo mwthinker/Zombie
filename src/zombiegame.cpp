@@ -48,6 +48,84 @@ namespace zombie {
 			return keyboardKeyCodes;
 		}
 
+		struct Settings {
+			float hertz = 60.0f;
+			int velocityIterations = 8;
+			int positionIterations = 3;
+			bool drawShapes = true;
+			bool drawJoints = true;
+			bool drawAABBs = false;
+			bool drawContactPoints = false;
+			bool drawContactNormals = false;
+			bool drawContactImpulse = false;
+			bool drawFrictionImpulse = false;
+			bool drawCOMs = false;
+			bool drawStats = false;
+			bool drawProfile = false;
+			bool enableWarmStarting = true;
+			bool enableContinuous = true;
+			bool enableSubStepping = false;
+			bool enableSleep = true;
+			bool pause = false;
+			bool singleStep = false;
+		};
+
+		Settings settings;
+
+		void imguiDebugTools() {
+			bool debug = true;
+
+			ImGui::Window("Tools", &debug, ImGuiWindowFlags_NoCollapse, []() {
+				if (ImGui::BeginTabBar("ControlTabs", ImGuiTabBarFlags_None)) {
+					if (ImGui::BeginTabItem("Controls")) {
+						ImGui::SliderInt("Vel Iters", &settings.velocityIterations, 0, 50);
+						ImGui::SliderInt("Pos Iters", &settings.positionIterations, 0, 50);
+						ImGui::SliderFloat("Hertz", &settings.hertz, 5.0f, 120.0f, "%.0f hz");
+
+						ImGui::Separator();
+
+						ImGui::Checkbox("Sleep", &settings.enableSleep);
+						ImGui::Checkbox("Warm Starting", &settings.enableWarmStarting);
+						ImGui::Checkbox("Time of Impact", &settings.enableContinuous);
+						ImGui::Checkbox("Sub-Stepping", &settings.enableSubStepping);
+
+						ImGui::Separator();
+
+						ImGui::Checkbox("Shapes", &settings.drawShapes);
+						ImGui::Checkbox("Joints", &settings.drawJoints);
+						ImGui::Checkbox("AABBs", &settings.drawAABBs);
+						ImGui::Checkbox("Contact Points", &settings.drawContactPoints);
+						ImGui::Checkbox("Contact Normals", &settings.drawContactNormals);
+						ImGui::Checkbox("Contact Impulses", &settings.drawContactImpulse);
+						ImGui::Checkbox("Friction Impulses", &settings.drawFrictionImpulse);
+						ImGui::Checkbox("Center of Masses", &settings.drawCOMs);
+						ImGui::Checkbox("Statistics", &settings.drawStats);
+						ImGui::Checkbox("Profile", &settings.drawProfile);
+
+						ImVec2 button_sz{-1, 0};
+						if (ImGui::Button("Pause (P)", button_sz)) {
+							settings.pause = !settings.pause;
+						}
+
+						if (ImGui::Button("Single Step (O)", button_sz)) {
+							settings.singleStep = !settings.singleStep;
+						}
+
+						if (ImGui::Button("Restart (R)", button_sz)) {
+							//RestartTest();
+						}
+
+						if (ImGui::Button("Quit", button_sz)) {
+							//glfwSetWindowShouldClose(g_mainWindow, GL_TRUE);
+						}
+
+						ImGui::EndTabItem();
+					}
+					ImGui::EndTabBar();
+				}
+				});
+		}
+
 	}
 
 	namespace factory {
@@ -138,7 +216,9 @@ namespace zombie {
 						drawDebugArrow_.position = {pos.x, pos.y};
 						auto unit = engine_.query<Unit>(drawDebugArrow_.position);
 						if (unit != nullptr) {
-							spdlog::info("Found unit!!");
+							spdlog::info("Found unit!");
+						} else {
+							spdlog::info("Unit not found!");
 						}
 						break;
 					}
@@ -244,6 +324,9 @@ namespace zombie {
 	}
 
 	void ZombieGame::draw(sdl::Graphic& graphic, double deltaTime) {
+		debugDraw_.SetGraphic(&graphic);
+		engine_.setDebugDraw(&debugDraw_);
+
 		glViewport(viewport_.x, viewport_.y, viewport_.w, viewport_.h);
 		updateGame(deltaTime);
 
@@ -262,7 +345,15 @@ namespace zombie {
 			player->draw(graphic);
 		}
 
+
+		uint32 flags = settings.drawShapes * b2Draw::e_shapeBit
+			| settings.drawJoints * b2Draw::e_jointBit
+			| settings.drawAABBs * b2Draw::e_aabbBit
+			| settings.drawCOMs * b2Draw::e_centerOfMassBit;
+		debugDraw_.SetFlags(flags);
+
 		drawDebugArrow_.draw(graphic);
+		engine_.debugDraw();
 	}
 
 	void ZombieGame::imGuiUpdate(const sdl::DeltaTime& deltaTime) {
@@ -293,12 +384,34 @@ namespace zombie {
 		});
 
 		ImGui::Window("Units", [&]() {
-			ImGui::Text("Active units %d", players_.size());
+			ImGui::Text("Active units %d", static_cast<int>(players_.size()));
 			ImGui::Text("Arrow position: (%4.2f, %4.2f)", drawDebugArrow_.position.x, drawDebugArrow_.position.y);
 		});
+
+		imguiDebugTools();
+
+		/*
+		ImGui::MainWindow("Main", [&]() {
+			engine_.debugDraw();
+			ImGui::Text("Active units %d", players_.size());
+			auto pos = ImGui::GetWindowPos();
+			ImGui::GetWindowDrawList()->AddCircle({100.f + pos.x, 100.f + pos.y}, 10.f, sdl::color::html::Bisque.toImU32());
+			//ImGui::GetWindowDrawList()->ca
+		});
+		*/
 	}
 
 	void ZombieGame::updateGame(double deltaTime) {
+		timeStep_ = 1.0 / settings.hertz;
+		
+		if (settings.pause) {
+			if (settings.singleStep) {
+				makeGameStep();
+				settings.singleStep = false;
+			}
+			return;
+		}
+
 		if (deltaTime > 0.25) {
 			// To avoid spiral of death.
 			deltaTime = 0.25;
@@ -312,7 +425,7 @@ namespace zombie {
 	}
 
 	void ZombieGame::makeGameStep() {
-		engine_.update(timeStep_);
+		engine_.update(timeStep_, settings.velocityIterations, settings.positionIterations);
 
 		auto time = engine_.getTime();
 		for (auto& player : players_) {

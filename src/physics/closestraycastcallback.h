@@ -3,14 +3,16 @@
 
 #include "box2ddef.h"
 
-#include <functional>
+#include <type_traits>
 
 namespace zombie {
 
+	template <typename ConditionFunc> requires std::is_invocable_r_v<bool, ConditionFunc, b2Fixture*>
 	class ClosestRayCastCallback : public b2RayCastCallback {
 	public:
-		ClosestRayCastCallback(std::function<bool(b2Fixture*)> conditionFunc)
-			: conditionFunc_{conditionFunc} {
+		// ConditionFunc in the form of bool(b2Fixture*)
+		explicit ClosestRayCastCallback(ConditionFunc&& conditionFunc)
+			: conditionFunc_{std::move(conditionFunc)} {
 		}
 
 		b2Fixture* getFixture() const {
@@ -41,7 +43,7 @@ namespace zombie {
 	private:
 		float closestFraction_ = 1.f;
 		b2Fixture* fixture_{};
-		std::function<bool(b2Fixture*)> conditionFunc_;
+		ConditionFunc conditionFunc_;
 	};
 
 }

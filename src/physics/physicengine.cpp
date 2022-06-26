@@ -22,11 +22,23 @@ namespace zombie {
 	}
 
 	PhysicEngine::~PhysicEngine() {
+		//world_.SetAllowSleeping(settings.m_enableSleep);
+		//world_.SetWarmStarting(settings.m_enableWarmStarting);
+		//world_.SetContinuousPhysics(settings.m_enableContinuous);
+		//world_.SetSubStepping(settings.m_enableSubStepping);
 	}
 
-	void PhysicEngine::update(double timeStep) {
+	void PhysicEngine::debugDraw() {
+		world_.DebugDraw();
+	}
+
+	void PhysicEngine::setDebugDraw(b2Draw* draw) {
+		world_.SetDebugDraw(draw);
+	}
+
+	void PhysicEngine::update(double timeStep, int velocityIterations, int positionIterations) {
 		// Update the objects physics interactions.
-		world_.Step(static_cast<float>(timeStep), 6, 2);
+		world_.Step(static_cast<float>(timeStep), velocityIterations, positionIterations);
 
 		// Move the time ahead.
 		time_ += timeStep;
@@ -81,11 +93,11 @@ namespace zombie {
 			// Safe to do, because all userdata must be a PhysicalObject!
 			auto ob = fixture->GetUserData().physicalObject;
 
-			//if (auto car = std::dynamic_pointer_cast<Car>(ob)) {
+			if (auto car = dynamic_cast<Car*>(ob)) {
 				// ToDo
-			//} else if (auto wItem = std::dynamic_pointer_cast<WeaponItem>(ob)) {
+			} else if (auto wItem = dynamic_cast<WeaponItem*>(ob)) {
 				// Todo
-			//}
+			}
 		}
 	}
 

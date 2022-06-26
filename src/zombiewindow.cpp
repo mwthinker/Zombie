@@ -113,10 +113,10 @@ namespace zombie {
 
 		shader_.useProgram();
 		if (zombieGame_) {
+			graphic_.clear();
 			auto delta = std::chrono::duration<double>(deltaTime).count();
 			zombieGame_->draw(graphic_, delta);
 		} else {
-			shader_.useProgram();
 			graphic_.clear();
 			graphic_.addRectangleImage({-1, -1}, {2, 2}, background_);
 		}

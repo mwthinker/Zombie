@@ -14,7 +14,10 @@ namespace zombie {
 			: world_{world} {
 		}
 
-		PhysicalObject* getPhysicalObject(const b2AABB& b2AABB) {
+		PhysicalObject* getPhysicalObject(Position position) {
+			position_ = position;
+			const auto delta = Position{0.5f, 0.5f};
+			const b2AABB& b2AABB{position - delta, position + delta};
 			object_ = nullptr;
 			world_.QueryAABB(this, b2AABB);
 			return object_;
@@ -22,15 +25,16 @@ namespace zombie {
 
 		bool ReportFixture(b2Fixture* fixture) override {
 			object_ = nullptr;
-			if (fixture->IsSensor()) {
+			if (!fixture->IsSensor() && fixture->TestPoint(position_)) {
 				object_ = fixture->GetUserData().physicalObject;
 			}
-			return object_ != nullptr;
+			return object_ == nullptr;
 		}
 
 	private:
 		b2World& world_;
 		PhysicalObject* object_ = nullptr;
+		Position position_{};
 	};
 
 	// Forward declarations.
@@ -46,7 +50,7 @@ namespace zombie {
 		PhysicEngine(GameInterface& gameInterface, float impulseThreshold);
 		~PhysicEngine();
 		
-		void update(double timeStep);
+		void update(double timeStep, int velocityIterations = 6, int positionIterations = 2);
 
 		// Add a generic object to the engine.
 		void add(PhysicalObject& object);
@@ -63,13 +67,15 @@ namespace zombie {
 			return impulseThreshold_;
 		}
 
-		template <typename Object>
+		template <typename Object> requires std::derived_from<Object, PhysicalObject>
 		Object* query(Position position) {
-			static_assert(std::is_base_of_v<PhysicalObject, Object>, "Object must be base of object");
-			auto delta = Position{0.5f, 0.5f};
-			auto ob = QueryCallback{world_}.getPhysicalObject({position - delta, position + delta});
+			auto ob = QueryCallback{world_}.getPhysicalObject(position);
 			return dynamic_cast<Object*>(ob);
 		}
+
+		void setDebugDraw(b2Draw* draw);
+
+		void debugDraw();
 
 	private:
 		void unitEvent(Unit* unit, int eventType) override;

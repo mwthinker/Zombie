@@ -1,13 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
-
-set(VCPKG_ROOT $ENV{VCPKG_ROOT})
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-	set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-		CACHE STRING ""
-	)
-	message(STATUS "Uses VCPKG CMAKE_TOOLCHAIN_FILE")
-endif()
-
+cmake_minimum_required(VERSION 3.21)
 project(Zombie
 	DESCRIPTION
 		"A 2D Zombie Game"
@@ -17,7 +8,7 @@ project(Zombie
 		CXX
 )
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -25,6 +16,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(SOURCES_ZOMBIE
 	# Graphic related
 	src/graphics/drawdebugarrow.h
+	src/graphics/debugdraw.cpp
+	src/graphics/debugdraw.h
 
 	# Physical
 	src/physics/physicalobject.cpp
@@ -119,8 +112,6 @@ if (ZombieData)
 	file(COPY ${ZombieData_SOURCE_DIR}/data/sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
 endif ()
 
-#file(COPY data/. DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
 set(ExternalDependencies
 	CppSdl2
 	ImGui
@@ -171,7 +162,7 @@ endif ()
 
 set_target_properties(Zombie
 	PROPERTIES
-		CXX_STANDARD 17
+		CXX_STANDARD 20
 		CXX_STANDARD_REQUIRED YES
 		CXX_EXTENSIONS NO
 )
@@ -180,6 +171,8 @@ target_include_directories(Zombie
 	PRIVATE
 		src/
 )
+
+set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 
 target_link_libraries(Zombie
 	PRIVATE

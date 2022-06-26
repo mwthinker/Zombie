@@ -16,15 +16,15 @@ constexpr float b2_lengthUnitsPerMeter = 1.0f;
 constexpr int b2_maxPolygonVertices = 8;
 
 struct b2BodyUserData {
-	zombie::PhysicalObject* physicalObject;
+	zombie::PhysicalObject* physicalObject = nullptr;
 };
 
 struct b2FixtureUserData {
-	zombie::PhysicalObject* physicalObject;
+	zombie::PhysicalObject* physicalObject = nullptr;
 };
 
 struct b2JointUserData {
-	zombie::PhysicalObject* physicalObject;
+	zombie::PhysicalObject* physicalObject = nullptr;
 };
 
 void* b2Alloc_Default(int32 size);
