@@ -1,0 +1,43 @@
+name: CI
+on: 
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: 55 19 * * 3
+
+jobs:
+  job:
+    name: ${{ matrix.os }}-${{ github.workflow }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            preset: 'windows'
+          - os: ubuntu-latest
+            preset: 'unix'
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set C++ VCPKG_ROOT
+        shell: bash
+        run: echo VCPKG_ROOT="$VCPKG_INSTALLATION_ROOT" >> "$GITHUB_ENV"; cat "$GITHUB_ENV"
+
+      - name: Run CMake DEBUG
+        shell: bash
+        run: cmake --preset=${{ matrix.preset }} -B build_debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_VERBOSE_MAKEFILE=1
+
+      - name: Compile binaries DEBUG
+        shell: bash
+        run: cmake --build build_debug
+
+      - name: Run CMake RELEASE
+        shell: bash
+        run: cmake --preset=${{ matrix.preset }} -B build_release -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=1
+
+      - name: Compile binaries RELEASE
+        shell: bash
+        run: cmake --build build_release
