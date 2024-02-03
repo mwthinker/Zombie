@@ -1,4 +1,4 @@
-Zombie
+zombie::Zombie [![CI build](https://github.com/mwthinker/Zombie/actions/workflows/ci.yml/badge.svg)](https://github.com/mwthinker/Zombie/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ======
 ![image](https://user-images.githubusercontent.com/3457668/116273499-14b62300-a782-11eb-8179-c66399824f6c.png)
 
