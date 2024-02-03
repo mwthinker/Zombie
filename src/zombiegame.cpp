@@ -327,7 +327,7 @@ namespace zombie {
 		debugDraw_.SetGraphic(&graphic);
 		engine_.setDebugDraw(&debugDraw_);
 
-		glViewport(viewport_.x, viewport_.y, viewport_.w, viewport_.h);
+		gl::glViewport(viewport_.x, viewport_.y, viewport_.w, viewport_.h);
 		updateGame(deltaTime);
 
 		graphic.clear();

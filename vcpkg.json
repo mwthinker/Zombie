@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
 	"name": "zombie",
 	"version-string": "0.1.0",
 	"port-version": 0,
@@ -11,12 +11,7 @@
 		"sdl2-mixer",
 		"sdl2-ttf",
 		"sdl2",
-		{
-			"name": "glad",
-			"features": [
-				"gl-api-33"
-			]
-		},
+		"glbinding",
 		"spdlog",
 		"glm",
 		"catch2",

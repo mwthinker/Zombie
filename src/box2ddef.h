@@ -44,56 +44,39 @@ struct fmt::formatter<sdl::Color> : fmt::formatter<std::string> {
 	}
 };
 
-template<>
-struct fmt::formatter<b2Vec2> {
-	template<typename ParseContext>
-	auto parse(ParseContext& ctx) {
-		return ctx.begin();
-	}
-	
-	template <typename FormatContext>
-	auto format(const b2Vec2& p, FormatContext& ctx) {
-		return fmt::format_to(ctx.out(), "({}, {})", p.x, p.y);
+template <>
+struct fmt::formatter<b2Vec2> : nested_formatter<decltype(b2Vec2::x)> {
+	auto format(b2Vec2 p, format_context& ctx) const {
+		return write_padded(ctx, [=](auto out) {
+			return fmt::format_to(out, "({}, {})", nested(p.x), nested(p.y));
+		});
 	}
 };
 
-template<>
-struct fmt::formatter<glm::vec2> {
-	template<typename ParseContext>
-	auto parse(ParseContext& ctx) {
-		return ctx.begin();
-	}
-
-	template <typename FormatContext>
-	auto format(const glm::vec2& p, FormatContext& ctx) {
-		return fmt::format_to(ctx.out(), "({}, {})", p.x, p.y);
-	}
-
-};
-
-template<>
-struct fmt::formatter<glm::vec3> {
-	template<typename ParseContext>
-	auto parse(ParseContext& ctx) {
-		return ctx.begin();
-	}
-
-	template <typename FormatContext>
-	auto format(const glm::vec3& p, FormatContext& ctx) {
-		return fmt::format_to(ctx.out(), "({}, {}, {})", p.x, p.y, p.z);
+template <>
+struct fmt::formatter<glm::vec2> : nested_formatter<decltype(glm::vec2::x)> {
+	auto format(glm::vec2 p, format_context& ctx) const {
+		return write_padded(ctx, [=](auto out) {
+			return fmt::format_to(out, "({}, {})", nested(p.x), nested(p.y));
+		});
 	}
 };
 
-template<>
-struct fmt::formatter<glm::vec4> {
-	template<typename ParseContext>
-	auto parse(ParseContext& ctx) {
-		return ctx.begin();
+template <>
+struct fmt::formatter<glm::vec3> : nested_formatter<decltype(glm::vec3::x)> {
+	auto format(glm::vec3 p, format_context& ctx) const {
+		return write_padded(ctx, [=](auto out) {
+			return fmt::format_to(out, "({}, {})", nested(p.x), nested(p.y));
+		});
 	}
+};
 
-	template <typename FormatContext>
-	auto format(const glm::vec4& p, FormatContext& ctx) {
-		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", p.x, p.y, p.x, p.w);
+template <>
+struct fmt::formatter<glm::vec4> : nested_formatter<decltype(glm::vec4::x)> {
+	auto format(glm::vec4 p, format_context& ctx) const {
+		return write_padded(ctx, [=](auto out) {
+			return fmt::format_to(out, "({}, {})", nested(p.x), nested(p.y));
+		});
 	}
 };
 
