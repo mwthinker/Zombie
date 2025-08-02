@@ -1,0 +1,17 @@
+{
+  "default-registry": {
+    "kind": "git",
+    "baseline": "65835fd63a01a91b58dd71ad6a1d81c5cf9dc66b",
+    "repository": "https://github.com/microsoft/vcpkg"
+  },
+  "registries": [
+    {
+      "kind": "git",
+      "baseline": "aed596b47e6b0648fe0448a6384db081ab589ab0",
+      "repository": "https://github.com/mwthinker/mw-vcpkg-registry.git",
+      "packages": [
+        "cppsdl2", "signal"
+      ]
+    }
+  ]
+}

@@ -1,31 +1,17 @@
 include(FetchContent)
 # Load external github projects
-FetchContent_Declare(CppSdl2
+FetchContent_Declare(CMakeHelper
 	GIT_REPOSITORY
-		https://github.com/mwthinker/CppSdl2.git
+		https://github.com/mwthinker/CMakeHelper.git
 	GIT_TAG
-		84d8f86bc49a3dc0da3eece46d7545b3e545c83e
+		a321588de57895a85e642810b6eedc5cbf89c0ea
 )
-FetchContent_MakeAvailable(CppSdl2)
-
-FetchContent_Declare(Signal
-	GIT_REPOSITORY
-		https://github.com/mwthinker/Signal.git
-	GIT_TAG
-		56a20197ab61a936cbdaace49c98fca50e1584ad 
-)
-FetchContent_MakeAvailable(Signal)
-
-fetchcontent_declare(CmakeAuxiliary
-	GIT_REPOSITORY
-		https://gist.github.com/mwthinker/e0539b200e3f0ac6da545af4843a6ff6
-)
-FetchContent_MakeAvailable(CmakeAuxiliary)
-FetchContent_GetProperties(CmakeAuxiliary
+FetchContent_MakeAvailable(CMakeHelper)
+FetchContent_GetProperties(CMakeHelper
 	SOURCE_DIR
-		CmakeAuxiliary_SOURCE_DIR
+		CMakeHelper_SOURCE_DIR
 )
-include(${CmakeAuxiliary_SOURCE_DIR}/auxiliary.cmake)
+include(${CMakeHelper_SOURCE_DIR}/auxiliary.cmake)
 
 message(STATUS "Download private data repository is available to add: -DZombieData_PrivateRepo_SSH=1")
 message(STATUS "Download private data repository is available to add: -DZombieData_PrivateRepo_HTTPS=1")

@@ -7,17 +7,17 @@
 	"description": "Simple 2D-shooter zombie game. ",
 	"license": "MIT",
 	"dependencies": [
-		"sdl2-image",
-		"sdl2-mixer",
-		"sdl2-ttf",
-		"sdl2",
-		"glbinding",
-		"spdlog",
-		"glm",
+		"cppsdl2",
+		"signal",
 		"catch2",
 		"fmt",
 		"box2d",
-		"nlohmann-json",
-		"freetype"
+		"nlohmann-json"
+	],
+	"overrides": [
+		{
+			"name": "box2d",
+			"version": "2.4.1#3"
+		}
 	]
 }

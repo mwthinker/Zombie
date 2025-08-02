@@ -8,10 +8,6 @@ project(Zombie
 		CXX
 )
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 # Source files.
 set(SOURCES_ZOMBIE
 	# Graphic related
@@ -88,6 +84,8 @@ if (MSVC)
 	configure_file(properties.rc ${CMAKE_CURRENT_BINARY_DIR}/properties.rc)
 endif ()
 
+find_package(CppSdl2 CONFIG REQUIRED)
+find_package(Signal CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(Threads REQUIRED)
@@ -111,30 +109,6 @@ if (ZombieData)
 	file(COPY ${ZombieData_SOURCE_DIR}/data/settings DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
 	file(COPY ${ZombieData_SOURCE_DIR}/data/sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
 endif ()
-
-set(ExternalDependencies
-	CppSdl2
-	ImGui
-	Signal
-)
-
-if (CppSdl2_Test)
-	set(ExternalDependencieTests "${ExternalDependencieTests};CppSdl2_Test")
-endif ()
-if (CppSdl2_Example)
-	set(ExternalDependencieTests "${ExternalDependencieTests};CppSdl2_Example")
-endif ()
-if (Signal_Test)
-	set(ExternalDependencieTests "${ExternalDependencieTests};Signal_Test")
-endif ()
-
-set_target_properties(
-	${ExternalDependencies}
-	${ExternalDependencieTests}
-	
-	PROPERTIES FOLDER
-		ExternalDependencies
-)
 
 if (MSVC)
 	add_executable(Zombie
@@ -162,7 +136,7 @@ endif ()
 
 set_target_properties(Zombie
 	PROPERTIES
-		CXX_STANDARD 20
+		CXX_STANDARD 23
 		CXX_STANDARD_REQUIRED YES
 		CXX_EXTENSIONS NO
 )
@@ -177,13 +151,31 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 target_link_libraries(Zombie
 	PRIVATE
 		box2d::box2d
-		nlohmann_json
 		nlohmann_json::nlohmann_json
-		${ExternalDependencies}
+		CppSdl2::CppSdl2
+		Signal::Signal
+		fmt::fmt
 )
 
-extract_git_hash()
-create_guid()
+extract_git_hash(
+	${CMAKE_CURRENT_SOURCE_DIR}
+	GIT_HASH
+	GIT_DATE
+)
+extract_git_hash(
+	$ENV{VCPKG_ROOT}
+	VCPKG_HASH
+	VCPKG_DATE
+)
+create_guid_from_source(
+	${CMAKE_CURRENT_SOURCE_DIR}
+	GUID
+)
+
+message(STATUS "VCPKG_HASH: ${VCPKG_HASH} ${VCPKG_DATE}")
+message(STATUS "GIT_HASH: ${GIT_HASH} ${GIT_DATE}")
+message(STATUS "CMAKE_PROJECT_VERSION: ${CMAKE_PROJECT_VERSION}")
+message(STATUS "GUID: ${GUID}")
 
 target_compile_definitions(Zombie
 	PRIVATE
