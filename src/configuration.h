@@ -4,20 +4,38 @@
 #include "physics/moving/unitproperties.h"
 #include "physics/weapons/weaponproperties.h"
 #include "physics/weapons/missileproperties.h"
+#include "textureview.h"
 
-#include <sdl/sound.h>
-#include <sdl/sprite.h>
+//#include <sdl/sound.h>
+//#include <sdl/sprite.h>
 #include <sdl/color.h>
-#include <sdl/font.h>
-#include <sdl/music.h>
-#include <sdl/textureatlas.h>
+#include <sdl/util.h>
+#include <sdl/imageatlas.h>
+#include <sdl/gpu/gpuutil.h>
+
+
+//#include <sdl/font.h>
+//#include <sdl/music.h>
+//#include <sdl/textureatlas.h>
 
 #include <nlohmann/json.hpp>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3/SDL_audio.h>
 
 #include <map>
 #include <vector>
 
+namespace sdl {
+
+}
+
 namespace zombie {
+
+	using SdlTtfFontPtr = sdl::SdlUniquePtr<TTF_Font, TTF_CloseFont>;
+
+	inline SdlTtfFontPtr createSdlTtfFontPtr(const std::string& fileName, float ptsize) {
+		return sdl::makeSdlUnique<TTF_Font, TTF_CloseFont>(TTF_OpenFont(fileName.c_str(), ptsize));
+	}
 
 	class Configuration {
 	public:
@@ -29,16 +47,17 @@ namespace zombie {
 		Configuration(const Configuration&) = delete;
 		Configuration& operator=(const Configuration&) = delete;
 
+		void init(SDL_GPUDevice* gpuDevice);
+		void close();
+
 		void save();
 
-		const sdl::Font& loadFont(const std::string& file, int fontSize);
-		sdl::Sound loadSound(const std::string& file);
-		sdl::Music loadMusic(const std::string& file);
-		sdl::TextureView loadSprite(const std::string& file);
+		TTF_Font* loadFont(const std::string& file, float fontSize);
+		//sdl::Sound loadSound(const std::string& file);
+		//sdl::Music loadMusic(const std::string& file);
+		TextureView loadSprite(const std::string& file);
 
-		const sdl::Font& getDefaultFont(int size);
-
-		void bindTextureFromAtlas();
+		TTF_Font* getDefaultFont(float size);
 
 		int getWindowPositionX();
 		int getWindowPositionY();
@@ -73,11 +92,11 @@ namespace zombie {
 		float getMusicVolume();
 		void setMusicVolume(float volume);
 
-		sdl::Music getMusicTrack();
+		//sdl::Music getMusicTrack();
 
-		sdl::TextureView getTreeImage();
+		TextureView getTreeImage();
 
-		sdl::TextureView getBuildingWallImage();
+		TextureView getBuildingWallImage();
 
 		float getSettingsImpulseThreshold();
 		float getSettingsTimeStep();
@@ -90,23 +109,22 @@ namespace zombie {
 
 		std::string getSettingsMap();
 
-		sdl::Sound getMenuSoundChoice();
-		sdl::Sound getMenuSoundHighlited();
-		sdl::TextureView getMenuBackgroundImage();
+		//sdl::Sound getMenuSoundChoice();
+		//sdl::Sound getMenuSoundHighlited();
+		TextureView getMenuBackgroundImage();
+		TextureView getWaterSeeFloorImage();
 
-		sdl::TextureView getWaterSeeFloorImage();
-
-		sdl::TextureView getRoadIntersection();
-		sdl::TextureView getRoadStraight0();
-		sdl::TextureView getRoadStraight90();
-		sdl::TextureView getRoadTurn0();
-		sdl::TextureView getRoadTurn90();
-		sdl::TextureView getRoadTurn180();
-		sdl::TextureView getRoadTurn270();
-		sdl::TextureView getRoadTurnIntersection0();
-		sdl::TextureView getRoadTurnIntersection90();
-		sdl::TextureView getRoadTurnIntersection180();
-		sdl::TextureView getRoadTurntersection270();
+		TextureView getRoadIntersection();
+		TextureView getRoadStraight0();
+		TextureView getRoadStraight90();
+		TextureView getRoadTurn0();
+		TextureView getRoadTurn90();
+		TextureView getRoadTurn180();
+		TextureView getRoadTurn270();
+		TextureView getRoadTurnIntersection0();
+		TextureView getRoadTurnIntersection90();
+		TextureView getRoadTurnIntersection180();
+		TextureView getRoadTurntersection270();
 
 		//ExplosionProperties getExplosionProperties();
 
@@ -114,6 +132,14 @@ namespace zombie {
 		UnitProperties getZombieProperties();
 
 		MissileProperties getMissileProperties();
+
+		ImTextureID getTextureAtlasBinding() {
+			return ImTextureID(&atlasBinding_);
+		}
+
+		SDL_GPUTextureSamplerBinding* getTextureSamplerBinding() {
+			return &atlasBinding_;
+		}
 
 	private:
 		Configuration();
@@ -131,16 +157,35 @@ namespace zombie {
 		MissileProperties loadMissileProperties(const nlohmann::json& unitTag);
 		MissileProperties loadMissileProperties(std::string weaponName);
 		
-		sdl::TextureAtlas textureAtlas_;
-		std::map<std::string, sdl::Sound> sounds_;
-		std::map<std::string, sdl::Font> fonts_;
-		std::map<std::string, sdl::Music> musics_;
+		std::map<std::string, SdlTtfFontPtr> fonts_;
+		//std::map<std::string, sdl::Sound> sounds_;
+		//std::map<std::string, sdl::Music> musics_;
 		std::map<std::string, WeaponProperties> weaponPropertiesMap_;
 		std::map<std::string, MissileProperties> missilePropertiesMap_;
 		std::map<std::string, UnitProperties> unitPropertiesMap_;
 
 		nlohmann::json settings_;
 		nlohmann::json rootMap_;
+
+		TextureView menuBackgroundImage_;
+		TextureView treeImage_;
+		TextureView buildingWallImage_;
+		TextureView waterSeeFloorImage_;
+		TextureView roadIntersection_;
+		TextureView roadStraight0_;
+		TextureView roadStraight90_;
+		TextureView roadTurn0_;
+		TextureView roadTurn90_;
+		TextureView roadTurn180_;
+		TextureView roadTurn270_;
+		TextureView roadTurnIntersection0_;
+		TextureView roadTurnIntersection90_;
+		TextureView roadTurnIntersection180_;
+		TextureView roadTurnIntersection270_;
+
+		sdl::gpu::GpuSampler sampler_;
+		sdl::gpu::GpuTexture atlasTexture_;
+		SDL_GPUTextureSamplerBinding atlasBinding_;
 	};
 
 }

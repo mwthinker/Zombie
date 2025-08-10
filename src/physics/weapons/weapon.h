@@ -5,8 +5,6 @@
 #include "physics/state.h"
 #include "physics/gameinterface.h"
 
-#include <sdl/sprite.h>
-
 #include <memory>
 
 namespace zombie {

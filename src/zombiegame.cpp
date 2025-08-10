@@ -12,8 +12,7 @@
 
 #include "configuration.h"
 
-#include <sdl/opengl.h>
-#include <sdl/exception.h>
+#include <sdl/sdlexception.h>
 
 #include <cmath>
 #include <sstream>
@@ -42,9 +41,9 @@ namespace zombie {
 			keyboardKeyCodes.left = SDLK_LEFT;
 			keyboardKeyCodes.right = SDLK_RIGHT;
 			keyboardKeyCodes.shoot = SDLK_SPACE;
-			keyboardKeyCodes.reload = SDLK_r;
+			keyboardKeyCodes.reload = SDLK_R;
 			keyboardKeyCodes.run = SDLK_LSHIFT;
-			keyboardKeyCodes.action = SDLK_e;
+			keyboardKeyCodes.action = SDLK_E;
 			return keyboardKeyCodes;
 		}
 
@@ -209,7 +208,7 @@ namespace zombie {
 		keyboard_->eventUpdate(windowEvent);
 
 		switch (windowEvent.type) {
-			case SDL_MOUSEBUTTONDOWN:
+			case SDL_EVENT_MOUSE_BUTTON_DOWN:
 				switch (windowEvent.button.button) {
 					case SDL_BUTTON_LEFT: {
 						auto pos = getMatrix(Space::Screen, Space::World) * glm::vec4{windowEvent.button.x, windowEvent.button.y, 0.f, 1.f};
@@ -224,7 +223,7 @@ namespace zombie {
 					}
 				}
 				break;
-			case SDL_MOUSEWHEEL:
+			case SDL_EVENT_MOUSE_WHEEL:
 				if (windowEvent.wheel.y > 0) {
 					zoom(1.1f);
 				}
@@ -232,8 +231,8 @@ namespace zombie {
 					zoom(0.9f);
 				}
 				break;
-			case SDL_MOUSEMOTION:
-				if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+			case SDL_EVENT_MOUSE_MOTION:
+				if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_MASK(SDL_BUTTON_MIDDLE)) {
 					auto delta = getMatrix(Space::Screen, Space::World) * glm::vec4{windowEvent.motion.xrel, windowEvent.motion.yrel, 0.f, 0.f};
 					worldToCamera_ = glm::translate(worldToCamera_, {delta.x, delta.y, 0.f});
 				}
@@ -295,9 +294,9 @@ namespace zombie {
 		keyboard_ = std::make_shared<InputKeyboard>(createDefaultKeyboardKeys());
 
 		if (Configuration::getInstance().isMusicOn()) {
-			music_ = Configuration::getInstance().getMusicTrack();
-			music_.setVolume(Configuration::getInstance().getMusicVolume());
-			music_.play(-1);
+			//music_ = Configuration::getInstance().getMusicTrack();
+			//music_.setVolume(Configuration::getInstance().getMusicVolume());
+			//music_.play(-1);
 		}
 
 		worldToCamera_ = glm::mat4{1};
@@ -308,12 +307,17 @@ namespace zombie {
 		players_.push_back(factory::createHumanPlayer(engine_, humanProperties, keyboard_));
 	}
 
-	void ZombieGame::setSize(int width, int height, const Viewport& viewport) {
-		viewport_ = viewport;
-		const float x = static_cast<float>(viewport.x);
-		const float y = static_cast<float>(viewport.y);
-		const float w = static_cast<float>(viewport.w);
-		const float h = static_cast<float>(viewport.h);
+	void ZombieGame::setSize(int width, int height) {
+		viewport_ = SDL_GPUViewport{
+			.w = static_cast<float>(width),
+			.h = static_cast<float>(height),
+			.min_depth = -100.f,
+			.max_depth = 100.f,
+		};
+		const float x = static_cast<float>(0.f);
+		const float y = static_cast<float>(0.f);
+		const float w = static_cast<float>(width);
+		const float h = static_cast<float>(height);
 		const float H = static_cast<float>(height);
 		const float aspect = w / h;
 
@@ -323,11 +327,10 @@ namespace zombie {
 		cameraToClip_ = glm::ortho(-delta * aspect, delta * aspect, -delta, delta);
 	}
 
-	void ZombieGame::draw(sdl::Graphic& graphic, double deltaTime) {
+	void ZombieGame::draw(Graphic& graphic, double deltaTime) {
 		debugDraw_.SetGraphic(&graphic);
 		engine_.setDebugDraw(&debugDraw_);
-
-		gl::glViewport(viewport_.x, viewport_.y, viewport_.w, viewport_.h);
+		
 		updateGame(deltaTime);
 
 		graphic.clear();
@@ -354,6 +357,8 @@ namespace zombie {
 
 		drawDebugArrow_.draw(graphic);
 		engine_.debugDraw();
+		// Add this test rectangle to see if basic rendering works
+		//graphic.addRectangle({-50, -50}, {100, 100}, sdl::color::html::Red);
 	}
 
 	void ZombieGame::imGuiUpdate(const sdl::DeltaTime& deltaTime) {

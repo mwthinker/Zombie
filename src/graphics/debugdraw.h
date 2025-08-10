@@ -2,10 +2,10 @@
 #define ZOMBIE_DEBUGDRAW_H
 
 #include "graphics/debugdraw.h"
+#include "../graphic.h"
 
 #include <box2d/box2d.h>
 #include <box2d/b2_collision.h>
-#include <sdl/graphic.h>
 
 namespace zombie {
 
@@ -13,7 +13,7 @@ namespace zombie {
 	public:
 		DebugDraw() = default;
 
-		void SetGraphic(sdl::Graphic* graphic);
+		void SetGraphic(Graphic* graphic);
 
 		void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override;
 
@@ -30,7 +30,7 @@ namespace zombie {
 		void DrawPoint(const b2Vec2& p, float size, const b2Color& color) override;
 		
 	private:
-		sdl::Graphic* graphic_ = nullptr;
+		Graphic* graphic_ = nullptr;
 	};
 
 }

@@ -2,7 +2,7 @@
 #include "auxiliary.h"
 #include "physics/moving/unit.h"
 
-#include <sdl/graphic.h>
+//#include <sdl/graphic.h>
 
 #include <list>
 #include <cassert>
@@ -67,11 +67,11 @@ namespace zombie {
 		unit_->updatePhysics(time, deltaTime);
 	}
 
-	void ZombiePlayer::draw(sdl::Graphic& graphic) {
+	void ZombiePlayer::draw(Graphic& graphic) {
 		auto pos = unit_->getPosition();
 		graphic.addCircle({pos.x, pos.y}, unit_->getRadius(), sdl::color::html::Firebrick);
 		graphic.addCircleOutline({pos.x, pos.y}, unit_->getViewDistance(), 0.04f, sdl::color::html::Firebrick);
-        graphic.addLine({pos.x, pos.y}, glm::vec2{pos.x, pos.y} + glm::rotate(glm::vec2{1.f, 0.f}*0.5f, unit_->getDirection()), 0.1f, sdl::color::html::Firebrick);
+		graphic.addLine({pos.x, pos.y}, glm::vec2{pos.x, pos.y} + glm::rotate(glm::vec2{1.f, 0.f}*0.5f, unit_->getDirection()), 0.1f, sdl::color::html::Firebrick);
 	} 
 
 	PhysicalObject* ZombiePlayer::getPhysicalObject() {

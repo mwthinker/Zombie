@@ -12,24 +12,18 @@
 #include "graphics/drawdebugarrow.h"
 #include "graphics/debugdraw.h"
 
-#include <sdl/graphic.h>
-#include <sdl/sprite.h>
-#include <sdl/sound.h>
-#include <sdl/music.h>
-#include <sdl/imguiwindow.h>
+//#include <sdl/graphic.h>
+//#include <sdl/sprite.h>
+//#include <sdl/sound.h>
+//#include <sdl/music.h>
+//#include <sdl/imguiwindow.h>
+
+#include <sdl/util.h>
 
 #include <memory>
 #include <vector>
 
 namespace zombie {
-
-	// In OpenGL coordinates, i.e. lower left screen is Origo and y is positive upwards on the screen.
-	struct Viewport {
-		int x;
-		int y;
-		int w;
-		int h;
-	};
 
 	// Responsible of loading map, units and initiate all
 	// game related things and to start the game engine.
@@ -41,15 +35,19 @@ namespace zombie {
 		ZombieGame();
 		~ZombieGame();
 		
-		void setSize(int width, int height, const Viewport& viewport);
+		void setSize(int width, int height);
 
-		void draw(sdl::Graphic& graphic, double deltaTime);
+		void draw(Graphic& graphic, double deltaTime);
 
 		void imGuiUpdate(const sdl::DeltaTime& deltaTime);
 
 		void zoom(float scale);
 
 		void eventUpdate(const SDL_Event& windowEvent);
+
+		SDL_GPUViewport* getViewport() {
+			return &viewport_;
+		}
 
 	private:
 		enum class Space {
@@ -105,10 +103,10 @@ namespace zombie {
 		glm::mat4 screenToClip_{};
 		glm::mat4 worldToCamera_{};
 		glm::mat4 cameraToClip_{};
-		Viewport viewport_{};
+		SDL_GPUViewport viewport_{};
 
 		Game game_;
-		sdl::Music music_;
+		//sdl::Music music_;
 
 		DevicePtr keyboard_;
 

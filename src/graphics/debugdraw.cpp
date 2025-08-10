@@ -22,7 +22,7 @@ namespace {
 
 namespace zombie {
 
-	void DebugDraw::SetGraphic(sdl::Graphic* graphic) {
+	void DebugDraw::SetGraphic(Graphic* graphic) {
 		graphic_ = graphic;
 	}
 

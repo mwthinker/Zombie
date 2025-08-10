@@ -14,7 +14,7 @@ namespace zombie {
 		explicit CarPlayer(DevicePtr device, std::unique_ptr<Car> car);
 
 		void updateInput(double time, double deltaTime) override;
-		void draw(sdl::Graphic& graphic) override;
+		void draw(Graphic& graphic) override;
 
 		PhysicalObject* getPhysicalObject() override;
 

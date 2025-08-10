@@ -63,6 +63,9 @@ set(SOURCES_ZOMBIE
 	src/main.cpp
 	src/player.h
 	src/b2_user_settings.h
+	src/graphic.h
+	src/textureview.h
+	src/batch.h
 	
 	src/zombieplayer.cpp
 	src/zombieplayer.h
@@ -78,13 +81,14 @@ set(SOURCES_ZOMBIE
 	ExternalFetchContent.cmake
 	CPack.cmake
 	vcpkg.json
+	vcpkg-configuration.json
 )
 
 if (MSVC)
 	configure_file(properties.rc ${CMAKE_CURRENT_BINARY_DIR}/properties.rc)
 endif ()
 
-find_package(CppSdl2 CONFIG REQUIRED)
+find_package(CppSdl3 CONFIG REQUIRED)
 find_package(Signal CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -152,7 +156,7 @@ target_link_libraries(Zombie
 	PRIVATE
 		box2d::box2d
 		nlohmann_json::nlohmann_json
-		CppSdl2::CppSdl2
+		CppSdl3::CppSdl3
 		Signal::Signal
 		fmt::fmt
 )

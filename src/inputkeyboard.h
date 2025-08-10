@@ -3,7 +3,7 @@
 
 #include "device.h"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 namespace zombie {
 
@@ -25,10 +25,10 @@ namespace zombie {
 		}
 
 		void eventUpdate(const SDL_Event& windowEvent) override {
-			auto key = windowEvent.key.keysym.sym;
+			auto key = windowEvent.key.key;
 
 			switch (windowEvent.type) {
-			case SDL_KEYDOWN:
+			case SDL_EVENT_KEY_DOWN:
 				if (key == keyCodes_.up) {
 					input_.forward = true;
 				} else if (key == keyCodes_.down) {
@@ -47,7 +47,7 @@ namespace zombie {
 					input_.action = true;
 				}
 				break;
-			case SDL_KEYUP:
+			case SDL_EVENT_KEY_UP:
 				if (key == keyCodes_.up) {
 					input_.forward = false;
 				} else if (key == keyCodes_.down) {

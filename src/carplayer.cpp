@@ -1,8 +1,6 @@
 #include "auxiliary.h"
 #include "carplayer.h"
 
-#include <sdl/graphic.h>
-
 #include <list>
 #include <cassert>
 
@@ -20,15 +18,14 @@ namespace zombie {
 		car_->updatePhysics(time, deltaTime);
 	}
 
-	void CarPlayer::draw(sdl::Graphic& graphic) {
-
+	void CarPlayer::draw(Graphic& graphic) {
 		auto pos = car_->getPosition();
 		//pos = {3.f, 3.f};
 		graphic.pushMatrix();
 		graphic.translate({pos.x, pos.y});
 		graphic.rotate(car_->getDirection());
 		
-		//graphic.rotate(Pi/2);
+		graphic.rotate(Pi/2);
 		graphic.addRectangle({-car_->getLength() * 0.5f, -car_->getWidth() * 0.5f}, {car_->getLength(), car_->getWidth()}, sdl::color::html::HotPink);
 
 		graphic.popMatrix();

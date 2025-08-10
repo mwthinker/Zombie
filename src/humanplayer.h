@@ -4,7 +4,6 @@
 #include "device.h"
 #include "physics/moving/unit.h"
 #include "player.h"
-#include "physics/moving/unit.h"
 
 #include <glm/gtx/rotate_vector.hpp>
 
@@ -22,7 +21,7 @@ namespace zombie {
 			unit_->updatePhysics(time, deltaTime);
 		}
 
-		void draw(sdl::Graphic& graphic) override {
+		void draw(Graphic& graphic) override {
 			auto pos = unit_->getPosition();
 			graphic.addCircle({pos.x, pos.y}, unit_->getRadius(), sdl::color::html::DeepSkyBlue);
 			graphic.addCircleOutline({pos.x, pos.y}, unit_->getViewDistance(), 0.1f, sdl::color::html::Firebrick);

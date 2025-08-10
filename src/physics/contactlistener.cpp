@@ -3,8 +3,6 @@
 #include "physics/moving/car.h"
 #include "physics/moving/unit.h"
 
-#include <sdl/opengl.h>
-
 namespace zombie {
 
 	namespace {

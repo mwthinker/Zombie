@@ -22,10 +22,6 @@ namespace zombie {
 		const std::string UnitsPath = "settings/units";
 		const std::string CarsPath = "settings/cars";
 		const std::string WeaponsPath = "settings/weapons";
-
-	}
-
-	namespace {
 		
 		// Takes a string as input and returns the point.
 		// The string "POINT (x y)" the input should be defined
@@ -91,14 +87,24 @@ namespace zombie {
 			}
 			return false;
 		}
+
+		SDL_Surface* createSurface(int w, int h, sdl::Color color) {
+			auto s = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_RGBA32);
+			SDL_FillSurfaceRect(s, nullptr, color.toImU32());
+			return s;
+		}
+
+		TextureView addImageToSurface(sdl::ImageAtlas& atlas, SDL_Surface* surfaceAtlas, const std::string& filename, int border = 0) {
+			auto rect = sdl::addImage(atlas, surfaceAtlas, filename, border);
+			return TextureView{
+				.position = {static_cast<float>(rect.x) / surfaceAtlas->w, static_cast<float>(rect.y) / surfaceAtlas->h},
+				.tex = {static_cast<float>(rect.w) / surfaceAtlas->w, static_cast<float>(rect.h) / surfaceAtlas->h},
+			};
+		}
 	
 	}
 
-	Configuration::Configuration()
-		: textureAtlas_{2048, 2048, []() {
-		glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_MIN_FILTER, gl::GL_NEAREST);
-		glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_MAG_FILTER, gl::GL_NEAREST);
-	}} {
+	Configuration::Configuration() {
 		spdlog::info("[Configuration] Current path: {}", fs::current_path().string());
 		
 		spdlog::info("[Configuration] Load: {}", SettingsPath);
@@ -168,25 +174,67 @@ namespace zombie {
 		}
 	}
 
+	void Configuration::init(SDL_GPUDevice* gpuDevice) {
+		std::vector<std::string> files;
+		sdl::ImageAtlas atlas{2048, 2048};
+		auto surfaceAtlas = sdl::createSdlSurface(createSurface(atlas.getWidth(), atlas.getHeight(), sdl::color::White));
+
+		menuBackgroundImage_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["menu"]["backgroundImage"].get<std::string>());
+		treeImage_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["tree"].get<std::string>());
+		buildingWallImage_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["buildings"]["wallImage"].get<std::string>());
+		waterSeeFloorImage_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["water"]["seeFloorImage"].get<std::string>());
+		roadIntersection_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["intersection"].get<std::string>());
+		roadStraight0_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["straight0"].get<std::string>());
+		roadStraight90_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["straight90"].get<std::string>());
+		roadTurn0_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["turn0"].get<std::string>());
+		roadTurn90_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["turn90"].get<std::string>());
+		roadTurn180_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["turn180"].get<std::string>());
+		roadTurn270_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["turn270"].get<std::string>());
+		roadTurnIntersection0_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["tintersection0"].get<std::string>());
+		roadTurnIntersection90_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["tintersection90"].get<std::string>());
+		roadTurnIntersection180_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["tintersection180"].get<std::string>());
+		roadTurnIntersection270_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["tintersection270"].get<std::string>());
+
+		atlasTexture_ = sdl::gpu::uploadSurface(gpuDevice, surfaceAtlas.get());
+		sampler_ = sdl::gpu::createSampler(gpuDevice, SDL_GPUSamplerCreateInfo{
+			.min_filter = SDL_GPU_FILTER_NEAREST,
+			.mag_filter = SDL_GPU_FILTER_NEAREST,
+			.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+			.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+			.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+			.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
+		});
+		atlasBinding_ = SDL_GPUTextureSamplerBinding{
+			.texture = atlasTexture_.get(),
+			.sampler = sampler_.get()
+		};
+	}
+
+	void Configuration::close() {
+		atlasTexture_.reset();
+		sampler_.reset();
+	}
+
 	void Configuration::save() {
 		std::ofstream out{SettingsPath};
 		//settings_ >> out;
 	}
 
-	const sdl::Font& Configuration::loadFont(const std::string& file, int fontSize) {
+	TTF_Font* Configuration::loadFont(const std::string& file, float fontSize) {
 		auto size = fonts_.size();
 		std::string key = file;
-		key += fontSize;
-		sdl::Font& font = fonts_[key];
+		key += fmt::format("_{:.2f}", fontSize);
+		auto& font = fonts_[key];
 
 		// Font not found?
 		if (fonts_.size() > size) {
-			font = sdl::Font{file, fontSize};
+			font = createSdlTtfFontPtr(file, fontSize);
 		}
 
-		return font;
+		return font.get();
 	}
 
+	/*
 	sdl::Sound Configuration::loadSound(const std::string& file) {
 		auto size = sounds_.size();
 		sdl::Sound& sound = sounds_[file];
@@ -210,17 +258,14 @@ namespace zombie {
 
 		return music;
 	}
+	*/
 
-	sdl::TextureView Configuration::loadSprite(const std::string& file) {
-		return textureAtlas_.add(file, 1).getTextureView();
+	TextureView Configuration::loadSprite(const std::string& file) {
+		return {};
 	}
 
-	const sdl::Font& Configuration::getDefaultFont(int size) {
+	TTF_Font* Configuration::getDefaultFont(float size) {
 		return loadFont(settings_["window"]["font"].get<std::string>(), size);
-	}
-
-	void Configuration::bindTextureFromAtlas() {
-		textureAtlas_.bind();
 	}
 
 	int Configuration::getWindowPositionX() {
@@ -315,16 +360,18 @@ namespace zombie {
 		settings_["music"]["volume"] = volume;
 	}
 
+	/*
 	sdl::Music Configuration::getMusicTrack() {
 		return loadMusic(settings_["music"]["track"].get<std::string>());
 	}
+	*/
 
-	sdl::TextureView Configuration::getTreeImage() {
-		return loadSprite(settings_["tree"].get<std::string>());
+	TextureView Configuration::getTreeImage() {
+		return treeImage_;
 	}
 
-	sdl::TextureView Configuration::getBuildingWallImage() {
-		return loadSprite(settings_["buildings"]["wallImage"].get<std::string>());
+	TextureView Configuration::getBuildingWallImage() {
+		return buildingWallImage_;
 	}
 
 	float Configuration::getSettingsImpulseThreshold() {
@@ -355,6 +402,7 @@ namespace zombie {
 		return settings_["settings"]["map"].get<std::string>();
 	}
 
+	/*
 	sdl::Sound Configuration::getMenuSoundChoice() {
 		return loadSound(settings_["menu"]["soundChoice"].get<std::string>());
 	}
@@ -362,57 +410,58 @@ namespace zombie {
 	sdl::Sound Configuration::getMenuSoundHighlited() {
 		return loadSound(settings_["menu"]["soundHighlited"].get<std::string>());
 	}
+	*/
 
-	sdl::TextureView Configuration::getMenuBackgroundImage() {
-		return loadSprite(settings_["menu"]["backgroundImage"].get<std::string>());
+	TextureView Configuration::getMenuBackgroundImage() {
+		return menuBackgroundImage_;
 	}
 
-	sdl::TextureView Configuration::getWaterSeeFloorImage() {
-		return loadSprite(settings_["water"]["seeFloorImage"].get<std::string>());
+	TextureView Configuration::getWaterSeeFloorImage() {
+		return waterSeeFloorImage_;
 	}
 
-	sdl::TextureView Configuration::getRoadIntersection() {
-		return loadSprite(settings_["roads"]["intersection"].get<std::string>());
+	TextureView Configuration::getRoadIntersection() {
+		return roadIntersection_;
 	}
 
-	sdl::TextureView Configuration::getRoadStraight0() {
-		return loadSprite(settings_["roads"]["straight0"].get<std::string>());
+	TextureView Configuration::getRoadStraight0() {
+		return roadStraight0_;
 	}
 
-	sdl::TextureView Configuration::getRoadStraight90() {
-		return loadSprite(settings_["roads"]["straight90"].get<std::string>());
+	TextureView Configuration::getRoadStraight90() {
+		return roadStraight90_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurn0() {
-		return loadSprite(settings_["roads"]["turn0"].get<std::string>());
+	TextureView Configuration::getRoadTurn0() {
+		return roadTurn0_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurn90() {
-		return loadSprite(settings_["roads"]["turn90"].get<std::string>());
+	TextureView Configuration::getRoadTurn90() {
+		return roadTurn90_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurn180() {
-		return loadSprite(settings_["roads"]["turn180"].get<std::string>());
+	TextureView Configuration::getRoadTurn180() {
+		return roadTurn180_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurn270() {
-		return loadSprite(settings_["roads"]["turn270"].get<std::string>());
+	TextureView Configuration::getRoadTurn270() {
+		return roadTurn270_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurnIntersection0() {
-		return loadSprite(settings_["roads"]["tintersection0"].get<std::string>());
+	TextureView Configuration::getRoadTurnIntersection0() {
+		return roadTurnIntersection0_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurnIntersection90() {
-		return loadSprite(settings_["roads"]["tintersection90"].get<std::string>());
+	TextureView Configuration::getRoadTurnIntersection90() {
+		return roadTurnIntersection90_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurnIntersection180() {
-		return loadSprite(settings_["roads"]["tintersection180"].get<std::string>());
+	TextureView Configuration::getRoadTurnIntersection180() {
+		return roadTurnIntersection180_;
 	}
 
-	sdl::TextureView Configuration::getRoadTurntersection270() {
-		return loadSprite(settings_["roads"]["tintersection270"].get<std::string>());
+	TextureView Configuration::getRoadTurntersection270() {
+		return roadTurnIntersection270_;
 	}
 
 	/*

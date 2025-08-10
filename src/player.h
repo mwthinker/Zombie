@@ -2,8 +2,7 @@
 #define ZOMBIE_PLAYER_H
 
 #include "input.h"
-
-#include <sdl/graphic.h>
+#include "graphic.h"
 
 namespace zombie {
 
@@ -14,7 +13,7 @@ namespace zombie {
 		virtual ~Player() = default;
 		virtual void updateInput(double time, double deltaTime) = 0;
 
-		virtual void draw(sdl::Graphic& graphic) = 0;
+		virtual void draw(Graphic& graphic) = 0;
 
 		virtual PhysicalObject* getPhysicalObject() = 0;
 	};

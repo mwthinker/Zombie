@@ -7,7 +7,7 @@
 	"description": "Simple 2D-shooter zombie game. ",
 	"license": "MIT",
 	"dependencies": [
-		"cppsdl2",
+		"cppsdl3",
 		"signal",
 		"catch2",
 		"fmt",
