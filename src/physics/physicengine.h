@@ -2,40 +2,11 @@
 #define ZOMBIE_ZOMBIEENGINE_H
 
 #include "box2ddef.h"
-#include "physics/contactlistener.h"
 #include "actionhandler.h"
 #include "physics/physicalobject.h"
+#include "graphics/debugdraw.h"
 
 namespace zombie {
-
-	class QueryCallback : public b2QueryCallback {
-	public:
-		explicit QueryCallback(b2World& world)
-			: world_{world} {
-		}
-
-		PhysicalObject* getPhysicalObject(Position position) {
-			position_ = position;
-			const auto delta = Position{0.5f, 0.5f};
-			const b2AABB& b2AABB{position - delta, position + delta};
-			object_ = nullptr;
-			world_.QueryAABB(this, b2AABB);
-			return object_;
-		}
-
-		bool ReportFixture(b2Fixture* fixture) override {
-			object_ = nullptr;
-			if (!fixture->IsSensor() && fixture->TestPoint(position_)) {
-				object_ = fixture->GetUserData().physicalObject;
-			}
-			return object_ == nullptr;
-		}
-
-	private:
-		b2World& world_;
-		PhysicalObject* object_ = nullptr;
-		Position position_{};
-	};
 
 	// Forward declarations.
 	class GameInterface;
@@ -50,7 +21,7 @@ namespace zombie {
 		PhysicEngine(GameInterface& gameInterface, float impulseThreshold);
 		~PhysicEngine();
 		
-		void update(double timeStep, int velocityIterations = 6, int positionIterations = 2);
+		void update(double timeStep, int subStepCount);
 
 		// Add a generic object to the engine.
 		void add(PhysicalObject& object);
@@ -69,13 +40,41 @@ namespace zombie {
 
 		template <typename Object> requires std::derived_from<Object, PhysicalObject>
 		Object* query(Position position) {
-			auto ob = QueryCallback{world_}.getPhysicalObject(position);
-			return dynamic_cast<Object*>(ob);
+			b2Vec2 delta{1, 1};
+
+			b2AABB aabb{
+				.lowerBound = position - delta,
+				.upperBound = position + delta
+			};
+
+			auto filter = b2DefaultQueryFilter();
+
+			// Perform the query
+			struct Data {
+				Object* object;
+			};
+			Data data{};
+
+			auto overlapCallback = [](b2ShapeId shapeId, void* context) -> bool {
+				auto shape = b2Shape_GetUserData(shapeId);
+				Data& data = *static_cast<Data*>(context);
+
+				if (void* userData = b2Shape_GetUserData(shapeId)) {
+					auto po = static_cast<PhysicalObject*>(userData);
+					if (auto object = dynamic_cast<Object*>(po)) {
+						data.object = object;
+						return false;
+					}
+				}
+				return true;
+			};
+			b2World_OverlapAABB(worldId_, aabb, b2DefaultQueryFilter(), overlapCallback, &data);
+			return data.object;
 		}
 
-		void setDebugDraw(b2Draw* draw);
-
 		void debugDraw();
+
+		void initDebugDraw(const b2DebugDraw& debugDraw, const DebugDrawSettings& settings);
 
 	private:
 		void unitEvent(Unit* unit, int eventType) override;
@@ -85,12 +84,13 @@ namespace zombie {
 		void doAction(Car* unit);
 		
 		GameInterface& gameInterface_;
-		ContactListener contactListener_;
-		b2World world_;
+		b2WorldId worldId_;
 		bool started_ = false;
 		double time_ = 0.0;
 
 		float impulseThreshold_ = 0.f;
+
+		b2DebugDraw debugDraw_ = b2DefaultDebugDraw();
 	};
 
 }

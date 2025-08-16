@@ -3,41 +3,53 @@
 #include "physics/state.h"
 #include "physics/moving/unit.h"
 #include "box2ddef.h"
-#include "physics/closestraycastcallback.h"
+#include "physics/gameinterface.h"
 
 namespace zombie {
 
 	namespace {
 
-		void doShotDamage(b2World& world, GameInterface& gameInterface, float damage, float angle, float range, Unit& shooter) {
+		void doShotDamage(b2WorldId worldId, GameInterface& gameInterface, float damage, float angle, float range, Unit& shooter) {
 			b2Vec2 dir{std::cos(angle), std::sin(angle)};
 			b2Vec2 hitPosition = shooter.getPosition() + range * dir;
 
-			// Return the closest physcal object.
-			ClosestRayCastCallback callback([](b2Fixture* fixture) {
-				return !fixture->IsSensor();
-			});
+			auto filter = b2DefaultQueryFilter();
 
-			world.RayCast(&callback, shooter.getPosition(), hitPosition);
-			auto fixture = callback.getFixture();
+			struct Data {
+				Unit& shooter;
+				float damage;
+				GameInterface& gameInterface;
+			};
+			Data data{
+				.shooter = shooter,
+				.damage = damage,
+				.gameInterface = gameInterface
+			};
 
-			hitPosition = shooter.getPosition() + range * callback.getFraction() * dir;
-
-			// Did bullet hit something?
-			if (fixture != nullptr) {
-				if (auto target = dynamic_cast<Unit*>(fixture->GetUserData().physicalObject)) {
-					gameInterface.shotHit(shooter.getPosition(), hitPosition, *target);
-					
-					if (!target->isDead()) {
-						target->updateHealthPoint(-damage);
-					}
-				} else {
-					// Calculate the hit position on the unknown object.
-					gameInterface.shotMissed(shooter.getPosition(), hitPosition);
+			auto callback = [](b2ShapeId shapeId, b2Vec2 point, b2Vec2 normal, float fraction, void* context) {
+				if (!b2Shape_IsSensor(shapeId)) {
+					return -1.f;
 				}
-			} else {
-				gameInterface.shotMissed(shooter.getPosition(), hitPosition);
-			}
+				if (auto ob = b2Shape_GetUserData(shapeId)) {
+					auto po = static_cast<PhysicalObject*>(ob);
+					Data& data = *static_cast<Data*>(context);
+
+					if (auto target = dynamic_cast<Unit*>(po)) {
+						data.gameInterface.shotHit(data.shooter.getPosition(), point, *target);
+
+						if (!target->isDead()) {
+							target->updateHealthPoint(-data.damage);
+						}
+					} else {
+						// Calculate the hit position on the unknown object.
+						data.gameInterface.shotMissed(data.shooter.getPosition(), point);
+					}
+					return 0.f;
+				}
+				return -1.f;
+			};
+
+			b2World_CastRay(worldId, shooter.getPosition(), hitPosition, filter, callback, &data);
 		}
 
 	}
@@ -56,7 +68,7 @@ namespace zombie {
 			if (bulletsInWeapon_ > 0) {
 				lastShotTime_ = time;
 				--bulletsInWeapon_;
-				doShotDamage(*world_, *gameInterface_, damage_, unit.getDirection(), range_, unit);
+				doShotDamage(worldId_, *gameInterface_, damage_, unit.getDirection(), range_, unit);
 			}
 		}
 	}
@@ -85,9 +97,9 @@ namespace zombie {
 		return range_;
 	}
 
-	void Gun::initEngine(b2World* world, GameInterface* gameInterface) {
+	void Gun::initEngine(b2WorldId worldId, GameInterface* gameInterface) {
 		gameInterface_ = gameInterface;
-		world_ = world;
+		worldId_ = worldId;
 	}
 
 }

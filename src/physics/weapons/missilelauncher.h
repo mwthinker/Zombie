@@ -26,15 +26,15 @@ namespace zombie {
 
 		float getRange() const override final;
 
-		void initEngine(b2World* world, GameInterface* gameInterface) override final;
+		void initEngine(b2WorldId worldId, GameInterface* gameInterface) override final;
 
 	protected:
 		virtual void reload() {
 		}
 
 	private:
-		GameInterface* gameInterface_{};
-		b2World* world_{};
+		GameInterface* gameInterface_ = nullptr;
+		b2WorldId worldId_{};
 
 		int clipSize_;
 		float timeBetweenShots_;

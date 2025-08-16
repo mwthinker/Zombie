@@ -5,33 +5,61 @@
 #include "../graphic.h"
 
 #include <box2d/box2d.h>
-#include <box2d/b2_collision.h>
+#include <sdl/color.h>
+//#include <box2d/b2_collision.h>
+
+#include <utility>
 
 namespace zombie {
 
-	class DebugDraw : public b2Draw {
-	public:
-		DebugDraw() = default;
+	struct DebugDrawSettings {
+		/// Bounds to use if restricting drawing to a rectangular region
+		b2AABB drawingBounds;
 
-		void SetGraphic(Graphic* graphic);
+		/// Option to restrict drawing to a rectangular region. May suffer from unstable depth sorting.
+		bool useDrawingBounds;
 
-		void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override;
+		/// Option to draw shapes
+		bool drawShapes;
 
-		void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override;
+		/// Option to draw joints
+		bool drawJoints;
 
-		void DrawCircle(const b2Vec2& center, float radius, const b2Color& color) override;
+		/// Option to draw additional information for joints
+		bool drawJointExtras;
 
-		void DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axis, const b2Color& color) override;
+		/// Option to draw the bounding boxes for shapes
+		bool drawBounds;
 
-		void DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) override;
+		/// Option to draw the mass and center of mass of dynamic bodies
+		bool drawMass;
 
-		void DrawTransform(const b2Transform& xf) override;
+		/// Option to draw body names
+		bool drawBodyNames;
 
-		void DrawPoint(const b2Vec2& p, float size, const b2Color& color) override;
-		
-	private:
-		Graphic* graphic_ = nullptr;
+		/// Option to draw contact points
+		bool drawContacts;
+
+		/// Option to visualize the graph coloring used for contacts and joints
+		bool drawGraphColors;
+
+		/// Option to draw contact normals
+		bool drawContactNormals;
+
+		/// Option to draw contact normal impulses
+		bool drawContactImpulses;
+
+		/// Option to draw contact feature ids
+		bool drawContactFeatures;
+
+		/// Option to draw contact friction impulses
+		bool drawFrictionImpulses;
+
+		/// Option to draw islands as bounding boxes
+		bool drawIslands;
 	};
+
+	b2DebugDraw initb2DebugDraw(Graphic& graphic, const DebugDrawSettings& settings);
 
 }
 

@@ -86,18 +86,14 @@ namespace zombie {
 			return input_;
 		}
 
-		b2Body* getBody() const override;
+		b2BodyId getBody() const override;
 
 	private:
-		void createBody(b2World& world) override;
+		void createBody(b2WorldId world) override;
 
 		void destroyBody() override {
-			if (body_ != nullptr) {
-				auto world = body_->GetWorld();
-				if (world != nullptr) {
-					world->DestroyBody(body_);
-				}
-				body_ = nullptr;
+			if (b2Body_IsValid(bodyId_)) {
+				b2DestroyBody(bodyId_);
 			}
 		}
 
@@ -124,7 +120,7 @@ namespace zombie {
 
 		float timeLeftToRun_{};
 
-		b2Body* body_{};
+		b2BodyId bodyId_{};
 		Input input_{};
 		Input lastInput_{};
 	};

@@ -66,9 +66,9 @@ namespace zombie {
 		}
 
 		// Should be called by the zombieEngine.
-		void init(b2World* world, GameInterface* gameInterface) {
+		void init(b2WorldId worldId, GameInterface* gameInterface) {
 			if (weaponInterface_) {
-				weaponInterface_->initEngine(world, gameInterface);
+				weaponInterface_->initEngine(worldId, gameInterface);
 			}
 		}
 

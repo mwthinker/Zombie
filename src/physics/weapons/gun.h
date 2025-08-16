@@ -26,11 +26,11 @@ namespace zombie {
 
 		float getRange() const override;
 
-		void initEngine(b2World* world, GameInterface* gameInterface);
+		void initEngine(b2WorldId worldId_, GameInterface* gameInterface);
 
 	private:
 		GameInterface* gameInterface_{};
-		b2World* world_{};
+		b2WorldId worldId_{};
 
 		float damage_;				// The damage made by the weapon.
 		float timeBetweenShots_;

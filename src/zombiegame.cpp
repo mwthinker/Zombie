@@ -49,8 +49,7 @@ namespace zombie {
 
 		struct Settings {
 			float hertz = 60.0f;
-			int velocityIterations = 8;
-			int positionIterations = 3;
+			int subStepCount = 4;
 			bool drawShapes = true;
 			bool drawJoints = true;
 			bool drawAABBs = false;
@@ -77,8 +76,7 @@ namespace zombie {
 			ImGui::Window("Tools", &debug, ImGuiWindowFlags_NoCollapse, []() {
 				if (ImGui::BeginTabBar("ControlTabs", ImGuiTabBarFlags_None)) {
 					if (ImGui::BeginTabItem("Controls")) {
-						ImGui::SliderInt("Vel Iters", &settings.velocityIterations, 0, 50);
-						ImGui::SliderInt("Pos Iters", &settings.positionIterations, 0, 50);
+						ImGui::SliderInt("Sub step counter", &settings.subStepCount, 1, 20);
 						ImGui::SliderFloat("Hertz", &settings.hertz, 5.0f, 120.0f, "%.0f hz");
 
 						ImGui::Separator();
@@ -328,9 +326,6 @@ namespace zombie {
 	}
 
 	void ZombieGame::draw(Graphic& graphic, double deltaTime) {
-		debugDraw_.SetGraphic(&graphic);
-		engine_.setDebugDraw(&debugDraw_);
-		
 		updateGame(deltaTime);
 
 		graphic.clear();
@@ -347,13 +342,6 @@ namespace zombie {
 		for (auto& player : players_) {
 			player->draw(graphic);
 		}
-
-
-		uint32 flags = settings.drawShapes * b2Draw::e_shapeBit
-			| settings.drawJoints * b2Draw::e_jointBit
-			| settings.drawAABBs * b2Draw::e_aabbBit
-			| settings.drawCOMs * b2Draw::e_centerOfMassBit;
-		debugDraw_.SetFlags(flags);
 
 		drawDebugArrow_.draw(graphic);
 		engine_.debugDraw();
@@ -430,7 +418,7 @@ namespace zombie {
 	}
 
 	void ZombieGame::makeGameStep() {
-		engine_.update(timeStep_, settings.velocityIterations, settings.positionIterations);
+		engine_.update(timeStep_, settings.subStepCount);
 
 		auto time = engine_.getTime();
 		for (auto& player : players_) {

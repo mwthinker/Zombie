@@ -36,7 +36,7 @@ namespace zombie {
 				targetAngle_ = std::atan2(dir.y, dir.x);
 				forward_ = true;
 
-				auto distSquared = dir.LengthSquared();
+				auto distSquared = b2LengthSquared(dir);
 				
 				// Target is in range?
 				if (auto& weapon = unit_->getWeapon();
@@ -83,7 +83,7 @@ namespace zombie {
 		float distance = 100.f;
 		for (auto unit : units) {
 			if (!unit->isInfected()) {
-				auto tmp = (position - unit->getPosition()).LengthSquared();
+				auto tmp = b2LengthSquared(position - unit->getPosition());
 				if (tmp < distance) {
 					target = unit;
 					distance = tmp;

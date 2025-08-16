@@ -21,10 +21,6 @@ set(SOURCES_ZOMBIE
 	src/physics/physicengine.cpp
 	src/physics/physicengine.h
 	src/physics/gameinterface.h
-	src/physics/contactlistener.cpp
-	src/physics/contactlistener.h
-	src/physics/closestraycastcallback.h
-	src/physics/inviewquerycallback.h
 	src/physics/state.h
 	
 	src/physics/moving/unit.cpp

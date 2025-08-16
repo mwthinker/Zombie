@@ -30,7 +30,7 @@ namespace zombie {
 		virtual int getBulletsInWeapon() const = 0;
 
 		// Todo! Remove or hide. Must be called by ZombieEngine.
-		virtual void initEngine(b2World* world_, GameInterface* gameInterface) {
+		virtual void initEngine(b2WorldId world, GameInterface* gameInterface) {
 		}
 
 		virtual WeaponInterfacePtr clone() const = 0;

@@ -11,10 +11,14 @@ namespace zombie {
 		Shot(Position startPoint, Position endPoint)
 			: position_{startPoint}
 			, direction_{endPoint - startPoint} {
+			
+			/*
+			auto dist = b2Length(direction_);
+			b2MulSV(1.f/ speed_, dist);
 
-			auto dist = direction_.Normalize();
-			duration_ = dist / speed_;
+			duration_ = (1.f/ speed_) * dist;
 			angle_ = calculateAnglePointToPoint(startPoint, endPoint) * 180 / Pi;
+			*/
 		}
 
 		bool toBeRemoved() const {

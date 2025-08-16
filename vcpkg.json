@@ -13,11 +13,5 @@
 		"fmt",
 		"box2d",
 		"nlohmann-json"
-	],
-	"overrides": [
-		{
-			"name": "box2d",
-			"version": "2.4.1#3"
-		}
 	]
 }

@@ -35,7 +35,7 @@ namespace zombie {
 		void updatePhysics(double time, double timeStept);
 
 		void applySpin(float impulse) {
-			body_->ApplyAngularImpulse(impulse, true);
+			b2Body_ApplyAngularImpulse(bodyId_, impulse, true);
 		}
 
 		State getState() const;
@@ -53,15 +53,16 @@ namespace zombie {
 		bool isInsideViewArea(Position position) const override;
 
 		Position getPosition() const {
-			return body_->GetPosition();
+			return b2Body_GetPosition(bodyId_);
 		}
 
-		b2Body* getBody() const override {
-			return body_;
+		b2BodyId getBody() const override {
+			return bodyId_;
 		}
 
 		float getDirection() const {
-			return body_->GetAngle();
+			//return body_->GetAngle();
+			return 0.f;
 		}
 
 		bool isInfected() const override {
@@ -85,15 +86,11 @@ namespace zombie {
 		}
 
 	private:
-		void createBody(b2World& world) override;
+		void createBody(b2WorldId world) override;
 
 		void destroyBody() override {
-			if (body_ != nullptr) {
-				auto world = body_->GetWorld();
-				if (world != nullptr) {
-					world->DestroyBody(body_);
-				}
-				body_ = nullptr;
+			if (b2Body_IsValid(bodyId_)) {
+				b2DestroyBody(bodyId_);
 			}
 		}
 
@@ -101,18 +98,19 @@ namespace zombie {
 			float frictionLateralFrontWheel, float frictionLateralBackWheel);
 
 		b2Vec2 getFrontWheelPosition() const {
-			return body_->GetWorldPoint(b2Vec2(properties_.length * wheelDelta_, 0));
+			return b2Body_GetWorldPoint(bodyId_, b2Vec2{properties_.length * wheelDelta_, 0});
 		}
 
 		b2Vec2 getBackWheelPosition() const {
-			return body_->GetWorldPoint(b2Vec2(-properties_.length * wheelDelta_, 0));
+			return b2Body_GetWorldPoint(bodyId_, b2Vec2{-properties_.length * wheelDelta_, 0});
 		}
 
 		b2Vec2 getDirectionVector() const {
-			return body_->GetWorldVector(b2Vec2(std::cos(steeringAngle_), std::sin(steeringAngle_)));
+			//return body_->GetWorldVector(b2Vec2(std::cos(steeringAngle_), std::sin(steeringAngle_)));
+			return b2Body_GetWorldVector(bodyId_, b2Vec2{std::cos(steeringAngle_), std::sin(steeringAngle_)});
 		}
 
-		b2Body* body_{};
+		b2BodyId bodyId_{};
 		float steeringAngle_{0.f};
 		
 		CarProperties properties_{};

@@ -23,12 +23,10 @@ namespace zombie {
 	}
 
 	void MissileLauncher::pullTrigger(Unit& unit, float time) {
-		if (lastShotTime_ + timeBetweenShots_ < time) {
-			if (bulletsInWeapon_ > 0) {
-				lastShotTime_ = time;
-				--bulletsInWeapon_;
-				gameInterface_->shot(unit, speed_, deathTime_, damage_, damageRadius_, force_);
-			}
+		if (lastShotTime_ + timeBetweenShots_ < time && bulletsInWeapon_ > 0) {
+			lastShotTime_ = time;
+			--bulletsInWeapon_;
+			gameInterface_->shot(unit, speed_, deathTime_, damage_, damageRadius_, force_);
 		}
 	}
 
@@ -55,9 +53,9 @@ namespace zombie {
 		}
 	}
 
-	void MissileLauncher::initEngine(b2World* world, GameInterface* gameInterface) {
+	void MissileLauncher::initEngine(b2WorldId worldId, GameInterface* gameInterface) {
 		gameInterface_ = gameInterface;
-		world_ = world;
+		worldId_ = worldId;
 	}
 
 }

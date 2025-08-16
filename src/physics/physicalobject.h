@@ -20,26 +20,26 @@ namespace zombie {
 
 		// Return the body for the object. Use with care!
 		// Return a nullpntr if the object not belongs to the world.
-		virtual b2Body* getBody() const = 0;
+		virtual b2BodyId getBody() const = 0;
 
 		void setEnabled(bool active) {
-			assert(getBody() != nullptr);
-			getBody()->SetEnabled(active);
+			if (active) {
+				b2Body_Enable(getBody());
+			} else {
+				b2Body_Disable(getBody());
+			}
 		}
 		
 		bool isEnabled() const {
-			assert(getBody() != nullptr);
-			return getBody()->IsEnabled();
+			return b2Body_IsEnabled(getBody());
 		}
 
 		void setAwake(bool awake) {
-			assert(getBody() != nullptr);
-			getBody()->SetAwake(awake);
+			b2Body_SetAwake(getBody(), awake);
 		}
 
 		bool isAwake() const {
-			assert(getBody() != nullptr);
-			return getBody()->IsAwake();
+			return b2Body_IsAwake(getBody());
 		}
 
 	private:
@@ -47,7 +47,7 @@ namespace zombie {
 		friend class PhysicEngine;
 
 		// Create the body. I.e. the body is now a part of the box2d world.
-		virtual void createBody(b2World& world) = 0;
+		virtual void createBody(b2WorldId world) = 0;
 
 		// Destroys the body. I.e. the body in no more a part of the box2d world.
 		virtual void destroyBody() = 0;

@@ -113,7 +113,6 @@ namespace zombie {
 		std::vector<std::unique_ptr<Player>> players_;
 		DrawDebugArrow drawDebugArrow_;
 		PhysicEngine engine_;
-		DebugDraw debugDraw_;
 
 		// Fix timestep.
 		double timeStep_{1.0/60.0};

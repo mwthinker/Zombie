@@ -17,50 +17,46 @@ namespace zombie {
 		}
 
 		Position getPosition() const {
-			return body_->GetPosition();
+			return b2Body_GetPosition(bodyId_);
 		}
 
 		float getRadius() const {
 			return radius_;
 		}
 
-		b2Body* getBody() const override {
-			return body_;
+		b2BodyId getBody() const override {
+			return bodyId_;
 		}
 
 	private:
-		void createBody(b2World& world) override {
-			b2BodyDef bodyDef;
-			bodyDef.position.Set(x_, y_);
-			bodyDef.angle = 0.0;
-			bodyDef.userData.physicalObject = this;
-			body_ = world.CreateBody(&bodyDef);
+		void createBody(b2WorldId worldId) override {
+			b2BodyDef bodyDef = b2DefaultBodyDef();
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position = b2Vec2{x_, y_};
+			bodyDef.rotation = b2MakeRot(0);
+			bodyDef.userData = this;
 
+			bodyId_ = b2CreateBody(worldId, &bodyDef);
 			// Add tensor. Should not be a physical object.
 			{
-				b2CircleShape circle;
-				circle.m_p.Set(0, 0);
-				circle.m_radius = radius_;
+				b2Circle circle{
+					.center = Zero,
+					.radius = radius_
+				};
 
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &circle;
-				fixtureDef.density = 0.0f;
-				fixtureDef.friction = 0.0f;
-				fixtureDef.isSensor = true;
-				fixtureDef.userData.physicalObject = this;
+				b2ShapeDef shapeDef = b2DefaultShapeDef();
+				shapeDef.density = 0.0f;
+				//shapeDef.friction = 0.0f;
+				shapeDef.isSensor = true;
+				shapeDef.userData = this;
 
-				// Add Body fixture.
-				body_->CreateFixture(&fixtureDef);
+				auto circleShapeId = b2CreateCircleShape(bodyId_, &shapeDef, &circle);
 			}
 		}
 
 		void destroyBody() override {
-			if (body_ != nullptr) {
-				auto world = body_->GetWorld();
-				if (world != nullptr) {
-					world->DestroyBody(body_);
-				}
-				body_ = nullptr;
+			if (b2Body_IsValid(bodyId_)) {
+				b2DestroyBody(bodyId_);
 			}
 		}
 
@@ -68,7 +64,7 @@ namespace zombie {
 		float radius_ = 0.5f;
 		float x_ = 0.f;
 		float y_ = 0.f;
-		b2Body* body_ = nullptr;
+		b2BodyId bodyId_ = b2_nullBodyId;
 	};
 
 }

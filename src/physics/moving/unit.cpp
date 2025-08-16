@@ -3,6 +3,8 @@
 #include "physics/weapons/weapon.h"
 #include "auxiliary.h"
 
+#include <spdlog/spdlog.h>
+
 #include <cmath>
 
 namespace zombie {
@@ -23,42 +25,42 @@ namespace zombie {
 		timeLeftToRun_ = 5.f;
 	}
 
-	void Unit::createBody(b2World& world) {
-		b2BodyDef bodyDef;
+	void Unit::createBody(b2WorldId world) {
+		b2BodyDef bodyDef = b2DefaultBodyDef();
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position = Zero;
-		bodyDef.angle = 0;
-		bodyDef.userData.physicalObject = this;
+		bodyDef.rotation = b2MakeRot(0);
+		bodyDef.userData = this;
 
-		body_ = world.CreateBody(&bodyDef);
+		bodyId_ = b2CreateBody(world, &bodyDef);
 		{ // Add tensor to make all objects inside the tenson visible.
-			b2CircleShape circle;
-			circle.m_p.Set(0, 0);
-			circle.m_radius = viewDistance_;
+			b2Circle circle{
+				.center = Zero,
+				.radius = viewDistance_
+			};
 
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circle;
-			fixtureDef.density = 0.0f;
-			fixtureDef.friction = 0.0f;
-			fixtureDef.isSensor = true;
-			fixtureDef.userData.physicalObject = this;
+			b2ShapeDef shapeDef = b2DefaultShapeDef();
+			shapeDef.density = 0.0f;
+			//shapeDef.friction = 0.0f;
+			shapeDef.isSensor = true;
+			shapeDef.userData = this;
 
-			body_->CreateFixture(&fixtureDef);
+			auto circleShapeId = b2CreateCircleShape(bodyId_, &shapeDef, &circle);
 		}
 		
 		{ // Add body properties.
-			b2CircleShape circle;
-			circle.m_p.Set(0, 0);
-			circle.m_radius = properties_.radius;
+			b2Circle circle{
+				.center = Zero,
+				.radius = properties_.radius
+			};
 
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circle;
-			fixtureDef.density = properties_.mass / (Pi * properties_.radius * properties_.radius);
-			fixtureDef.friction = 0.0f;
-			fixtureDef.userData.physicalObject = this;
-			fixtureDef.isSensor = false;
+			b2ShapeDef shapeDef = b2DefaultShapeDef();
+			shapeDef.density = properties_.mass / (Pi * properties_.radius * properties_.radius);
+			//shapeDef.friction = 0.0f;
+			shapeDef.isSensor = true;
+			shapeDef.userData = this;
 			
-			body_->CreateFixture(&fixtureDef);
+			auto circleShapeId = b2CreateCircleShape(bodyId_, &shapeDef, &circle);
 		}
 	}
 
@@ -94,15 +96,15 @@ namespace zombie {
 
 		// Move forward or backwards.
 		if (input.forward && !input.backward) {
-			body_->ApplyForceToCenter(b2Vec2{move.x, move.y}, true);
+			b2Body_ApplyForceToCenter(bodyId_, b2Vec2{move.x, move.y}, true);
 			unitEventHandler(UnitEvent::Walk);
-			spdlog::info("Force: {}", body_->GetPosition());
+			spdlog::info("Force: {}", b2Body_GetPosition(bodyId_));
 		} else if (!input.forward && input.backward) {
-			body_->ApplyForceToCenter(-b2Vec2{move.x, move.y}, true);
+			b2Body_ApplyForceToCenter(bodyId_, -b2Vec2{move.x, move.y}, true);
 			unitEventHandler(UnitEvent::Walk);
 		} else {
 			// In order to make the unit stop when not moving.
-			body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
+			b2Body_ApplyForceToCenter(bodyId_, -b2Body_GetLinearVelocity(bodyId_), true);
 			unitEventHandler(UnitEvent::Standstill);
 		}
 
@@ -111,11 +113,11 @@ namespace zombie {
 
 		// Turn left or right.
 		if (input.turnLeft && !input.turnRight) {
-			body_->SetAngularVelocity(3.0f);
+			b2Body_SetAngularVelocity(bodyId_, 3.0f);
 		} else if (!input.turnLeft && input.turnRight) {
-			body_->SetAngularVelocity(-3.0f);
+			b2Body_SetAngularVelocity(bodyId_, -3.0f);
 		} else {
-			body_->SetAngularVelocity(0.0);
+			b2Body_SetAngularVelocity(bodyId_, 0.0f);
 		}
 
 		// Want to shoot?
@@ -137,19 +139,21 @@ namespace zombie {
 	}
 	
 	State Unit::getState() const {
-		return State{body_->GetPosition(),
-					 body_->GetLinearVelocity(),
-					 body_->GetAngle(),
-					 body_->GetAngularVelocity()};
+		return State{
+			b2Body_GetPosition(bodyId_),
+			b2Body_GetLinearVelocity(bodyId_),
+			b2Rot_GetAngle(b2Body_GetRotation(bodyId_)),
+			b2Body_GetAngularVelocity(bodyId_)
+		};
 	}
 
 	void Unit::setState(const State& state) {
 		// Set the position and current angle.
-		body_->SetTransform(state.position_ - body_->GetPosition(), state.angle_ - body_->GetAngle());
+		b2Body_SetTransform(bodyId_, state.position_ - b2Body_GetPosition(bodyId_), b2MakeRot(state.angle_ - b2Rot_GetAngle(b2Body_GetRotation(bodyId_))));
 		
 		// Set the velocity of the states.
-		body_->SetAngularVelocity(state.anglularVelocity_);
-		body_->SetLinearVelocity(body_->GetLinearVelocity());
+		b2Body_SetAngularVelocity(bodyId_, state.anglularVelocity_);
+		b2Body_SetLinearVelocity(bodyId_, state.velocity_);
 	}
 
 	float Unit::getViewDistance() const {
@@ -163,25 +167,25 @@ namespace zombie {
 	float Unit::viewAngle() const {
 		return viewAngle_;
 	}
-
+	
 	bool Unit::isInside(Position position) const {
-		return (position - getPosition()).LengthSquared() < getRadius()*getRadius();
+		return b2LengthSquared(position - getPosition()) < getRadius()*getRadius();
 	}
 
 	bool Unit::isInsideViewArea(Position position) const {
 		Position p = position - getPosition();
 		auto angle = std::atan2(p.y, p.x);
-		return (calculateDifferenceBetweenAngles(angle, body_->GetAngle() + viewAngle() * 0.5f) < 0
-			&& calculateDifferenceBetweenAngles(angle, body_->GetAngle() - viewAngle() * 0.5f) > 0
-			&& p.LengthSquared() < getViewDistance() * getViewDistance()) || isInsideSmalViewDistance(position);
+		return (calculateDifferenceBetweenAngles(angle, b2Rot_GetAngle(b2Body_GetRotation(bodyId_)) + viewAngle() * 0.5f) < 0
+			&& calculateDifferenceBetweenAngles(angle, b2Rot_GetAngle(b2Body_GetRotation(bodyId_)) - viewAngle() * 0.5f) > 0
+			&& b2LengthSquared(p) < getViewDistance() * getViewDistance()) || isInsideSmalViewDistance(position);
 	}
 
 	bool Unit::isInsideSmalViewDistance(Position position) const {
-		return (position - getPosition()).LengthSquared() < smallViewDistance_*smallViewDistance_;
+		return b2LengthSquared((position - getPosition())) < smallViewDistance_*smallViewDistance_;
 	}
 
 	float Unit::getDirection() const {
-		return body_->GetAngle();
+		return b2Rot_GetAngle(b2Body_GetRotation(bodyId_));
 	}
 
 	float Unit::healthPoints() const {
@@ -203,15 +207,15 @@ namespace zombie {
 	}
 
 	Position Unit::getPosition() const {
-		return body_->GetPosition();
+		return b2Body_GetPosition(bodyId_);
 	}
 
 	float Unit::getRadius() const {
 		return properties_.radius;
 	}
 
-	b2Body* Unit::getBody() const {
-		return body_;
+	b2BodyId Unit::getBody() const {
+		return bodyId_;
 	}
 
 }
