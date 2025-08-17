@@ -5,7 +5,7 @@
 
 #include <sdl/window.h>
 #include <sdl/shader.h>
-#include <sdl/gpu/sdlgpu.h>
+#include <sdl/gpu.h>
 
 #include <memory>
 
@@ -37,7 +37,7 @@ namespace zombie {
 		ImFont* buttonFont_ = nullptr;
 		ImFont* debugFont_ = nullptr;
 
-		sdl::gpu::GpuGraphicsPipeline graphicsPipeline_;
+		sdl::GpuGraphicsPipeline graphicsPipeline_;
 	};
 
 }

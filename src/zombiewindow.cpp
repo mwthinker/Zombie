@@ -226,7 +226,7 @@ namespace zombie {
 				.num_color_targets = 1,
 			}
 		};
-		graphicsPipeline_ = sdl::gpu::createGraphicsPipeline(gpuDevice_, pipelineInfo);
+		graphicsPipeline_ = sdl::createGpuGraphicsPipeline(gpuDevice_, pipelineInfo);
 		
 		background_ = Configuration::getInstance().getMenuBackgroundImage();
 

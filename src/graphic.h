@@ -4,10 +4,10 @@
 #include "input.h"
 #include "box2ddef.h"
 #include "textureview.h"
-#include "batch.h"
 
+#include <sdl/batch.h>
 #include <sdl/shader.h>
-#include <sdl/gpu/sdlgpu.h>
+#include <sdl/gpu.h>
 
 #include <SDL3/SDL_gpu.h>
 #include <glm/gtx/rotate_vector.hpp>
@@ -28,7 +28,7 @@ namespace zombie {
 					.usage = flag,
 					.size = static_cast<Uint32>(bytes_)
 				};
-				buffer_ = sdl::gpu::createBuffer(gpuDevice, vertexBufferInfo);
+				buffer_ = sdl::createGpuBuffer(gpuDevice, vertexBufferInfo);
 			}
 			return buffer_.get();
 		}
@@ -44,7 +44,7 @@ namespace zombie {
 
 	private:
 		size_t bytes_ = 0;
-		sdl::gpu::GpuBuffer buffer_;
+		sdl::GpuBuffer buffer_;
 	};
 
 	class TransferBuffer {
@@ -58,9 +58,9 @@ namespace zombie {
 					.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
 					.size = static_cast<Uint32>(bytes_)
 				};
-				transferBuffer_ = sdl::gpu::createTransferBuffer(gpuDevice, transferInfo);
+				transferBuffer_ = sdl::createGpuTransferBuffer(gpuDevice, transferInfo);
 			}
-			sdl::gpu::mapTransferBuffer(gpuDevice, transferBuffer_, data);
+			sdl::mapTransferBuffer(gpuDevice, transferBuffer_.get(), data);
 			return transferBuffer_.get();
 		}
 
@@ -75,7 +75,7 @@ namespace zombie {
 
 	private:
 		size_t bytes_ = 0;
-		sdl::gpu::GpuTransferBuffer transferBuffer_;
+		sdl::GpuTransferBuffer transferBuffer_;
 	};
 
 	class Graphic {
@@ -308,7 +308,7 @@ namespace zombie {
 			};
 			SDL_GPUTransferBuffer* indexTransferBuffer = indexTransferBuffer_.get(gpuDevice, indices_);
 
-			sdl::gpu::copyPass(commandBuffer, [&](SDL_GPUCopyPass* copyPass) {
+			sdl::copyPass(commandBuffer, [&](SDL_GPUCopyPass* copyPass) {
 				SDL_GPUTransferBufferLocation vertexLocation{
 					.transfer_buffer = vertexTransferBuffer,
 					.offset = 0
@@ -358,7 +358,7 @@ namespace zombie {
 
 	private:
 		glm::mat4 matrix_{1.0f};
-		Batch<sdl::Vertex> batch_;
+		sdl::Batch<sdl::Vertex> batch_;
 		TransferBuffer vertexTransferBuffer_;
 		TransferBuffer indexTransferBuffer_;
 		Buffer vertexBuffer_;

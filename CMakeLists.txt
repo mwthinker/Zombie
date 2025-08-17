@@ -61,8 +61,7 @@ set(SOURCES_ZOMBIE
 	src/b2_user_settings.h
 	src/graphic.h
 	src/textureview.h
-	src/batch.h
-	
+
 	src/zombieplayer.cpp
 	src/zombieplayer.h
 	src/carplayer.cpp

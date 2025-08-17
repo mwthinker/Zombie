@@ -11,7 +11,7 @@
 #include <sdl/color.h>
 #include <sdl/util.h>
 #include <sdl/imageatlas.h>
-#include <sdl/gpu/gpuutil.h>
+#include <sdl/gpuutil.h>
 
 
 //#include <sdl/font.h>
@@ -183,8 +183,8 @@ namespace zombie {
 		TextureView roadTurnIntersection180_;
 		TextureView roadTurnIntersection270_;
 
-		sdl::gpu::GpuSampler sampler_;
-		sdl::gpu::GpuTexture atlasTexture_;
+		sdl::GpuSampler sampler_;
+		sdl::GpuTexture atlasTexture_;
 		SDL_GPUTextureSamplerBinding atlasBinding_;
 	};
 

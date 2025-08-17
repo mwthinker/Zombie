@@ -195,8 +195,8 @@ namespace zombie {
 		roadTurnIntersection180_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["tintersection180"].get<std::string>());
 		roadTurnIntersection270_ = addImageToSurface(atlas, surfaceAtlas.get(), settings_["roads"]["tintersection270"].get<std::string>());
 
-		atlasTexture_ = sdl::gpu::uploadSurface(gpuDevice, surfaceAtlas.get());
-		sampler_ = sdl::gpu::createSampler(gpuDevice, SDL_GPUSamplerCreateInfo{
+		atlasTexture_ = sdl::uploadSurface(gpuDevice, surfaceAtlas.get());
+		sampler_ = sdl::createGpuSampler(gpuDevice, SDL_GPUSamplerCreateInfo{
 			.min_filter = SDL_GPU_FILTER_NEAREST,
 			.mag_filter = SDL_GPU_FILTER_NEAREST,
 			.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
