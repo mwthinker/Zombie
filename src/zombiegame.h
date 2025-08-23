@@ -25,6 +25,15 @@
 
 namespace zombie {
 
+	struct Settings {
+		b2DebugDraw b2DebugDraw = b2DefaultDebugDraw();
+		int subStepCount = 4;
+		float hertz = 60.0f;
+		bool pause = false;
+		bool singleStep = false;
+		bool debug = false;
+	};
+
 	// Responsible of loading map, units and initiate all
 	// game related things and to start the game engine.
 	// It also handle all game events triggered by the game engine,
@@ -117,6 +126,7 @@ namespace zombie {
 		// Fix timestep.
 		double timeStep_ =  1.0/60.0;
 		double accumulator_ = 0.0;
+		Settings settings_;
 	};
 
 }

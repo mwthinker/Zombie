@@ -18,7 +18,7 @@ namespace zombie {
 	// I.e. hides the Box2d usage.
 	class PhysicEngine : public ActionHandler {
 	public:
-		PhysicEngine(GameInterface& gameInterface, float impulseThreshold);
+		PhysicEngine(GameInterface& gameInterface, float impulseThreshold, b2DebugDraw& b2DebugDraw);
 		~PhysicEngine();
 		
 		void update(double timeStep, int subStepCount);
@@ -74,8 +74,6 @@ namespace zombie {
 
 		void debugDraw();
 
-		void initDebugDraw(const b2DebugDraw& debugDraw);
-
 	private:
 		void unitEvent(Unit* unit, int eventType) override;
 		void carEvent(Car* car, int eventType) override;
@@ -90,7 +88,7 @@ namespace zombie {
 
 		float impulseThreshold_ = 0.f;
 
-		b2DebugDraw debugDraw_ = b2DefaultDebugDraw();
+		b2DebugDraw& debugDraw_;
 	};
 
 }

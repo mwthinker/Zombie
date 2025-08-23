@@ -6,11 +6,13 @@
 
 #include <concepts>
 
-
-
 namespace zombie {
 
 	namespace {
+
+		struct Context {
+			Graphic& graphic;
+		};
 
 		inline sdl::Color toColor(b2HexColor color) {
 			return sdl::Color{static_cast<ImU32>(static_cast<ImU32>(color | 0xFF000000))};
@@ -109,9 +111,13 @@ namespace zombie {
 
 	}
 
-	b2DebugDraw initb2DebugDraw(Graphic& graphic, const DebugDrawSettings& settings) {
+	b2DebugDraw initb2DebugDraw(Graphic& graphic) {
 		b2DebugDraw dd = b2DefaultDebugDraw();
 		dd.context = &graphic;
+		dd.drawingBounds = b2AABB{
+			.lowerBound = {-1000.f, -1000.f},
+			.upperBound = {1000.f, 1000.f}
+		};
 		dd.DrawPolygonFcn = &drawPolygonFcn;
 		dd.DrawSolidPolygonFcn = &drawSolidPolygonFcn;
 		dd.DrawCircleFcn = &drawCircleFcn;
@@ -121,21 +127,6 @@ namespace zombie {
 		dd.DrawTransformFcn = &drawTransformFcn;
 		dd.DrawPointFcn = &drawPointFcn;
 		dd.DrawStringFcn = &drawStringFcn;
-		dd.drawingBounds = settings.drawingBounds;
-		dd.useDrawingBounds = settings.useDrawingBounds;
-		dd.drawShapes = settings.drawShapes;
-		dd.drawJoints = settings.drawJoints;
-		dd.drawJointExtras = settings.drawJointExtras;
-		dd.drawBounds = settings.drawBounds;
-		dd.drawMass = settings.drawMass;
-		dd.drawBodyNames = settings.drawBodyNames;
-		dd.drawContacts = settings.drawContacts;
-		dd.drawGraphColors = settings.drawGraphColors;
-		dd.drawContactNormals = settings.drawContactNormals;
-		dd.drawContactImpulses = settings.drawContactImpulses;
-		dd.drawContactFeatures = settings.drawContactFeatures;
-		dd.drawFrictionImpulses = settings.drawFrictionImpulses;
-		dd.drawIslands = settings.drawIslands;
 		return dd;
 	}
 

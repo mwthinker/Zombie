@@ -48,9 +48,10 @@ namespace zombie {
 		
 	}
 
-	PhysicEngine::PhysicEngine(GameInterface& gameInterface, float impulseThreshold)
+	PhysicEngine::PhysicEngine(GameInterface& gameInterface, float impulseThreshold, b2DebugDraw& b2DebugDraw)
 		: gameInterface_{gameInterface}
-		, impulseThreshold_{impulseThreshold} {
+		, impulseThreshold_{impulseThreshold}
+		, debugDraw_{b2DebugDraw} {
 		
 		b2WorldDef worldDef = b2DefaultWorldDef();
 		worldDef.gravity = b2Vec2{0, 0};
@@ -66,10 +67,6 @@ namespace zombie {
 
 	void PhysicEngine::debugDraw() {
 		b2World_Draw(worldId_, &debugDraw_);
-	}
-
-	void PhysicEngine::initDebugDraw(const b2DebugDraw& debugDraw) {
-		debugDraw_ = debugDraw;
 	}
 
 	void PhysicEngine::update(double timeStep, int subStepCount) {
