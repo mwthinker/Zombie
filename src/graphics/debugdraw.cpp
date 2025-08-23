@@ -13,7 +13,7 @@ namespace zombie {
 	namespace {
 
 		inline sdl::Color toColor(b2HexColor color) {
-			return sdl::color::Red;
+			return sdl::Color{static_cast<ImU32>(static_cast<ImU32>(color | 0xFF000000))};
 		}
 
 		constexpr float LineWidth = 0.1f;

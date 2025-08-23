@@ -77,6 +77,7 @@ set(SOURCES_ZOMBIE
 	CPack.cmake
 	vcpkg.json
 	vcpkg-configuration.json
+	cppsdl3.natvis
 )
 
 if (MSVC)

@@ -48,57 +48,49 @@ namespace zombie {
 		}
 
 		struct Settings {
-			float hertz = 60.0f;
+			DebugDrawSettings debugDrawSettings{
+				.drawingBounds = b2AABB{
+					.lowerBound = {-1000.f, -1000.f},
+					.upperBound = {1000.f, 1000.f}
+				}
+			};
 			int subStepCount = 4;
-			bool drawShapes = true;
-			bool drawJoints = true;
-			bool drawAABBs = false;
-			bool drawContactPoints = false;
-			bool drawContactNormals = false;
-			bool drawContactImpulse = false;
-			bool drawFrictionImpulse = false;
-			bool drawCOMs = false;
-			bool drawStats = false;
-			bool drawProfile = false;
-			bool enableWarmStarting = true;
-			bool enableContinuous = true;
-			bool enableSubStepping = false;
-			bool enableSleep = true;
+			float hertz = 60.0f;
 			bool pause = false;
 			bool singleStep = false;
+			bool debug = false;
 		};
 
 		Settings settings;
 
-		void imguiDebugTools() {
+		void imguiDebugTools(Settings& settings) {
 			bool debug = true;
 
-			ImGui::Window("Tools", &debug, ImGuiWindowFlags_NoCollapse, []() {
+			ImGui::Window("Tools", &debug, ImGuiWindowFlags_NoCollapse, [&]() {
 				if (ImGui::BeginTabBar("ControlTabs", ImGuiTabBarFlags_None)) {
 					if (ImGui::BeginTabItem("Controls")) {
+						ImGui::Separator();
+						ImGui::Checkbox("Debug", &settings.debug);
+						ImGui::Separator();
 						ImGui::SliderInt("Sub step counter", &settings.subStepCount, 1, 20);
 						ImGui::SliderFloat("Hertz", &settings.hertz, 5.0f, 120.0f, "%.0f hz");
 
 						ImGui::Separator();
-
-						ImGui::Checkbox("Sleep", &settings.enableSleep);
-						ImGui::Checkbox("Warm Starting", &settings.enableWarmStarting);
-						ImGui::Checkbox("Time of Impact", &settings.enableContinuous);
-						ImGui::Checkbox("Sub-Stepping", &settings.enableSubStepping);
-
-						ImGui::Separator();
-
-						ImGui::Checkbox("Shapes", &settings.drawShapes);
-						ImGui::Checkbox("Joints", &settings.drawJoints);
-						ImGui::Checkbox("AABBs", &settings.drawAABBs);
-						ImGui::Checkbox("Contact Points", &settings.drawContactPoints);
-						ImGui::Checkbox("Contact Normals", &settings.drawContactNormals);
-						ImGui::Checkbox("Contact Impulses", &settings.drawContactImpulse);
-						ImGui::Checkbox("Friction Impulses", &settings.drawFrictionImpulse);
-						ImGui::Checkbox("Center of Masses", &settings.drawCOMs);
-						ImGui::Checkbox("Statistics", &settings.drawStats);
-						ImGui::Checkbox("Profile", &settings.drawProfile);
-
+						
+                        ImGui::Checkbox("Use Drawing Bounds", &settings.debugDrawSettings.useDrawingBounds);
+						ImGui::Checkbox("Draw Shapes", &settings.debugDrawSettings.drawShapes);
+						ImGui::Checkbox("Draw Joints", &settings.debugDrawSettings.drawJoints);
+						ImGui::Checkbox("Draw Joint Extras", &settings.debugDrawSettings.drawJointExtras);
+						ImGui::Checkbox("Draw Bounds", &settings.debugDrawSettings.drawBounds);
+						ImGui::Checkbox("Draw Mass", &settings.debugDrawSettings.drawMass);
+						ImGui::Checkbox("Draw Body Names", &settings.debugDrawSettings.drawBodyNames);
+						ImGui::Checkbox("Draw Contacts", &settings.debugDrawSettings.drawContacts);
+						ImGui::Checkbox("Draw Graph Colors", &settings.debugDrawSettings.drawGraphColors);
+						ImGui::Checkbox("Draw Contact Normals", &settings.debugDrawSettings.drawContactNormals);
+						ImGui::Checkbox("Draw Contact Impulses", &settings.debugDrawSettings.drawContactImpulses);
+						ImGui::Checkbox("Draw Contact Features", &settings.debugDrawSettings.drawContactFeatures);
+						ImGui::Checkbox("Draw Friction Impulses", &settings.debugDrawSettings.drawFrictionImpulses);
+						ImGui::Checkbox("Draw Islands", &settings.debugDrawSettings.drawIslands);
 						ImVec2 button_sz{-1, 0};
 						if (ImGui::Button("Pause (P)", button_sz)) {
 							settings.pause = !settings.pause;
@@ -120,7 +112,7 @@ namespace zombie {
 					}
 					ImGui::EndTabBar();
 				}
-				});
+			});
 		}
 
 	}
@@ -326,25 +318,32 @@ namespace zombie {
 	}
 
 	void ZombieGame::draw(Graphic& graphic, double deltaTime) {
+		engine_.initDebugDraw(initb2DebugDraw(graphic, settings.debugDrawSettings));
+
 		updateGame(deltaTime);
 
 		graphic.clear();
-		graphic.addRectangle({-1, -1}, {2, 2}, sdl::color::html::OliveDrab);
+		if (!settings.debug) {
+			graphic.addRectangle({-1, -1}, {2, 2}, sdl::color::html::OliveDrab);
+		}
 		graphic.setMatrix(cameraToClip_ * worldToCamera_);
-		for (int i = 0; i < 100; ++i) {
-			for (int j = 0; j < 100; ++j) {
-				float x = i - 50.f;
-				float y = j - 50.f;
-				const float w = 0.05f;
-				graphic.addRectangle({x + w, y + w}, {1.f - w * 2.f, 1.f - w * 2.f}, sdl::color::html::ForestGreen);
-			}
-		}
-		for (auto& player : players_) {
-			player->draw(graphic);
-		}
 
-		drawDebugArrow_.draw(graphic);
-		engine_.debugDraw();
+		if (settings.debug) {
+			engine_.debugDraw();
+		} else {
+			for (int i = 0; i < 100; ++i) {
+				for (int j = 0; j < 100; ++j) {
+					float x = i - 50.f;
+					float y = j - 50.f;
+					const float w = 0.05f;
+					graphic.addRectangle({x + w, y + w}, {1.f - w * 2.f, 1.f - w * 2.f}, sdl::color::html::ForestGreen);
+				}
+			}
+			for (auto& player : players_) {
+				player->draw(graphic);
+			}
+			drawDebugArrow_.draw(graphic);
+		}
 		// Add this test rectangle to see if basic rendering works
 		//graphic.addRectangle({-50, -50}, {100, 100}, sdl::color::html::Red);
 	}
@@ -381,17 +380,7 @@ namespace zombie {
 			ImGui::Text("Arrow position: (%4.2f, %4.2f)", drawDebugArrow_.position.x, drawDebugArrow_.position.y);
 		});
 
-		imguiDebugTools();
-
-		/*
-		ImGui::MainWindow("Main", [&]() {
-			engine_.debugDraw();
-			ImGui::Text("Active units %d", players_.size());
-			auto pos = ImGui::GetWindowPos();
-			ImGui::GetWindowDrawList()->AddCircle({100.f + pos.x, 100.f + pos.y}, 10.f, sdl::color::html::Bisque.toImU32());
-			//ImGui::GetWindowDrawList()->ca
-		});
-		*/
+		imguiDebugTools(settings);
 	}
 
 	void ZombieGame::updateGame(double deltaTime) {

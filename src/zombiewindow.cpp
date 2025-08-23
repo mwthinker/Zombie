@@ -38,13 +38,21 @@ namespace zombie {
 		Configuration::getInstance().close();
 	}
 
+	void ZombieWindow::handleResize() {
+		if (zombieGame_) {
+		}
+	}
+
 	void ZombieWindow::processEvent(const SDL_Event& windowEvent) {
 		if (zombieGame_) {
 			zombieGame_->eventUpdate(windowEvent);
 		}
-
+		
 		switch (windowEvent.type) {
 			case SDL_EVENT_WINDOW_RESIZED:
+				if (zombieGame_) {
+					zombieGame_->setSize(windowEvent.window.data1, windowEvent.window.data2);
+				}
 				if (!(SDL_GetWindowFlags(sdl::Window::getSdlWindow()) & SDL_WINDOW_MAXIMIZED)) {
 					// The Window's is not maximized. Save size!
 					//GameData::getInstance().setWindowWidth(windowEvent.window.data1);
@@ -107,7 +115,6 @@ namespace zombie {
 		if (zombieGame_) {
 			graphic_.clear();
 
-			//shader_.pushProjectionMatrix(commandBuffer, modelMatrix);
 			auto delta = std::chrono::duration<double>(deltaTime).count();
 			zombieGame_->draw(graphic_, delta);
 

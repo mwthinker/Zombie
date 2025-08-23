@@ -78,9 +78,98 @@ namespace zombie {
 		sdl::GpuTransferBuffer transferBuffer_;
 	};
 
+	template <sdl::VertexType Vertex>
+	class GraphicBuffer {
+	public:
+		void bindBuffers(SDL_GPURenderPass* renderPass) {
+			SDL_GPUBufferBinding vertexBinding{
+				.buffer = vertexBuffer_.get(),
+				.offset = 0
+			};
+			SDL_BindGPUVertexBuffers(
+				renderPass,
+				0,
+				&vertexBinding,
+				1
+			);
+
+			SDL_GPUBufferBinding indexBinding{
+				.buffer = indexBuffer_.get(),
+				.offset = 0
+			};
+			SDL_BindGPUIndexBuffer(
+				renderPass,
+				&indexBinding,
+				SDL_GPU_INDEXELEMENTSIZE_32BIT
+			);
+		}
+
+		void uploadToGpu(SDL_GPUDevice* gpuDevice, SDL_GPUCommandBuffer* commandBuffer, sdl::Batch<Vertex>& batch) {
+			auto indices_ = batch.indices();
+			auto vertices_ = batch.vertices();
+
+			SDL_GPUBuffer* indexBuffer = indexBuffer_.get(gpuDevice, SDL_GPU_BUFFERUSAGE_INDEX, indices_);
+			SDL_GPUBuffer* vertexBuffer = vertexBuffer_.get(gpuDevice, SDL_GPU_BUFFERUSAGE_VERTEX, vertices_);
+
+			SDL_GPUTransferBuffer* vertexTransferBuffer = vertexTransferBuffer_.get(gpuDevice, vertices_);
+			SDL_GPUTransferBuffer* indexTransferBuffer = indexTransferBuffer_.get(gpuDevice, indices_);
+
+			sdl::copyPass(commandBuffer, [&](SDL_GPUCopyPass* copyPass) {
+				SDL_GPUTransferBufferLocation vertexLocation{
+					.transfer_buffer = vertexTransferBuffer,
+					.offset = 0
+				};
+
+				SDL_GPUBufferRegion vertexRegion{
+					.buffer = vertexBuffer,
+					.offset = 0,
+					.size = static_cast<Uint32>(vertices_.size() * sizeof(sdl::Vertex))
+				};
+
+				SDL_UploadToGPUBuffer(
+					copyPass,
+					&vertexLocation,
+					&vertexRegion,
+					false);
+
+				SDL_GPUTransferBufferLocation indexLocation{
+					.transfer_buffer = indexTransferBuffer,
+					.offset = 0
+				};
+
+				SDL_GPUBufferRegion indexRegion{
+					.buffer = indexBuffer,
+					.offset = 0,
+					.size = static_cast<Uint32>(indices_.size() * sizeof(uint32_t))
+				};
+
+				SDL_UploadToGPUBuffer(copyPass,
+					&indexLocation,
+					&indexRegion,
+					false);
+			});
+		}
+
+		void draw(SDL_GPURenderPass* renderPass, sdl::Batch<Vertex>& batch) {
+			SDL_DrawGPUIndexedPrimitives(
+				renderPass,
+				static_cast<Uint32>(batch.indices().size()),
+				1,
+				0,
+				0,
+				0
+			);
+		}
+
+		TransferBuffer vertexTransferBuffer_;
+		TransferBuffer indexTransferBuffer_;
+		Buffer vertexBuffer_;
+		Buffer indexBuffer_;
+	};
+
 	class Graphic {
 	public:
-		static constexpr glm::vec2 NO_TEXTURE{-1.0f, -1.0f};
+		static constexpr glm::vec2 NoTexture{-1.0f, -1.0f};
 
 		const glm::mat4& getMatrix() const {
 			return matrix_;
@@ -95,11 +184,11 @@ namespace zombie {
 
 			batch_.startBatch();
 			batch_.insert({
-				sdl::Vertex{pos3, NO_TEXTURE, color},
-				sdl::Vertex{{pos3.x + size.x, pos3.y, pos3.z}, NO_TEXTURE, color},
-				sdl::Vertex{{pos3.x + size.x, pos3.y + size.y, pos3.z}, NO_TEXTURE, color},
-				sdl::Vertex{{pos3.x, pos3.y + size.y, pos3.z}, NO_TEXTURE, color}
-				});
+				sdl::Vertex{pos3, NoTexture, color},
+				sdl::Vertex{{pos3.x + size.x, pos3.y, pos3.z}, NoTexture, color},
+				sdl::Vertex{{pos3.x + size.x, pos3.y + size.y, pos3.z}, NoTexture, color},
+				sdl::Vertex{{pos3.x, pos3.y + size.y, pos3.z}, NoTexture, color}
+			});
 
 			batch_.insertIndices({
 				0, 1, 2,
@@ -140,58 +229,36 @@ namespace zombie {
 
 			batch_.startBatch();
 			batch_.insert({
-				sdl::Vertex{p1_3d - dp_3d, NO_TEXTURE, color},
-				sdl::Vertex{p2_3d - dp_3d, NO_TEXTURE, color},
-				sdl::Vertex{p2_3d + dp_3d, NO_TEXTURE, color},
-				sdl::Vertex{p1_3d + dp_3d, NO_TEXTURE, color}
-				});
+				sdl::Vertex{p1_3d - dp_3d, NoTexture, color},
+				sdl::Vertex{p2_3d - dp_3d, NoTexture, color},
+				sdl::Vertex{p2_3d + dp_3d, NoTexture, color},
+				sdl::Vertex{p1_3d + dp_3d, NoTexture, color}
+			});
 
 			batch_.insertIndices({
 				0, 1, 2,
 				2, 3, 0 
-				});
-		}
-
-		void pushMatrix() {
-
-		}
-
-		void pushMatrix(std::invocable auto&& t) {
-			pushMatrix();
-			t();
-			popMatrix();
-		}
-
-		void rotate(float angle) {
-
-		}
-
-		void translate(const glm::vec2& pos) {
-
-		}
-
-		void popMatrix() {
-
+			});
 		}
 
 		void addCircle(const glm::vec2& center, float radius, Color color, unsigned int iterations = 30, float startAngle = 0) {
 			batch_.startBatch();
 
 			// Add center vertex
-			batch_.insert({sdl::Vertex{glm::vec3{center, 0.0f}, NO_TEXTURE, color}});
+			batch_.insert({sdl::Vertex{glm::vec3{center, 0.0f}, NoTexture, color}});
 
 			// Add perimeter vertices
 			for (unsigned int i = 0; i <= iterations; ++i) {
 				float angle = startAngle + (2.0f * Pi * i) / iterations;
 				glm::vec2 pos = center + radius * glm::vec2{std::cos(angle), std::sin(angle)};
-				batch_.insert({sdl::Vertex{glm::vec3{pos, 0.0f}, NO_TEXTURE, color}});
+				batch_.insert({sdl::Vertex{glm::vec3{pos, 0.0f}, NoTexture, color}});
 			}
 
 			// Create triangles from center to perimeter
 			for (unsigned int i = 0; i < iterations; ++i) {
 				batch_.insertIndices({
 					0, i + 1, i + 2
-					});
+				});
 			}
 		}
 
@@ -210,9 +277,9 @@ namespace zombie {
 				glm::vec2 outerPos = center + outerRadius * direction;
 
 				batch_.insert({
-					sdl::Vertex{glm::vec3{innerPos, 0.0f}, NO_TEXTURE, color},
-					sdl::Vertex{glm::vec3{outerPos, 0.0f}, NO_TEXTURE, color}
-					});
+					sdl::Vertex{glm::vec3{innerPos, 0.0f}, NoTexture, color},
+					sdl::Vertex{glm::vec3{outerPos, 0.0f}, NoTexture, color}
+				});
 			}
 
 			// Create quad strips between inner and outer circles
@@ -221,7 +288,7 @@ namespace zombie {
 				batch_.insertIndices({
 					baseIndex, baseIndex + 1, baseIndex + 3,
 					baseIndex + 3, baseIndex + 2, baseIndex
-					});
+				});
 			}
 		}
 
@@ -233,7 +300,7 @@ namespace zombie {
 			batch_.startBatch();
 
 			for (auto it = begin; it != end; ++it) {
-				batch_.pushBack({{*it, 0}, NO_TEXTURE, color});
+				batch_.pushBack({{*it, 0}, NoTexture, color});
 			}
 
 			const auto size = std::distance(begin, end);
@@ -250,7 +317,7 @@ namespace zombie {
 		void addPolygon(std::input_iterator auto begin, std::input_iterator auto end, Color color) {
 			batch_.startBatch();
 			for (auto it = begin; it != end; ++it) {
-				batch_.pushBack({{*it, 0.f}, NO_TEXTURE, color});
+				batch_.pushBack({{*it, 0.f}, NoTexture, color});
 			}
 			const auto size = std::distance(begin, end);
 			for (unsigned int i = 1; i < size - 1; ++i) {
@@ -263,106 +330,21 @@ namespace zombie {
 		}
 
 		void bindBuffers(SDL_GPURenderPass* renderPass) {
-			// Bind vertex buffer
-			SDL_GPUBufferBinding vertexBinding{
-				.buffer = vertexBuffer_.get(),
-				.offset = 0
-			};
-			SDL_BindGPUVertexBuffers(
-				renderPass,
-				0,
-				&vertexBinding,
-				1
-			);
-
-			// Bind index buffer
-			SDL_GPUBufferBinding indexBinding{
-				.buffer = indexBuffer_.get(),
-				.offset = 0
-			};
-			SDL_BindGPUIndexBuffer(
-				renderPass,
-				&indexBinding,
-				SDL_GPU_INDEXELEMENTSIZE_32BIT
-			);
+			graphicBuffer_.bindBuffers(renderPass);
 		}
 
 		void uploadToGpu(SDL_GPUDevice* gpuDevice, SDL_GPUCommandBuffer* commandBuffer) {
-			auto indices_ = batch_.indices();
-			auto vertices_ = batch_.vertices();
-
-			// Create vertex buffers
-			SDL_GPUBuffer* vertexBuffer = vertexBuffer_.get(gpuDevice, SDL_GPU_BUFFERUSAGE_VERTEX, vertices_);
-			SDL_GPUBuffer* indexBuffer = indexBuffer_.get(gpuDevice, SDL_GPU_BUFFERUSAGE_INDEX, indices_);
-
-			// Create transfer buffers
-			SDL_GPUTransferBufferCreateInfo vertexTransferInfo{
-				.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-				.size = static_cast<Uint32>(vertices_.size() * sizeof(sdl::Vertex))
-			};
-			SDL_GPUTransferBuffer* vertexTransferBuffer = vertexTransferBuffer_.get(gpuDevice, vertices_);
-
-			SDL_GPUTransferBufferCreateInfo indexTransferInfo{
-				.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-				.size = static_cast<Uint32>(indices_.size() * sizeof(uint32_t))
-			};
-			SDL_GPUTransferBuffer* indexTransferBuffer = indexTransferBuffer_.get(gpuDevice, indices_);
-
-			sdl::copyPass(commandBuffer, [&](SDL_GPUCopyPass* copyPass) {
-				SDL_GPUTransferBufferLocation vertexLocation{
-					.transfer_buffer = vertexTransferBuffer,
-					.offset = 0
-				};
-
-				SDL_GPUBufferRegion vertexRegion{
-					.buffer = vertexBuffer,
-					.offset = 0,
-					.size = static_cast<Uint32>(vertices_.size() * sizeof(sdl::Vertex))
-				};
-
-				SDL_UploadToGPUBuffer(
-					copyPass,
-					&vertexLocation,
-					&vertexRegion,
-					false);
-
-				SDL_GPUTransferBufferLocation indexLocation{
-					.transfer_buffer = indexTransferBuffer,
-					.offset = 0
-				};
-
-				SDL_GPUBufferRegion indexRegion{
-					.buffer = indexBuffer,
-					.offset = 0,
-					.size = static_cast<Uint32>(indices_.size() * sizeof(uint32_t))
-				};
-
-				SDL_UploadToGPUBuffer(copyPass,
-					&indexLocation,
-					&indexRegion,
-					false);
-			});
+			graphicBuffer_.uploadToGpu(gpuDevice, commandBuffer, batch_);
 		}
 
 		void draw(SDL_GPURenderPass* renderPass) {
-			SDL_DrawGPUIndexedPrimitives(
-				renderPass,
-				static_cast<Uint32>(batch_.indices().size()),
-				1,
-				0,
-				0,
-				0
-			);
+			graphicBuffer_.draw(renderPass, batch_);
 		}
-
 
 	private:
 		glm::mat4 matrix_{1.0f};
 		sdl::Batch<sdl::Vertex> batch_;
-		TransferBuffer vertexTransferBuffer_;
-		TransferBuffer indexTransferBuffer_;
-		Buffer vertexBuffer_;
-		Buffer indexBuffer_;
+		GraphicBuffer<sdl::Vertex> graphicBuffer_;
 	};
 
 }

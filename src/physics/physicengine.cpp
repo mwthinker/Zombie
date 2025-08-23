@@ -65,10 +65,10 @@ namespace zombie {
 	}
 
 	void PhysicEngine::debugDraw() {
-		
+		b2World_Draw(worldId_, &debugDraw_);
 	}
 
-	void PhysicEngine::initDebugDraw(const b2DebugDraw& debugDraw, const DebugDrawSettings& settings) {
+	void PhysicEngine::initDebugDraw(const b2DebugDraw& debugDraw) {
 		debugDraw_ = debugDraw;
 	}
 

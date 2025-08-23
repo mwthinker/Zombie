@@ -74,7 +74,7 @@ namespace zombie {
 
 		void debugDraw();
 
-		void initDebugDraw(const b2DebugDraw& debugDraw, const DebugDrawSettings& settings);
+		void initDebugDraw(const b2DebugDraw& debugDraw);
 
 	private:
 		void unitEvent(Unit* unit, int eventType) override;

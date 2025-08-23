@@ -1,0 +1,118 @@
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="std::exception">
+    <DisplayString>what() = {what()}</DisplayString>
+    <Expand>
+      <Item Name="what()">what()</Item>
+    </Expand>
+  </Type>
+  <Type Name="std::runtime_error">
+    <DisplayString>what() = {what()}</DisplayString>
+    <Expand>
+      <Item Name="what()">what()</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="sdl::Color">
+    <!-- Show RGBA values directly without complex bit manipulation -->
+    <DisplayString>R={(value_&amp;0xFF),d} G={((value_>>8)&amp;0xFF),d} B={((value_>>16)&amp;0xFF),d} A={((value_>>24)&amp;0xFF),d}</DisplayString>
+
+    <Expand>
+      <Item Name="Red">value_&amp;0xFF</Item>
+      <Item Name="Green">(value_>>8)&amp;0xFF</Item>
+      <Item Name="Blue">(value_>>16)&amp;0xFF</Item>
+      <Item Name="Alpha">(value_>>24)&amp;0xFF</Item>
+      <Item Name="Hex">value_,X</Item>
+      <Item Name="value_">value_</Item>
+    </Expand>
+  </Type>
+  
+  <!-- Vectors -->
+  <!-- vec1 -->
+  <Type Name="glm::vec&lt;1,*&gt;">
+    <DisplayString>{{x={x,g}}}</DisplayString>
+    <Expand>
+      <Item Name="x" ExcludeView="simple">x</Item>
+    </Expand>
+  </Type>
+
+  <!-- vec2 -->
+  <Type Name="glm::vec&lt;2,*&gt;">
+    <DisplayString>{{x={x,g} y={y,g}}}</DisplayString>
+    <Expand>
+      <Item Name="x" ExcludeView="simple">x</Item>
+      <Item Name="y" ExcludeView="simple">y</Item>
+    </Expand>
+  </Type>
+
+  <!-- vec3 -->
+  <Type Name="glm::vec&lt;3,*&gt;">
+    <DisplayString>{{x={x,g} y={y,g} z={z,g}}}</DisplayString>
+    <Expand>
+      <Item Name="x" ExcludeView="simple">x</Item>
+      <Item Name="y" ExcludeView="simple">y</Item>
+      <Item Name="z" ExcludeView="simple">z</Item>
+    </Expand>
+  </Type>
+
+  <!-- vec4 -->
+  <Type Name="glm::vec&lt;4,*&gt;">
+    <DisplayString>{{x={x,g} y={y,g} z={z,g} w={w,g}}}</DisplayString>
+    <Expand>
+      <Item Name="x" ExcludeView="simple">x</Item>
+      <Item Name="y" ExcludeView="simple">y</Item>
+      <Item Name="z" ExcludeView="simple">z</Item>
+      <Item Name="w" ExcludeView="simple">w</Item>
+    </Expand>
+  </Type>
+
+  <!-- Matrices -->
+  <!-- mat2 = 2x2 -->
+  <Type Name="glm::mat&lt;2,2,*&gt;">
+    <DisplayString>{{[{[0][0],g}, {[0][1],g}], [{[1][0],g}, {[1][1],g}]}}</DisplayString>
+    <Expand>
+      <Item Name="[0][0]" ExcludeView="simple">[0][0]</Item>
+      <Item Name="[0][1]" ExcludeView="simple">[0][1]</Item>
+      <Item Name="[1][0]" ExcludeView="simple">[1][0]</Item>
+      <Item Name="[1][1]" ExcludeView="simple">[1][1]</Item>
+    </Expand>
+  </Type>
+
+  <!-- mat3 = 3x3 -->
+  <Type Name="glm::mat&lt;3,3,*&gt;">
+    <DisplayString>{{[{[0][0],g}, {[0][1],g}, {[0][2],g}], [{[1][0],g}, {[1][1],g}, {[1][2],g}], [{[2][0],g}, {[2][1],g}, {[2][2],g}]}}</DisplayString>
+    <Expand>
+      <Item Name="[0][0]" ExcludeView="simple">[0][0]</Item>
+      <Item Name="[0][1]" ExcludeView="simple">[0][1]</Item>
+      <Item Name="[0][2]" ExcludeView="simple">[0][2]</Item>
+      <Item Name="[1][0]" ExcludeView="simple">[1][0]</Item>
+      <Item Name="[1][1]" ExcludeView="simple">[1][1]</Item>
+      <Item Name="[1][2]" ExcludeView="simple">[1][2]</Item>
+      <Item Name="[2][0]" ExcludeView="simple">[2][0]</Item>
+      <Item Name="[2][1]" ExcludeView="simple">[2][1]</Item>
+      <Item Name="[2][2]" ExcludeView="simple">[2][2]</Item>
+    </Expand>
+  </Type>
+
+  <!-- mat4 = 4x4 -->
+  <Type Name="glm::mat&lt;4,4,*&gt;">
+    <DisplayString>{{[{[0][0],g}, {[0][1],g}, {[0][2],g}, {[0][3],g}], [{[1][0],g}, {[1][1],g}, {[1][2],g}, {[1][3],g}], [{[2][0],g}, {[2][1],g}, {[2][2],g}, {[2][3],g}], [{[3][0],g}, {[3][1],g}, {[3][2],g}, {[3][3],g}]}}</DisplayString>
+    <Expand>
+      <Item Name="[0][0]" ExcludeView="simple">[0][0]</Item>
+      <Item Name="[0][1]" ExcludeView="simple">[0][1]</Item>
+      <Item Name="[0][2]" ExcludeView="simple">[0][2]</Item>
+      <Item Name="[0][3]" ExcludeView="simple">[0][3]</Item>
+      <Item Name="[1][0]" ExcludeView="simple">[1][0]</Item>
+      <Item Name="[1][1]" ExcludeView="simple">[1][1]</Item>
+      <Item Name="[1][2]" ExcludeView="simple">[1][2]</Item>
+      <Item Name="[1][3]" ExcludeView="simple">[1][3]</Item>
+      <Item Name="[2][0]" ExcludeView="simple">[2][0]</Item>
+      <Item Name="[2][1]" ExcludeView="simple">[2][1]</Item>
+      <Item Name="[2][2]" ExcludeView="simple">[2][2]</Item>
+      <Item Name="[2][3]" ExcludeView="simple">[2][3]</Item>
+      <Item Name="[3][0]" ExcludeView="simple">[3][0]</Item>
+      <Item Name="[3][1]" ExcludeView="simple">[3][1]</Item>
+      <Item Name="[3][2]" ExcludeView="simple">[3][2]</Item>
+      <Item Name="[3][3]" ExcludeView="simple">[3][3]</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>

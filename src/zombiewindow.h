@@ -38,6 +38,8 @@ namespace zombie {
 		ImFont* debugFont_ = nullptr;
 
 		sdl::GpuGraphicsPipeline graphicsPipeline_;
+
+		void handleResize();
 	};
 
 }

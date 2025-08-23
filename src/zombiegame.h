@@ -115,8 +115,8 @@ namespace zombie {
 		PhysicEngine engine_;
 
 		// Fix timestep.
-		double timeStep_{1.0/60.0};
-		double accumulator_{};
+		double timeStep_ =  1.0/60.0;
+		double accumulator_ = 0.0;
 	};
 
 }
