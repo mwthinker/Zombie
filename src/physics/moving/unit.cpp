@@ -98,18 +98,18 @@ namespace zombie {
 		if (input.forward && !input.backward) {
 			b2Body_ApplyForceToCenter(bodyId_, b2Vec2{move.x, move.y}, true);
 			unitEventHandler(UnitEvent::Walk);
-			spdlog::info("Force: {}", b2Body_GetPosition(bodyId_));
+			//spdlog::info("Force: {}", b2Body_GetPosition(bodyId_));
 		} else if (!input.forward && input.backward) {
 			b2Body_ApplyForceToCenter(bodyId_, -b2Vec2{move.x, move.y}, true);
 			unitEventHandler(UnitEvent::Walk);
 		} else {
 			// In order to make the unit stop when not moving.
-			b2Body_ApplyForceToCenter(bodyId_, -b2Body_GetLinearVelocity(bodyId_), true);
+			b2Body_ApplyForceToCenter(bodyId_, -b2Body_GetLinearVelocity(bodyId_) * 10, true);
 			unitEventHandler(UnitEvent::Standstill);
 		}
 
 		// Add friction.
-		//body_->ApplyForceToCenter(-body_->GetLinearVelocity(), true);
+		//b2Body_ApplyForceToCenter(bodyId_, b2Body_GetLinearVelocity(bodyId_) * -11.f, true);
 
 		// Turn left or right.
 		if (input.turnLeft && !input.turnRight) {

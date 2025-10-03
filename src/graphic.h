@@ -50,7 +50,7 @@ namespace zombie {
 	class TransferBuffer {
 	public:
 		template <typename T>
-		SDL_GPUTransferBuffer* get(SDL_GPUDevice* gpuDevice, std::span<const T> data) {
+		SDL_GPUTransferBuffer* get(SDL_GPUDevice* gpuDevice, std::span<const T> data, bool cycle = false) {
 			if (!transferBuffer_.get() || bytes_ < data.size_bytes()) {
 				bytes_ = data.size_bytes();
 
@@ -60,7 +60,7 @@ namespace zombie {
 				};
 				transferBuffer_ = sdl::createGpuTransferBuffer(gpuDevice, transferInfo);
 			}
-			sdl::mapTransferBuffer(gpuDevice, transferBuffer_.get(), data);
+			sdl::mapGpuTransferBuffer(gpuDevice, transferBuffer_.get(), data, cycle);
 			return transferBuffer_.get();
 		}
 
@@ -114,7 +114,7 @@ namespace zombie {
 			SDL_GPUTransferBuffer* vertexTransferBuffer = vertexTransferBuffer_.get(gpuDevice, vertices_);
 			SDL_GPUTransferBuffer* indexTransferBuffer = indexTransferBuffer_.get(gpuDevice, indices_);
 
-			sdl::copyPass(commandBuffer, [&](SDL_GPUCopyPass* copyPass) {
+			sdl::gpuCopyPass(commandBuffer, [&](SDL_GPUCopyPass* copyPass) {
 				SDL_GPUTransferBufferLocation vertexLocation{
 					.transfer_buffer = vertexTransferBuffer,
 					.offset = 0

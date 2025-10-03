@@ -35,16 +35,16 @@ namespace zombie {
 		}
 
 		constexpr KeyboardKeys createDefaultKeyboardKeys() {
-			KeyboardKeys keyboardKeyCodes{};
-			keyboardKeyCodes.up = SDLK_UP;
-			keyboardKeyCodes.down = SDLK_DOWN;
-			keyboardKeyCodes.left = SDLK_LEFT;
-			keyboardKeyCodes.right = SDLK_RIGHT;
-			keyboardKeyCodes.shoot = SDLK_SPACE;
-			keyboardKeyCodes.reload = SDLK_R;
-			keyboardKeyCodes.run = SDLK_LSHIFT;
-			keyboardKeyCodes.action = SDLK_E;
-			return keyboardKeyCodes;
+			return KeyboardKeys{
+				.up = SDLK_UP,
+				.down = SDLK_DOWN,
+				.right = SDLK_RIGHT,
+				.left = SDLK_LEFT,
+				.shoot = SDLK_SPACE,
+				.reload = SDLK_R,
+				.run = SDLK_LSHIFT,
+				.action = SDLK_E
+			};
 		}
 
 		void imguiDebugTools(Settings& settings) {
@@ -226,6 +226,7 @@ namespace zombie {
 					case Space::Screen:
 						return glm::inverse(screenToClip_) * cameraToClip_ * worldToCamera_;
 				}
+				break;
 			case Space::Camera:
 				switch (to) {
 					case Space::Camera:
@@ -237,6 +238,7 @@ namespace zombie {
 					case Space::Screen:
 						return glm::inverse(screenToClip_) * cameraToClip_;
 				}
+				break;
 			case Space::Clip:
 				switch (to) {
 					case Space::Camera:
@@ -248,6 +250,7 @@ namespace zombie {
 					case Space::Screen:
 						return glm::inverse(screenToClip_);
 				}
+				break;
 			case Space::Screen:
 				switch (to) {
 					case Space::Camera:
@@ -259,6 +262,7 @@ namespace zombie {
 					case Space::Screen:
 						return glm::mat4{1};
 				}
+				break;
 		}
 		return glm::mat4{1};
 	}
@@ -343,8 +347,8 @@ namespace zombie {
 				players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugArrow_.position));
 			}
 
-			if (ImGui::Button("Create 10 Zombies")) {
-				for (int i = 0; i < 10; ++i) {
+			if (ImGui::Button("Create 100 Zombies")) {
+				for (int i = 0; i < 100; ++i) {
 					b2Vec2 delta{random(0,5), random(0,5)};
 					players_.push_back(factory::createZombiePlayer(engine_, UnitProperties{}, drawDebugArrow_.position + delta));
 				}

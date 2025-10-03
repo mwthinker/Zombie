@@ -1,13 +1,13 @@
 {
   "default-registry": {
       "kind": "git",
-      "baseline": "4bb07a326d9b9bce3703272a509e5bc25dd9cfd5",
+      "baseline": "a62ce77d56ee07513b4b67de1ec2daeaebfae51a",
       "repository": "https://github.com/microsoft/vcpkg"
   },
   "registries": [
     {
       "kind": "git",
-      "baseline": "1ebb5e9128cf49f599a0f32030e2a6b015e8765f",
+      "baseline": "05281f3b6769eef38d07217e06084ae6ff844065",
       "repository": "https://github.com/mwthinker/mw-vcpkg-registry.git",
       "packages": [
           "cppsdl3",
