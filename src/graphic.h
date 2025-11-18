@@ -8,6 +8,7 @@
 #include <sdl/batch.h>
 #include <sdl/shader.h>
 #include <sdl/gpu.h>
+#include <sdl/gpuutil.h>
 
 #include <SDL3/SDL_gpu.h>
 #include <glm/gtx/rotate_vector.hpp>
@@ -16,67 +17,6 @@
 #include <span>
 
 namespace zombie {
-
-	class Buffer {
-	public:
-		template <typename T>
-		SDL_GPUBuffer* get(SDL_GPUDevice* gpuDevice, SDL_GPUBufferUsageFlags flag, std::span<const T> data) {
-			if (!buffer_.get() || bytes_ < data.size_bytes()) {
-				bytes_ = data.size_bytes();
-
-				SDL_GPUBufferCreateInfo vertexBufferInfo{
-					.usage = flag,
-					.size = static_cast<Uint32>(bytes_)
-				};
-				buffer_ = sdl::createGpuBuffer(gpuDevice, vertexBufferInfo);
-			}
-			return buffer_.get();
-		}
-
-		SDL_GPUBuffer* get() {
-			return buffer_.get();
-		}
-
-		void reset() {
-			bytes_ = 0;
-			buffer_.reset();
-		}
-
-	private:
-		size_t bytes_ = 0;
-		sdl::GpuBuffer buffer_;
-	};
-
-	class TransferBuffer {
-	public:
-		template <typename T>
-		SDL_GPUTransferBuffer* get(SDL_GPUDevice* gpuDevice, std::span<const T> data, bool cycle = false) {
-			if (!transferBuffer_.get() || bytes_ < data.size_bytes()) {
-				bytes_ = data.size_bytes();
-
-				SDL_GPUTransferBufferCreateInfo transferInfo{
-					.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-					.size = static_cast<Uint32>(bytes_)
-				};
-				transferBuffer_ = sdl::createGpuTransferBuffer(gpuDevice, transferInfo);
-			}
-			sdl::mapGpuTransferBuffer(gpuDevice, transferBuffer_.get(), data, cycle);
-			return transferBuffer_.get();
-		}
-
-		SDL_GPUTransferBuffer* get() {
-			return transferBuffer_.get();
-		}
-
-		void reset() {
-			bytes_ = 0;
-			transferBuffer_.reset();
-		}
-
-	private:
-		size_t bytes_ = 0;
-		sdl::GpuTransferBuffer transferBuffer_;
-	};
 
 	template <sdl::VertexType Vertex>
 	class GraphicBuffer {
@@ -161,10 +101,10 @@ namespace zombie {
 			);
 		}
 
-		TransferBuffer vertexTransferBuffer_;
-		TransferBuffer indexTransferBuffer_;
-		Buffer vertexBuffer_;
-		Buffer indexBuffer_;
+		sdl::TransferBuffer vertexTransferBuffer_;
+		sdl::TransferBuffer indexTransferBuffer_;
+		sdl::Buffer vertexBuffer_;
+		sdl::Buffer indexBuffer_;
 	};
 
 	class Graphic {

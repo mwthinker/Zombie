@@ -93,15 +93,6 @@ find_package(fmt CONFIG REQUIRED)
 
 include(ExternalFetchContent.cmake)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS On) 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Zombie)
-
-source_group(TREE
-	${CMAKE_CURRENT_SOURCE_DIR}
-	FILES
-		${SOURCES_ZOMBIE}
-)
-
 # Copy data to build folder.
 if (ZombieData)
 	file(COPY ${ZombieData_SOURCE_DIR}/data/fonts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -133,6 +124,10 @@ else ()
 			-Wall -pedantic -Wcast-align -Woverloaded-virtual -Wno-unused-parameter -Wno-sign-compare -Wno-unused-function
 	)
 endif ()
+
+set_property(GLOBAL PROPERTY USE_FOLDERS On) 
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Zombie)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR})
 
 set_target_properties(Zombie
 	PROPERTIES
